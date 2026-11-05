@@ -1,6 +1,6 @@
 #!/bin/bash
 # install-all.sh — يركّب كل المهارات والأدوات في جلسة Claude Code سحابية جديدة (لينكس).
-#   الاستخدام:   bash install-all.sh            (ينزّل B Studio من مستودعه الرسمي)
+#   الاستخدام:   bash install-all.sh            (يستخدم «B Studio.zip» الموجود بجانب السكربت، وإلا ينزّله من مستودعه الرسمي)
 #                bash install-all.sh /مسار/B_Studio.zip   (أو من ملفك المحلي)
 #   - B Studio: يفك الملف المضغوط ثم يشغّل install.sh الرسمي الذي بداخله (لا ينسخ ولا يرفع شيئاً لأي مكان).
 #   - مهارات OpenSEO الاثنتا عشرة: تُنزَّل من مستودعها الرسمي (رخصة MIT).
@@ -9,7 +9,9 @@
 #   لا يحذف شيئاً. أي خطوة تفشل تُطبع ويكمل الباقي.
 set -uo pipefail
 
+HERE="$(cd "$(dirname "$0")" && pwd)"
 ZIP="${1:-}"
+[ -z "$ZIP" ] && [ -f "$HERE/B Studio.zip" ] && ZIP="$HERE/B Studio.zip"   # الملف الموجود في المستودع
 SKILLS="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills"
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
@@ -77,10 +79,10 @@ else
   bad "VoiceStudio: أداة uv غير موجودة (curl -LsSf https://astral.sh/uv/install.sh | sh)"
 fi
 
-# ───────────── 5) حقيبة المعلم (مهارات تربوية وتصميم ومواقع وألعاب) ─────────────
-if [ -f "$(dirname "$0")/teacher-toolkit/install-teacher-toolkit.sh" ]; then
-  bash "$(dirname "$0")/teacher-toolkit/install-teacher-toolkit.sh" || FAIL=1
-fi
+# ───────────── 5) حقيبة المعلم + حقيبة البرمجة والتصميم ─────────────
+for t in install-teacher-toolkit.sh install-dev-design-toolkit.sh; do
+  [ -f "$HERE/teacher-toolkit/$t" ] && { bash "$HERE/teacher-toolkit/$t" || FAIL=1; }
+done
 
 echo
 [ "$FAIL" = 0 ] && echo "انتهى بدون أخطاء. ابدأ محادثة جديدة لتظهر المهارات." || echo "انتهى مع تنبيهات ✗ فوق."
