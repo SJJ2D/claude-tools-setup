@@ -80,6 +80,11 @@ else
   bad "VoiceStudio: أداة uv غير موجودة (curl -LsSf https://astral.sh/uv/install.sh | sh)"
 fi
 
+# ───────────── 5) حقيبة المعلم (مهارات تربوية وتصميم ومواقع وألعاب) ─────────────
+if [ -f "$(dirname "$0")/teacher-toolkit/install-teacher-toolkit.sh" ]; then
+  bash "$(dirname "$0")/teacher-toolkit/install-teacher-toolkit.sh" || FAIL=1
+fi
+
 echo
 [ "$FAIL" = 0 ] && echo "انتهى بدون أخطاء. ابدأ محادثة جديدة لتظهر المهارات." || echo "انتهى مع تنبيهات ✗ فوق."
 exit $FAIL
