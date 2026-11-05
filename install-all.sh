@@ -1,6 +1,7 @@
 #!/bin/bash
 # install-all.sh — يركّب كل المهارات والأدوات في جلسة Claude Code سحابية جديدة (لينكس).
-#   الاستخدام:   bash install-all.sh /مسار/B_Studio.zip
+#   الاستخدام:   bash install-all.sh            (ينزّل B Studio من مستودعه الرسمي)
+#                bash install-all.sh /مسار/B_Studio.zip   (أو من ملفك المحلي)
 #   - B Studio: يفك الملف المضغوط ثم يشغّل install.sh الرسمي الذي بداخله (لا ينسخ ولا يرفع شيئاً لأي مكان).
 #   - مهارات OpenSEO الاثنتا عشرة: تُنزَّل من مستودعها الرسمي (رخصة MIT).
 #   - VoiceStudio: يُنزَّل من مستودعه الرسمي (رخصة AGPL) ويُركَّب خادمه على CPU (حوالي 2.3 جيجابايت). النماذج لا تنزل قبل موافقتك على رخصتها.
@@ -18,24 +19,20 @@ ok(){ echo "✓ $*"; }
 bad(){ echo "✗ $*"; FAIL=1; }
 
 # ───────────── 1) B Studio (من ملفك أنت، لا يُرفع لأي مكان: الرخصة تمنع النشر) ─────────────
-if [ -z "$ZIP" ] || [ ! -f "$ZIP" ]; then
-  bad "B Studio: ما لقيت الملف. شغّل:  bash install-all.sh /مسار/B_Studio.zip"
+mkdir -p "$WORK/bstudio"
+if [ -n "$ZIP" ] && [ -f "$ZIP" ]; then
+  unzip -o -q "$ZIP" -d "$WORK/bstudio" || bad "B Studio: فشل فك الضغط"
 else
-  mkdir -p "$WORK/bstudio"
-  if unzip -o -q "$ZIP" -d "$WORK/bstudio"; then
-    INST="$(find "$WORK/bstudio" -name install.sh -path '*edit-studio*' -prune -o -name install.sh -print | head -1)"
-    if [ -n "$INST" ]; then
-      # لينكس ما فيه ditto (أمر ماك): بديل يعمل نفس النسخ
-      mkdir -p "$WORK/shim"
-      printf '#!/bin/bash\n[ "$1" = "--noqtn" ] && shift\ncp -R "$1" "$2"\n' > "$WORK/shim/ditto"
-      chmod +x "$WORK/shim/ditto"
-      if PATH="$WORK/shim:$PATH" bash "$INST"; then ok "B Studio والمهارتان edit-studio وvideo-edit"; else bad "B Studio: install.sh فشل"; fi
-    else
-      bad "B Studio: ما لقيت install.sh داخل الملف"
-    fi
-  else
-    bad "B Studio: فشل فك الضغط"
-  fi
+  # بلا ملف zip: نزّله من المستودع الرسمي لصاحبه (الدليل نفسه يطلب التركيب من هذا الرابط)
+  git clone --depth 1 -q https://github.com/bassam-pt95/edit-studio "$WORK/bstudio/official" 2>/dev/null || bad "B Studio: فشل تنزيله من المستودع الرسمي (جرّب مع ملف zip)"
+fi
+INST="$(find "$WORK/bstudio" -name install.sh -path '*edit-studio*' -prune -o -name install.sh -print 2>/dev/null | head -1)"
+if [ -n "$INST" ]; then
+  mkdir -p "$WORK/shim"   # لينكس ما فيه ditto (أمر ماك): بديل يعمل نفس النسخ
+  printf '#!/bin/bash\n[ "$1" = "--noqtn" ] && shift\ncp -R "$1" "$2"\n' > "$WORK/shim/ditto"; chmod +x "$WORK/shim/ditto"
+  if PATH="$WORK/shim:$PATH" bash "$INST"; then ok "B Studio والمهارتان edit-studio وvideo-edit"; else bad "B Studio: install.sh فشل"; fi
+else
+  bad "B Studio: ما لقيت install.sh"
 fi
 
 # ───────────── 2) أدوات المونتاج على لينكس ─────────────

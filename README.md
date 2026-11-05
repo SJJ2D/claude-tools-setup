@@ -5,7 +5,8 @@
 ## الاستخدام
 ```bash
 git clone https://github.com/SJJ2D/claude-tools-setup && cd claude-tools-setup
-bash install-all.sh /مسار/B_Studio.zip
+bash install-all.sh                      # ينزّل B Studio من مستودعه الرسمي
+# أو: bash install-all.sh /مسار/B_Studio.zip
 ```
 
 ## ما الذي يركّبه
