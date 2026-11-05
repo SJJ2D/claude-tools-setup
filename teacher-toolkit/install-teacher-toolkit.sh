@@ -48,5 +48,15 @@ if fetch OleksiiDotsenko/lesson-in-game 01986910c771974b9494e11180ddc254fe8b5660
   else bad "Lesson in Game: تركيب npm فشل (المهارات نُسخت: $n)"; fi
 else bad "lesson-in-game"; fi
 
+# 6) المونتاج (بدائل مفتوحة المصدر، MIT): قص وإزالة السكتات وكابشن بـ ffmpeg وWhisper
+if fetch 6missedcalls/video-editing-skill 7dc6e1da66f43eff44c3692d4b84e06aef6590b6 "$WORK/vedit"; then
+  rm -rf "$WORK/vedit/.git"; mkdir -p "$SKILLS/video-editing-skill" && cp -R "$WORK/vedit/." "$SKILLS/video-editing-skill/" && ok "video-editing-skill (يحتاج ffmpeg وWhisper)"
+else bad "video-editing-skill"; fi
+
+# 7) فيديوهات شرح وسبورة بيضاء وأنيميشن للمعلمين (MIT)
+if fetch iart-ai/explainer-video-skills 3e2d411b725d9a72939cf8e5eb81579e751373e7 "$WORK/expl"; then
+  n=0; for s in "$WORK"/expl/skills/*/; do put "${s%/}" && n=$((n+1)); done; ok "فيديوهات الشرح والأنيميشن: $n"
+else bad "explainer-video-skills"; fi
+
 echo; [ "$FAIL" = 0 ] && echo "انتهى بدون أخطاء. ابدأ محادثة جديدة لتظهر المهارات." || echo "انتهى مع تنبيهات ✗ فوق."
 exit $FAIL
