@@ -31,3 +31,14 @@
 
 ## B Studio
 ملف `B Studio.zip` في جذر المستودع رفعه صاحب المستودع بنفسه ويتحمل مسؤولية حقوقه. السكربت يستخدمه، وإن غاب ينزّل الاستوديو من المستودع الرسمي.
+
+## مهارات مونتاج وفيديو برمجي (install-video-skills.sh) — من claude-video-editor.nadr.ai
+فُحصت بـ NVIDIA SkillSpector (بدون LLM) + مراجعة يدوية لأنماط الشبكة والمفاتيح والأوامر الخطرة.
+
+| المهارة | الرخصة | الحالة |
+|---|---|---|
+| HyperFrames (9 مهارات) | Apache-2.0 | تُركَّب. فيها تتبّع استخدام PostHog في media-use؛ عطّله بـ DO_NOT_TRACK=1. الفحص الكامل للمستودع انتهت مهلته، فراجعتُ مجلد skills يدوياً |
+| Lemo Opuscar | MIT | تُركَّب مع مكتبتها مثبّتة في ~/lemo-opuscar. سكربت setup.sh الخاص بالمهارة قد يحدّث المكتبة من الإنترنت |
+| OneTake | PolyForm Noncommercial | تُركَّب. SkillSpector قال CRITICAL / DO_NOT_INSTALL بسبب حدود تغطية الماسح؛ مراجعتي اليدوية: ffmpeg وملفات مؤقتة فقط، بلا شبكة ولا مفاتيح. للاستخدام غير التجاري فقط |
+| Clawd Animation Base | MIT | ليست مهارة (لا SKILL.md): قاعدة Node في ~/tools/ClaudeAnimationBase. الفحص LOW |
+| Collage B-roll | — | اختيارية (INSTALL_COLLAGE=1). SkillSpector HIGH أغلبه إنذارات كاذبة، لكنها تحتاج أدوات مدفوعة (MaxFusion/Gemini) وتوجّه Claude ألا يسأل المستخدم |
