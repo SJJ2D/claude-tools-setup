@@ -53,3 +53,22 @@
 | 21st-dev/magic-mcp (مهارة 21st-ui) | ISC | LOW / SAFE. الخادم يحتاج مفتاح API من 21st.dev |
 | usestrix/strix (9 مهارات) | Apache-2.0 | HIGH / DO_NOT_INSTALL بسبب مهارة CI التي تشرح `curl strix.ai/install \| bash` كمثال في GitHub Actions (توثيق وليس تنفيذاً هنا). مهارات اختبار اختراق: لتطبيقاتك أو بإذن فقط. الأداة نفسها تحتاج Docker |
 | Graphify-Labs/graphify | Apache-2.0 | أداة بايثون تُركَّب بـ uv على نسخة مثبّتة ثم `graphify install` يسجّل المهارة. لم أفحصها بـ SkillSpector لأنها حزمة وليست مهارة |
+
+## من مدونة nexcode.codes (install-nexcode-skills.sh)
+قرأتُ كل تدوينات المدونة (صفحتان) واستخرجت منها المستودعات. المركّب:
+
+| المصدر | الرخصة | الفحص |
+|---|---|---|
+| Leonxlnx/taste-skill | MIT | مراجعة يدوية (SkillSpector انتهت مهلته): تحميل ملفاته المحلية فقط عبر fetch، بلا مفاتيح ولا أوامر خطرة. حجمها كبير (1617 ملف) |
+| pbakaus/impeccable | Apache-2.0 | مراجعة يدوية: سكربت `impeccable` ينزّل «محرّك» بنسخة محددة عند أول تشغيل، وlive mode يشغّل خادماً محلياً؛ لا تحقنه في موقع منشور |
+| microsoft/playwright-cli (مهارة) | Apache-2.0 | SkillSpector بدون درجة (تغطية 79%). الأداة نفسها: `npm install -g @playwright/cli` ولم أثبّتها |
+| img2threejs/img2threejs | Apache-2.0 | مراجعة يدوية: بايثون يشغّل عمليات فرعية محدودة ويمرّر متغيرات بيئة من قائمة سماح |
+| Jakeschincariol/youtube-agent-skill (11) | MIT | SkillSpector: بلا نتائج مرتفعة، تغطية 100%. أغلب أدواتها لا تقرأ العربية |
+| Jakeschincariol/console-skill (11) | MIT | HIGH / DO_NOT_INSTALL بسبب نسخ متغيرات البيئة في console-anywhere وconsole-tester؛ راجعتها يدوياً: تمرير البيئة لعملية فرعية فقط، بلا شبكة. استخدمها على أقراصك أنت فقط |
+| VoltAgent/awesome-design-md | MIT | ملفات نصية مرجعية، تبقى في ~/tools/awesome-design-md |
+
+**لم يُركَّب افتراضياً:**
+- **REA** (morluto/rea): أداة هندسة عكسية تعدّل إعدادات الوكلاء وتضيف خادم MCP، وتُشغَّل بـ `npx rea-agents@latest setup` من مجلد موثوق. قرارك متى تحتاجها.
+- **CallMe** (ZeframLou/call-me): يتصل بجوالك عبر مزوّد هاتف (Telnyx) ومفتاح OpenAI ونفق ngrok يعرّض خادماً محلياً للإنترنت.
+- **تطبيقات لا مهارات:** OpenMausBot، وتطبيقات المدونة المفتوحة (AppFlowy وOpenProject وChatwoot وCap وCal.diy وOpenWhispr). منها Open Generative AI وVoiceStudio وOpenSEO مضافة أصلاً.
+- تدوينات الأنيميشن (19 ستايل): برومتات فقط وليست مهارات.
