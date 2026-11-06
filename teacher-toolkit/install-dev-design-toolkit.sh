@@ -29,7 +29,7 @@ else bad "designing-arabic-frontends"; fi
 
 # 4) UX/UI: أنظمة تصميم، رموز، إتاحة WCAG، مراجعة تصميم (MIT). مهاراتها تشير لملفات داخل المستودع، فيبقى كاملاً في ~/tools
 UX="${UXUI_DIR:-$HOME/tools/ux-ui-agent-skills}"
-if fetch plugin87/ux-ui-agent-skills def84a70fadc3490d80901295a4f1951fdb2cc69 "$UX"; then
+if [ -d "$UX/.git" ] || fetch plugin87/ux-ui-agent-skills def84a70fadc3490d80901295a4f1951fdb2cc69 "$UX"; then
   ok "ux-ui-agent-skills في $UX — لأفضل نتيجة شغّل Claude Code من داخل هذا المجلد (مهاراته مشروع)"
 else bad "ux-ui-agent-skills"; fi
 

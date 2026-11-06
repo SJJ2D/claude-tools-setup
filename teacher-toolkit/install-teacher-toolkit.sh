@@ -41,7 +41,7 @@ else bad "gamedev skills"; fi
 
 # 5) Lesson in Game: درسك يتحول إلى لعبة جماعية تُلعب على جوالات الطلاب عبر شبكة الصف (MIT، محلي بالكامل)
 LG="${LESSON_IN_GAME_DIR:-$HOME/tools/lesson-in-game}"
-if fetch OleksiiDotsenko/lesson-in-game 01986910c771974b9494e11180ddc254fe8b5660 "$LG"; then
+if [ -d "$LG/.git" ] || fetch OleksiiDotsenko/lesson-in-game 01986910c771974b9494e11180ddc254fe8b5660 "$LG"; then
   n=0; for s in "$LG"/lesson-in-game/skills/*/; do put "${s%/}" && n=$((n+1)); done
   if command -v npm >/dev/null 2>&1 && (cd "$LG/lesson-in-game/engine" && npm install --silent --no-audit --no-fund >/dev/null 2>&1); then
     ok "Lesson in Game: $n مهارات + المحرك في $LG (اقرأ README قبل التشغيل)"
