@@ -77,3 +77,11 @@
 
 ## مهارات خاصة بي (skills-own/)
 - `animation-styles`: 19 ستايل أنيميشن من تدوينتَي nexcode مع قالب البرومت وكتلة التنفيذ (seek(t)) وسكربت التصدير إلى mp4 وجدول توجيه للمهارات الأخرى. تُنسخ تلقائياً في `install-all.sh`. الستايل 19 وصل مبتوراً من الصفحة فبطاقته مختصرة.
+
+## design-toolkit ومهارات 21st.dev (install-design-toolkit.sh)
+| المصدر | الرخصة | الملاحظات |
+|---|---|---|
+| `skills/design-toolkit` (كتبتها مع Claude، داخل هذا المستودع) | تابعة لمستودعك | متى تُستخدم GSAP وLenis وReact Bits و21st.dev، وقواعد حركة (تقليل الحركة، RTL، الأداء). |
+| GSAP 3.15.1 وLenis 1.3.27 (من npm وقت التركيب) | GSAP: رخصة GreenSock المجانية (مجانية حتى تجاريًا)، Lenis: MIT | نسخ محلية في `assets/` داخل المهارة، ولا تُحفظ في المستودع. |
+| مكوّنات React Bits (من reactbits.dev وقت التركيب) | MIT مع Commons Clause (لا تُباع كما هي) | كود 218 مكوّنًا (TS + Tailwind) في `assets/react-bits`. |
+| 21st.dev: 8 مهارات رسمية من `21st.dev/.well-known/skills` | يحددها الموقع | الجلب والتوليد والنشر تحتاج أداة `21st` ومفتاح API من 21st.dev/settings/api-keys. قرأتها قبل التركيب فلم أجد أوامر خطرة. لا تُثبَّت على نسخة commit لأن الموقع لا يوفر نسخًا مثبّتة. |

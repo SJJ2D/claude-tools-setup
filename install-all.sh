@@ -84,7 +84,7 @@ fi
 fi
 
 # ───────────── 5) حقيبة المعلم + حقيبة البرمجة والتصميم ─────────────
-for t in install-teacher-toolkit.sh install-dev-design-toolkit.sh install-video-skills.sh install-agent-tools.sh install-nexcode-skills.sh; do
+for t in install-teacher-toolkit.sh install-dev-design-toolkit.sh install-video-skills.sh install-agent-tools.sh install-nexcode-skills.sh install-design-toolkit.sh; do
   [ -f "$HERE/teacher-toolkit/$t" ] && { bash "$HERE/teacher-toolkit/$t" || FAIL=1; }
 done
 

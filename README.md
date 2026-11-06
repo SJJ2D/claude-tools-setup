@@ -17,6 +17,7 @@ bash install-all.sh
 | **VoiceStudio** | استنساخ الصوت محلياً على CPU (AGPL). |
 | **حقيبة المعلم** | تخطيط وتقويم ودمج (UDL)، شرائح، ألعاب تعليمية، فيديو شرح ومونتاج، مهارات Anthropic للمستندات والتصميم. |
 | **حقيبة البرمجة والتصميم** | منهجية تطوير (superpowers)، Python/JS/APIs/قواعد بيانات/أمان، واجهات عربية RTL، أنظمة تصميم وإتاحة. |
+| **design-toolkit + مهارات 21st.dev** | مهارة `design-toolkit` (GSAP وLenis وReact Bits وإرشادات 21st.dev، مع نسخ محلية من المكتبات) من مجلد `skills/`، ومهارات 21st.dev الرسمية الثمانية (بناء الواجهات واستكشافها ومراجعتها والبحث والتوليد والنشر). |
 | **OpenSEO** | 12 مهارة SEO (تحتاج مفتاح DataForSEO). |
 
 الفهرس الكامل بالمصادر والرخص: [`teacher-toolkit/CATALOG.md`](teacher-toolkit/CATALOG.md).
