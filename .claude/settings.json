@@ -1,0 +1,7 @@
+{
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "SKIP_HEAVY=1 bash \"$CLAUDE_PROJECT_DIR/install-all.sh\" >/tmp/claude-tools-install.log 2>&1", "timeout": 900 } ] }
+    ]
+  }
+}

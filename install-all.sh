@@ -37,6 +37,7 @@ else
   bad "B Studio: ما لقيت install.sh"
 fi
 
+if [ "${SKIP_HEAVY:-0}" != 1 ]; then
 # ───────────── 2) أدوات المونتاج على لينكس ─────────────
 VEB="${VEB_HOME:-$HOME/Documents/video-edit}"
 if command -v python3.12 >/dev/null 2>&1; then
@@ -50,6 +51,7 @@ if command -v python3.12 >/dev/null 2>&1; then
   fi
 else
   bad "بايثون 3.12 غير موجود: ثبّته أولاً (مثلاً uv python install 3.12)"
+fi
 fi
 for t in ffmpeg node; do command -v $t >/dev/null 2>&1 && ok "$t موجود" || bad "$t غير موجود، ثبّته"; done
 
@@ -65,6 +67,7 @@ if git clone --depth 1 --filter=blob:none --sparse -q https://github.com/every-a
 else
   bad "OpenSEO: فشل تنزيل المستودع"
 fi
+if [ "${SKIP_HEAVY:-0}" != 1 ]; then
 # ───────────── 4) VoiceStudio (استنساخ الصوت محلياً، CPU) ─────────────
 VS="${VOICESTUDIO_DIR:-$HOME/tools/VoiceStudio}"
 if command -v uv >/dev/null 2>&1; then
@@ -77,6 +80,7 @@ if command -v uv >/dev/null 2>&1; then
   fi
 else
   bad "VoiceStudio: أداة uv غير موجودة (curl -LsSf https://astral.sh/uv/install.sh | sh)"
+fi
 fi
 
 # ───────────── 5) حقيبة المعلم + حقيبة البرمجة والتصميم ─────────────
