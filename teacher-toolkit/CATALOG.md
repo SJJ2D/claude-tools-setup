@@ -42,3 +42,14 @@
 | OneTake | PolyForm Noncommercial | تُركَّب. SkillSpector قال CRITICAL / DO_NOT_INSTALL بسبب حدود تغطية الماسح؛ مراجعتي اليدوية: ffmpeg وملفات مؤقتة فقط، بلا شبكة ولا مفاتيح. للاستخدام غير التجاري فقط |
 | Clawd Animation Base | MIT | ليست مهارة (لا SKILL.md): قاعدة Node في ~/tools/ClaudeAnimationBase. الفحص LOW |
 | Collage B-roll | — | اختيارية (INSTALL_COLLAGE=1). SkillSpector HIGH أغلبه إنذارات كاذبة، لكنها تحتاج أدوات مدفوعة (MaxFusion/Gemini) وتوجّه Claude ألا يسأل المستخدم |
+
+## أدوات برمجة عامة (install-agent-tools.sh)
+فُحصت بـ SkillSpector (بدون LLM). الدرجات تحذيرية فقط؛ راجعت أعلاها يدوياً.
+
+| المصدر | الرخصة | الفحص والملاحظات |
+|---|---|---|
+| addyosmani/agent-skills (25 مهارة) | MIT | CRITICAL / DO_NOT_INSTALL بسبب مهارة security-and-hardening (محتواها دفاعي: نموذج تهديدات وقوائم أمان، والماسح يطابق كلمات مثل exploit) وملفات مرجعية لم تُفحص كاملة (تغطية 80%). المهارات الأخرى LOW/MEDIUM. مراجعتي اليدوية: نصوص إرشادية، والتحذير «تجاهل التعليمات» في browser-testing هو قاعدة تمنع حقن الأوامر وليس حقناً |
+| upstash/context7 (3 مهارات) | MIT | MEDIUM / CAUTION. الخادم MCP يرسل أسئلة الأكواد لخدمة Upstash؛ يُضاف يدوياً |
+| 21st-dev/magic-mcp (مهارة 21st-ui) | ISC | LOW / SAFE. الخادم يحتاج مفتاح API من 21st.dev |
+| usestrix/strix (9 مهارات) | Apache-2.0 | HIGH / DO_NOT_INSTALL بسبب مهارة CI التي تشرح `curl strix.ai/install \| bash` كمثال في GitHub Actions (توثيق وليس تنفيذاً هنا). مهارات اختبار اختراق: لتطبيقاتك أو بإذن فقط. الأداة نفسها تحتاج Docker |
+| Graphify-Labs/graphify | Apache-2.0 | أداة بايثون تُركَّب بـ uv على نسخة مثبّتة ثم `graphify install` يسجّل المهارة. لم أفحصها بـ SkillSpector لأنها حزمة وليست مهارة |
