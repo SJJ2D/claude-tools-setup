@@ -67,6 +67,8 @@
 | Jakeschincariol/console-skill (11) | MIT | HIGH / DO_NOT_INSTALL بسبب نسخ متغيرات البيئة في console-anywhere وconsole-tester؛ راجعتها يدوياً: تمرير البيئة لعملية فرعية فقط، بلا شبكة. استخدمها على أقراصك أنت فقط |
 | VoltAgent/awesome-design-md | MIT | ملفات نصية مرجعية، تبقى في ~/tools/awesome-design-md |
 
+**REA وCallMe رُكّبا لاحقاً بطلب المستخدم (install-rea-callme.sh، خارج وضع SKIP_HEAVY).** الأسطر التالية كانت قبل ذلك:
+
 **لم يُركَّب افتراضياً:**
 - **REA** (morluto/rea): أداة هندسة عكسية تعدّل إعدادات الوكلاء وتضيف خادم MCP، وتُشغَّل بـ `npx rea-agents@latest setup` من مجلد موثوق. قرارك متى تحتاجها.
 - **CallMe** (ZeframLou/call-me): يتصل بجوالك عبر مزوّد هاتف (Telnyx) ومفتاح OpenAI ونفق ngrok يعرّض خادماً محلياً للإنترنت.

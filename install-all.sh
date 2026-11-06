@@ -88,6 +88,8 @@ for t in install-teacher-toolkit.sh install-dev-design-toolkit.sh install-video-
   [ -f "$HERE/teacher-toolkit/$t" ] && { bash "$HERE/teacher-toolkit/$t" || FAIL=1; }
 done
 
+[ "${SKIP_HEAVY:-0}" != 1 ] && [ -f "$HERE/teacher-toolkit/install-rea-callme.sh" ] && { bash "$HERE/teacher-toolkit/install-rea-callme.sh" || FAIL=1; }
+
 echo
 [ "$FAIL" = 0 ] && echo "انتهى بدون أخطاء. ابدأ محادثة جديدة لتظهر المهارات." || echo "انتهى مع تنبيهات ✗ فوق."
 exit $FAIL
