@@ -8,3 +8,10 @@
 - **Lighting:** consistent across the whole video. Measure each shot's brightness and match it to one level, use one colour grade, and don't shoot characters against the sun (silhouettes); light them from the side or from behind the camera.
 - **Voice:** use the `arabic-voiceover` skill. The user wants a professional voice like ElevenLabs, and the dialect for real (Bahraini) when he asks for it, not MSA. The best option is his own voice on ElevenLabs (v4/v3 with tags), with his consent. The local model is only a fallback, and if used he must be told clearly that it leans toward MSA.
 - Before rendering a long video: an approval package (script + voice sample + stills), then the edits in one batch.
+
+## The repo as a memory between sessions
+- Your own skills are in `skills-own/` inside this repo and can be read directly even if they didn't load as a skill in this session:
+  - `skills-own/arabic-voiceover/SKILL.md`: any Arabic voiceover (the user's voice, dialect, tones, quality checks).
+  - `skills-own/animation-styles/SKILL.md`: short animations and video styles.
+- Before any task related to video, voice, education or design: read the relevant skill from `skills-own/` and apply it, without waiting for an instruction.
+- When the user gives a new note or preference, or you learn a lesson from a mistake: add it to the relevant section here or in the relevant skill, then commit and push (that way it is remembered in the next session).
