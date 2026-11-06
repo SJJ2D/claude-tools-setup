@@ -40,10 +40,16 @@ if command -v uv >/dev/null 2>&1; then
   else bad "graphify: فشل التركيب"; fi
 else bad "graphify: uv غير موجود"; fi
 
+# 6) Context7 MCP (مفعّل بطلب المستخدم): يرسل أسئلة الأكواد لخدمة Upstash
+if command -v claude >/dev/null 2>&1; then
+  if claude mcp list 2>/dev/null | grep -q '^context7:'; then ok "context7 MCP مفعّل مسبقاً"
+  elif claude mcp add --transport http --scope user context7 https://mcp.context7.com/mcp >/dev/null 2>&1; then ok "context7 MCP فُعّل"
+  else bad "context7 MCP: فشل التفعيل"; fi
+fi
+
 cat <<'MSG'
 
 أدوات خارجية تحتاج حسابك (لا أركّبها بدون موافقتك):
-  • Context7 MCP (يرسل أسئلة الأكواد لخدمة Upstash):  claude mcp add --transport http context7 https://mcp.context7.com/mcp
   • 21st Magic MCP يحتاج مفتاح API من 21st.dev (مهارة 21st-ui تعمل بدونه لكن لن تولّد مكوّنات)
   • Strix نفسه يحتاج Docker ومفتاح نموذج (pip/uv install strix-agent)؛ المركّب هنا مهاراته فقط
 MSG
