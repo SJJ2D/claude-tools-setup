@@ -15,3 +15,7 @@
   - `skills-own/animation-styles/SKILL.md`: short animations and video styles.
 - Before any task related to video, voice, education or design: read the relevant skill from `skills-own/` and apply it, without waiting for an instruction.
 - When the user gives a new note or preference, or you learn a lesson from a mistake: add it to the relevant section here or in the relevant skill, then commit and push (that way it is remembered in the next session).
+- **Transitions the user liked (v2):** a GTA-style character switch. The camera rises to the sky, crosses to the next location, then descends onto the next character, with three thumps. Plus characters in different locations (beach, city centre, desert) and a living world (pedestrians and animals that react).
+- **Lighting:** after building the shots, measure each shot's mean brightness (`__lum`) and set an exposure multiplier so each matches a target (~0.55 by day, ~0.42 for intentional dusk).
+- **Comedy he likes:** absurd exaggeration around the nickname ("زلفه يوصل قبله بثانيتين", "هرنه يوصل قبله", "الشامة عندها متابعين أكثر منه"), plus characters talking in distinct voices.
+- Last project's files (not in the repo): /home/user/film4 (web/, voice/, score.py). Local voices from emotion_bank.

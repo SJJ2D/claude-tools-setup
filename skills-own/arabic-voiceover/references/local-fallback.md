@@ -48,3 +48,23 @@ The sentence «سأخبركم الآن بما حدث اليوم في السوق�
 | whisper | .4 | partial: quieter and softer (HNR 10), not a full whisper |
 | nervous | .75 | moderate, and a word came out wrong → redo the take |
 - Rule: 2–3 takes for each line in a strong tone, and pick by transcription accuracy (CER).
+
+## Distinct character voices (locally, from the user's voice only)
+Proven method (the "الحرب العظمى v2" trailer): generate the line in the user's voice with the right tone from `emotion_bank`, then reshape the voice with Praat `Change gender` (parselmouth) by changing the formants and pitch:
+```python
+from parselmouth.praat import call
+out = call(parselmouth.Sound(w, sampling_frequency=24000), "Change gender", 75, 600, formant_ratio, pitch_median_hz, pitch_range_factor, duration_factor)
+```
+| Character | formant | pitch Hz | range | duration | Extra |
+|---|---|---|---|---|---|
+| Cute / child | 1.10 | 255 | 1.4 | 1.0 | equalizer 3.5 kHz +2 dB (higher = less clear: 330 Hz was not understood) |
+| Fast and excited | 1.08 | 185 | 1.4 | .9 | — |
+| Cool and deep | .93 | 112 | .85 | 1.0 | aecho 180 ms light (not a short echo) |
+| Giant / tank | .86 | 98 | .8 | 1.08 | sub-octave layer at 0.2 + 3.5 dB |
+| Sharp / mischievous | 1.06 | 165 | 1.4 | .95 | — |
+| Robot / beta | 1.0 | 125 | .15 (monotone) | 1.0 | flanger + light acrusher (afftfilt robot made the words unclear) |
+- Check intelligibility with the transcriber *after* the change (CER). If it rises, reduce the pitch or formant shift.
+- Speed: narrator ×1.15 and characters ×1.06 (atempo) shortened the trailer without hurting clarity.
+- Trim the model's tail after the last word, and shorten long pauses inside the line to ≤ 0.24 s.
+- Lip sync: a loudness envelope at 30 fps for each character line drives the mouth opening.
+- Note: VAD in faster-whisper can drop short lines inside a music mix; check with `vad_filter=False`.
