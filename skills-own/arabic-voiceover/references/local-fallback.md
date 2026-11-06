@@ -15,10 +15,10 @@ Settings that worked (Arabic, the user's voice):
 
 ## Tone bank (emotion_bank/): the user's tones without ElevenLabs
 10 reference clips of the user's voice (T.Sajjad, generated once from ElevenLabs v4 in Bahraini, 6–10 s each):
-`calm warm happy excited sad angry sarcastic whisper nervous dramatic` → `emotion_bank/<tone>.wav`.
+`calm warm happy excited sad angry sarcastic whisper nervous dramatic` → `emotion_bank/bahraini/<tone>.wav` (Bahraini) and `emotion_bank/msa/<tone>.wav` (MSA). Choose the folder that matches the script's language.
 Usage: pass the tone's clip as `audio_prompt_path` and the model copies the tone onto any new text:
 ```python
-wav = m.generate(text, language_id='ar', audio_prompt_path='emotion_bank/angry.wav', exaggeration=.8, cfg_weight=.5, temperature=.75)
+wav = m.generate(text, language_id='ar', audio_prompt_path='emotion_bank/bahraini/angry.wav', exaggeration=.8, cfg_weight=.5, temperature=.75)
 ```
 Tested result (the same new sentence with each tone; transcription accurate in all 10):
 | Tone | exaggeration | Transfer | Measurement |
@@ -34,3 +34,17 @@ Tested result (the same new sentence with each tone; transcription accurate in a
 | whisper | .4 | does not work ✗ | the model does not whisper (HNR 14.5); use ElevenLabs `[whispers]` |
 - The mumbling after the sentence was long in sad, sarcastic and dramatic (up to 2.5 s): you must trim at the end of the last word.
 - Rule: use the bank when ElevenLabs is not allowed. For a professional job (an ad, a whisper, strong hype), use ElevenLabs directly.
+
+### MSA bank (emotion_bank/msa/): tested result
+The sentence «سأخبركم الآن بما حدث اليوم في السوق، ولن تصدقوا ما رأيت» with each tone:
+| Tone | exaggeration | Result |
+|---|---|---|
+| angry | .8 | strong ✓ (204 Hz), but one word came out wrong → redo the take |
+| sarcastic | .55 | strong ✓ (205 Hz) |
+| happy / excited | .6 / .9 | good ✓ (~172 Hz). Excited is better than in the Bahraini bank because exaggeration is .9 |
+| dramatic | .55 | deep ✓ (127 Hz) |
+| sad | .45 | quieter ✓ |
+| warm / calm | .45 / .4 | good ✓ |
+| whisper | .4 | partial: quieter and softer (HNR 10), not a full whisper |
+| nervous | .75 | moderate, and a word came out wrong → redo the take |
+- Rule: 2–3 takes for each line in a strong tone, and pick by transcription accuracy (CER).
