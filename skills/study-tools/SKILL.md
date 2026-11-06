@@ -22,8 +22,8 @@ description: أدوات سجاد المحلية للعمل الجامعي وال
 ## قراءة الملفات
 - `~/.local/bin/markitdown file.pdf > file.md` (PDF/DOCX/PPTX/XLSX/HTML). الملفات الممسوحة ضوئياً تحتاج OCR.
 
-## نصوص عربية للأطفال (ثقيل؛ يُركّب عند أول استخدام: `bash teacher-toolkit/arabic-nlp.sh`)
-- تشكيل: `~/tools/arabic-venv/bin/python teacher-toolkit/arabic_nlp.py tashkeel "<نص|ملف>"`
+## نصوص عربية للأطفال (ثقيل؛ يُركّب عند أول استخدام: `bash installers/arabic-nlp.sh`)
+- تشكيل: `~/tools/arabic-venv/bin/python <المستودع>/tools/arabic_nlp.py tashkeel "<نص|ملف>"`
 - مستوى القراءة: `... arabic_nlp.py readability "<نص|ملف>"` → مستوى BAREC لكل جملة (1–19). تقريباً: ≤6 روضة/أول، ~6–7 ثاني، ≤11 حتى الرابع. جملة فوق ~9 لطفل صف 1–3 تحتاج تبسيطاً.
 - التشكيل الآلي فيه أخطاء (مثال مُختبر: «تُغْنِي» بدل «تُغَنِّي»)؛ راجعه دائماً قبل إعطائه للأطفال، وقل للمستخدم ذلك. النتائج "ملاءمة تقديرية" وليست مطابقة رسمية للمنهج.
 

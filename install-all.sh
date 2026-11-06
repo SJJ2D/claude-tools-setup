@@ -1,6 +1,6 @@
 #!/bin/bash
 # install-all.sh — يركّب كل المهارات والأدوات في جلسة Claude Code سحابية جديدة (لينكس).
-#   الاستخدام:   bash install-all.sh            (يستخدم «B Studio.zip» الموجود بجانب السكربت، وإلا ينزّله من مستودعه الرسمي)
+#   الاستخدام:   bash install-all.sh            (يستخدم «vendor/B Studio.zip»، وإلا ينزّله من مستودعه الرسمي)
 #                bash install-all.sh /مسار/B_Studio.zip   (أو من ملفك المحلي)
 #   - B Studio: يفك الملف المضغوط ثم يشغّل install.sh الرسمي الذي بداخله (لا ينسخ ولا يرفع شيئاً لأي مكان).
 #   - مهارات OpenSEO الاثنتا عشرة: تُنزَّل من مستودعها الرسمي (رخصة MIT).
@@ -11,7 +11,7 @@ set -uo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ZIP="${1:-}"
-[ -z "$ZIP" ] && [ -f "$HERE/B Studio.zip" ] && ZIP="$HERE/B Studio.zip"   # الملف الموجود في المستودع
+[ -z "$ZIP" ] && [ -f "$HERE/vendor/B Studio.zip" ] && ZIP="$HERE/vendor/B Studio.zip"   # الملف الموجود في المستودع
 SKILLS="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills"
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
@@ -85,16 +85,16 @@ fi
 
 # ───────────── 5) حقيبة المعلم + حقيبة البرمجة والتصميم ─────────────
 for t in install-teacher-toolkit.sh install-dev-design-toolkit.sh install-video-skills.sh install-agent-tools.sh install-nexcode-skills.sh install-design-toolkit.sh install-approved-tools.sh; do
-  [ -f "$HERE/teacher-toolkit/$t" ] && { bash "$HERE/teacher-toolkit/$t" || FAIL=1; }
+  [ -f "$HERE/installers/$t" ] && { bash "$HERE/installers/$t" || FAIL=1; }
 done
 
-# مهاراتي الخاصة المحفوظة داخل المستودع (skills-own/)
-for d in "$HERE"/skills-own/*/; do
+# مهاراتي الخاصة المحفوظة داخل المستودع (skills/، عدا design-toolkit الذي يركّبه سكربته)
+for d in "$HERE"/skills/*/; do [ "$(basename "$d")" = design-toolkit ] && continue
   [ -f "$d/SKILL.md" ] || continue
   rm -rf "$SKILLS/$(basename "$d")" && cp -R "${d%/}" "$SKILLS/$(basename "$d")" && ok "مهارة خاصة: $(basename "$d")"
 done
 
-[ "${SKIP_HEAVY:-0}" != 1 ] && [ -f "$HERE/teacher-toolkit/install-rea-callme.sh" ] && { bash "$HERE/teacher-toolkit/install-rea-callme.sh" || FAIL=1; }
+[ "${SKIP_HEAVY:-0}" != 1 ] && [ -f "$HERE/installers/install-rea-callme.sh" ] && { bash "$HERE/installers/install-rea-callme.sh" || FAIL=1; }
 
 echo
 [ "$FAIL" = 0 ] && echo "انتهى بدون أخطاء. ابدأ محادثة جديدة لتظهر المهارات." || echo "انتهى مع تنبيهات ✗ فوق."

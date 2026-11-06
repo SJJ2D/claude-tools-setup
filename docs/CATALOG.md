@@ -75,7 +75,9 @@
 - **تطبيقات لا مهارات:** OpenMausBot، وتطبيقات المدونة المفتوحة (AppFlowy وOpenProject وChatwoot وCap وCal.diy وOpenWhispr). منها Open Generative AI وVoiceStudio وOpenSEO مضافة أصلاً.
 - تدوينات الأنيميشن (19 ستايل): برومتات فقط وليست مهارات.
 
-## مهارات خاصة بي (skills-own/)
+## مهارات خاصة بي (skills/)
+- `arabic-voiceover`: تعليق صوتي عربي (بحريني/فصحى)، بنك النبرات (emotion_bank) وفحص الجودة.
+- `study-tools`: دليل استخدام الأدوات المعتمدة أدناه.
 - `animation-styles`: 19 ستايل أنيميشن من تدوينتَي nexcode مع قالب البرومت وكتلة التنفيذ (seek(t)) وسكربت التصدير إلى mp4 وجدول توجيه للمهارات الأخرى. تُنسخ تلقائياً في `install-all.sh`. الستايل 19 وصل مبتوراً من الصفحة فبطاقته مختصرة.
 
 ## design-toolkit ومهارات 21st.dev (install-design-toolkit.sh)
@@ -85,3 +87,19 @@
 | GSAP 3.15.1 وLenis 1.3.27 (من npm وقت التركيب) | GSAP: رخصة GreenSock المجانية (مجانية حتى تجاريًا)، Lenis: MIT | نسخ محلية في `assets/` داخل المهارة، ولا تُحفظ في المستودع. |
 | مكوّنات React Bits (من reactbits.dev وقت التركيب) | MIT مع Commons Clause (لا تُباع كما هي) | كود 218 مكوّنًا (TS + Tailwind) في `assets/react-bits`. |
 | 21st.dev: 8 مهارات رسمية من `21st.dev/.well-known/skills` | يحددها الموقع | الجلب والتوليد والنشر تحتاج أداة `21st` ومفتاح API من 21st.dev/settings/api-keys. قرأتها قبل التركيب فلم أجد أوامر خطرة. لا تُثبَّت على نسخة commit لأن الموقع لا يوفر نسخًا مثبّتة. |
+
+## الأدوات المعتمدة (نوفمبر 2026، install-approved-tools.sh)
+| الأداة | المصدر | الرخصة | ملاحظات |
+|---|---|---|---|
+| paper-search (CLI + مهارة) | openags/paper-search-mcp | MIT | بحث في ~20 قاعدة أبحاث. الاستعلامات تذهب لمواقع خارجية؛ لا يُفعّل sci-hub. |
+| Pandoc + apa.csl | citation-style-language/styles | CC BY-SA 3.0 | توثيق APA 7 بدون إنترنت → `~/tools/csl/apa.csl`. |
+| markitdown[all] | microsoft/markitdown | MIT | PDF/DOCX/PPTX/XLSX → Markdown. |
+| markmap-cli | markmap/markmap | MIT | خرائط ذهنية. |
+| troika-three-text | protectwise/troika | MIT | نص عربي متصل في Three.js → `~/tools/js`. |
+| Rhubarb Lip Sync 1.14.0 | DanielSWolf/rhubarb-lip-sync | MIT | حركة الفم من الصوت → `~/tools/rhubarb`. |
+| 17 خط عربي | google/fonts (ofl) | OFL | `~/.local/share/fonts/arabic`. |
+| RobotExpressive.glb | three.js examples | CC0 | حزم Quaternius/KayKit/Kenney تُنزّل يدوياً (تمنع التنزيل الآلي) وتوضع في `assets/3d/`. |
+| MCP: chrome-devtools 1.12.0، memory 2.1.0، sequential-thinking 2.1.1، fetch | ChromeDevTools / modelcontextprotocol | Apache-2.0 / MIT | memory يحفظ في `memory/memory.jsonl` داخل المستودع (بدون بيانات طلاب). |
+| CATT + BAREC (عند الطلب: installers/arabic-nlp.sh) | abjadai/catt، CAMeL-Lab | Apache-2.0 / MIT | تشكيل وقياس مستوى القراءة؛ ~1–2GB؛ النتائج تحتاج مراجعة. |
+
+**مؤجّلة (ثقيلة، تُركّب عند الحاجة):** CAMeL Tools، Docling، Qari-OCR، Blender MCP، ACE-Step، Manim، rembg، Real-ESRGAN، Habibi-TTS (غير تجاري، لا بحريني)، Anki/Zotero MCP (تحتاج تطبيقات على جهازك).

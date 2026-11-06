@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # الأدوات المعتمدة (نوفمبر 2026): بحث أكاديمي، APA، خرائط ذهنية، تحويل مستندات، MCP رسمية،
 # Chrome DevTools، خطوط عربية، نص عربي في Three.js، مزامنة الشفاه، أصول CC0.
-# الثقيل (تشكيل CATT + مستوى القراءة BAREC) يُركّب عند أول استخدام: bash teacher-toolkit/arabic-nlp.sh
+# الثقيل (تشكيل CATT + مستوى القراءة BAREC) يُركّب عند أول استخدام: bash installers/arabic-nlp.sh
 set -u
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
 SKILLS="$HOME/.claude/skills"; T="$HOME/tools"; mkdir -p "$SKILLS" "$T"

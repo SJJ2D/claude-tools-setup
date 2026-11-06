@@ -1,29 +1,35 @@
 # تعليمات للجلسات
-- المهارات المركّبة في ~/.claude/skills تُستخدم تلقائياً حسب الحاجة بدون انتظار أمر من المستخدم: اختر المهارة التي تفيد المهمة وطبّقها.
-- سجل التركيب: /tmp/claude-tools-install.log. إن لم تظهر مهارة، شغّل: bash install-all.sh
-- مصادر خارجية (Context7 وغيره) لا تُرسل لها أسراراً ولا بيانات طلاب.
 
-## من أنا (اقرأ أولاً)
-- المستخدم: سجاد، طالب سنة رابعة في كلية المعلمين بجامعة البحرين. ملفه الكامل وطريقة العمل معه في `profile/study-guide.md`.
-- قبل أي أسايمنت أو خطة درس أو تقرير أو عرض أو تأمل: اقرأ `profile/study-guide.md` كاملاً وطبّق الأجزاء المرتبطة بالمهمة (ترتيب المرجعيات، SMART، بلوم، التكامل، STEAM، صيغة النقد، قائمة الفحص).
-- خاطبه بالمذكر وبلهجة بحرينية بسيطة في النقاش، وفصحى طبيعية في النص الأكاديمي. لا تختلق مراجع أو تجارب أو مطابقة رسمية للمنهج.
-- إذا صحّح معلومة أو أضاف تفضيلاً دائماً: حدّث الملف ثم commit وpush.
-- أدوات الدراسة المحلية (أبحاث، APA، تشكيل، مستوى القراءة، خرائط ذهنية، خطوط، lip sync): `skills-own/study-tools/SKILL.md`.
-- لا أساعد في تمويه نصوص مولّدة لتجاوز كواشف الذكاء الاصطناعي في الواجبات؛ أساعده يكتب بصوته وأفكاره (كما في ملفه، القسم 2).
+## 1) من أنا (اقرأ أولاً)
+- المستخدم: سجاد، طالب سنة رابعة في كلية المعلمين بجامعة البحرين (الحلقة الأولى، الصفوف 1–3). ملفه الكامل: `profile/study-guide.md`.
+- قبل أي أسايمنت أو خطة درس أو تقرير أو عرض أو تأمل: اقرأ `profile/study-guide.md` كاملاً وطبّق ما يخص المهمة (ترتيب المرجعيات، SMART، بلوم، التكامل، STEAM، صيغة النقد، قائمة الفحص).
+- خاطبه بالمذكر، بلهجة بحرينية بسيطة في النقاش، وبفصحى طبيعية في النص الأكاديمي.
+- لا تختلق مراجع أو تجارب أو استجابات تلاميذ أو مطابقة رسمية للمنهج.
+- يفضّل الاقتصاد في التوكنز: نفّذ مباشرة، واعرض النتيجة باختصار.
 
-## Video and voiceover preferences (from the user's notes on the "الحرب العظمى" trailer)
-- **Camera:** steady with smooth movements. No continuous handheld shake, and no strong shake on steps or impacts. If needed, one light, short shake on an important hit only. Transitions use a cut on the beat or a fade instead of a fast camera spin.
-- **Lighting:** consistent across the whole video. Measure each shot's brightness and match it to one level, use one colour grade, and don't shoot characters against the sun (silhouettes); light them from the side or from behind the camera.
-- **Voice:** use the `arabic-voiceover` skill. The user wants a professional voice like ElevenLabs, and the dialect for real (Bahraini) when he asks for it, not MSA. The best option is his own voice on ElevenLabs (v4/v3 with tags), with his consent. The local model is only a fallback, and if used he must be told clearly that it leans toward MSA.
-- Before rendering a long video: an approval package (script + voice sample + stills), then the edits in one batch.
+## 2) المهارات والأدوات
+- المهارات المركّبة في `~/.claude/skills` تُستخدم تلقائياً حسب الحاجة بدون انتظار أمر.
+- مهاراتي داخل المستودع في `skills/` (تُقرأ مباشرة حتى لو لم تُحمَّل):
+  - `skills/arabic-voiceover/SKILL.md`: أي تعليق صوتي عربي (صوته، اللهجة، النبرات، الفحص).
+  - `skills/animation-styles/SKILL.md`: أنيميشن قصير وستايلات الفيديو.
+  - `skills/study-tools/SKILL.md`: أدوات الدراسة المحلية (أبحاث، APA، تشكيل، مستوى القراءة، خرائط ذهنية، خطوط، lip sync، أصول 3D).
+  - `skills/design-toolkit/SKILL.md`: واجهات وحركة (GSAP، Lenis، React Bits، 21st.dev).
+- قبل أي مهمة فيديو أو صوت أو تعليم أو تصميم: اقرأ المهارة المناسبة من `skills/` وطبّقها.
+- سجل التركيب: `/tmp/claude-tools-install.log`. إن نقصت أداة: `bash install-all.sh`. الأدوات الثقيلة تُركّب عند الحاجة (انظر `docs/CATALOG.md`).
+- لا تُرسل أسراراً أو بيانات طلاب لأي مصدر خارجي (Context7، fetch، بحث الأبحاث، ElevenLabs...). ذاكرة MCP (`memory/`) للحقائق العامة فقط.
+- في هذه الحاوية: أدوات بايثون التي تتصل بالإنترنت تحتاج `REQUESTS_CA_BUNDLE=/root/.ccr/ca-bundle.crt SSL_CERT_FILE=/root/.ccr/ca-bundle.crt`، وpip يحتاج `--cert /root/.ccr/ca-bundle.crt`.
 
-## The repo as a memory between sessions
-- Your own skills are in `skills-own/` inside this repo and can be read directly even if they didn't load as a skill in this session:
-  - `skills-own/arabic-voiceover/SKILL.md`: any Arabic voiceover (the user's voice, dialect, tones, quality checks).
-  - `skills-own/animation-styles/SKILL.md`: short animations and video styles.
-- Before any task related to video, voice, education or design: read the relevant skill from `skills-own/` and apply it, without waiting for an instruction.
-- When the user gives a new note or preference, or you learn a lesson from a mistake: add it to the relevant section here or in the relevant skill, then commit and push (that way it is remembered in the next session).
-- **Transitions the user liked (v2):** a GTA-style character switch. The camera rises to the sky, crosses to the next location, then descends onto the next character, with three thumps. Plus characters in different locations (beach, city centre, desert) and a living world (pedestrians and animals that react).
-- **Lighting:** after building the shots, measure each shot's mean brightness (`__lum`) and set an exposure multiplier so each matches a target (~0.55 by day, ~0.42 for intentional dusk).
-- **Comedy he likes:** absurd exaggeration around the nickname ("زلفه يوصل قبله بثانيتين", "هرنه يوصل قبله", "الشامة عندها متابعين أكثر منه"), plus characters talking in distinct voices.
-- Last project's files (not in the repo): /home/user/film4 (web/, voice/, score.py). Local voices from emotion_bank.
+## 3) الفيديو والصوت (من ملاحظاته على إعلان «الحرب العظمى»)
+- **الكاميرا:** ثابتة بحركات ناعمة. لا اهتزاز مستمر ولا اهتزاز قوي مع الخطوات أو الضربات؛ عند الحاجة اهتزاز خفيف قصير على ضربة مهمة فقط.
+- **الانتقالات:** قطع على الإيقاع أو تلاشٍ. الانتقال الذي أعجبه (v2): تبديل شخصيات بأسلوب GTA (الكاميرا تصعد للسماء، تعبر للموقع التالي، تنزل على الشخصية، مع ثلاث ضربات صوتية).
+- **الإضاءة:** موحّدة في كل الفيديو. بعد بناء اللقطات قِس متوسط سطوع كل لقطة (`__lum`) واضبط معامل تعريض ليطابق الهدف (~0.55 نهاراً، ~0.42 للغروب المقصود). لون grade واحد، ولا تصوّر الشخصيات عكس الشمس؛ أضئها من الجانب أو من خلف الكاميرا.
+- **العالم:** مواقع متنوعة (شاطئ، وسط المدينة، صحراء) وعالم حي (مشاة وحيوانات تتفاعل).
+- **الكوميديا التي يحبها:** مبالغة عبثية حول الألقاب («زلفه يوصل قبله بثانيتين»، «هرنه يوصل قبله»، «الشامة عندها متابعين أكثر منه»)، وشخصيات بأصوات مختلفة.
+- **الصوت:** استخدم مهارة `arabic-voiceover`. يريد صوتاً احترافياً بمستوى ElevenLabs وباللهجة البحرينية فعلاً عند طلبها، لا الفصحى. الأفضل صوته هو على ElevenLabs (v4/v3 مع tags) بموافقته. النموذج المحلي بديل فقط، وإن استُخدم فأخبره بوضوح أنه يميل للفصحى. لا يوجد نموذج مفتوح للهجة البحرينية حتى الآن.
+- **قبل رندر فيديو طويل:** حزمة اعتماد (نص + عينة صوت + لقطات ثابتة)، ثم التعديلات دفعة واحدة.
+- **التسليم:** نسخة 16:9 (crf ~22) + نسخة ستوري 9:16، وتُرفع الملفات الكبيرة على فرع `videos` (أقل من 100MB) لأن رفع Releases غير متاح من الجلسة.
+
+## 4) المستودع ذاكرة بين الجلسات
+- عند ملاحظة أو تفضيل جديد، أو درس من خطأ: أضفه للقسم المناسب هنا أو في المهارة أو في `profile/study-guide.md`، ثم commit وpush.
+- ملفات المشاريع خارج المستودع (مثل `/home/user/film4`) تضيع عند انتهاء الحاوية؛ ما يستحق البقاء يُحفظ في المستودع أو على فرع `videos`.
+- لا تُرفع كتب وزارة التربية على GitHub. `vendor/B Studio.zip` رفعه المستخدم ويتحمل حقوقه.
