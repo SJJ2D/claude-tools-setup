@@ -15,9 +15,9 @@ bash install-all.sh
 | `CLAUDE.md` | تعليمات الجلسات: من أنا، المهارات، تفضيلات الفيديو والصوت، قواعد الذاكرة. |
 | `profile/study-guide.md` | ملفي الدراسي وطريقة العمل معي في الأسايمنتات والخطط. |
 | `install-all.sh` | المدخل الوحيد للتركيب؛ يشغّل سكربتات `installers/`. |
-| `installers/` | سكربتات التركيب حسب المجال (المعلم، البرمجة والتصميم، الفيديو، الوكلاء، nexcode، design-toolkit، الأدوات المعتمدة، REA/CallMe، والأدوات العربية الثقيلة `arabic-nlp.sh`). |
+| `installers/` | سكربتات التركيب حسب المجال (المعلم، البرمجة والتصميم، الفيديو، الوكلاء، nexcode، design-toolkit، الأدوات المعتمدة، REA/CallMe، والأدوات الثقيلة عند الطلب `on-demand.sh` و`arabic-nlp.sh`). |
 | `skills/` | مهاراتي الخاصة: `arabic-voiceover` (مع بنك النبرات)، `animation-styles`، `study-tools`، `design-toolkit`. |
-| `tools/` | سكربتات مساعدة (مثل `arabic_nlp.py` للتشكيل ومستوى القراءة). |
+| `tools/` | سكربتات مساعدة: `arabic_nlp.py` (تشكيل ومستوى القراءة)، `arabic_ocr.py` (OCR عربي)، `upscale.py` (تكبير الصور). |
 | `docs/CATALOG.md` | الفهرس الكامل بالمصادر والرخص والملاحظات. |
 | `memory/` | ذاكرة خادم MCP memory (حقائق عامة فقط، بدون بيانات طلاب). |
 | `vendor/B Studio.zip` | حزمة B Studio (edit-studio وvideo-edit). |

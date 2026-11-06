@@ -6,7 +6,12 @@ set -u
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
 SKILLS="$HOME/.claude/skills"; T="$HOME/tools"; mkdir -p "$SKILLS" "$T"
 ok(){ echo "✓ $*"; }; bad(){ echo "✗ $*"; FAIL=1; }; FAIL=0
-CA=/root/.ccr/ca-bundle.crt; [ -f "$CA" ] && export SSL_CERT_FILE="$CA" REQUESTS_CA_BUNDLE="$CA" NODE_EXTRA_CA_CERTS="$CA" UV_NATIVE_TLS=1
+CA=/root/.ccr/ca-bundle.crt; C=()
+if [ -f "$CA" ]; then  # بعض المواقع تمر عبر بروكسي الحاوية وبعضها لا: نحتاج الشهادات العامة + شهادة البروكسي معاً
+  CA_ALL="$HOME/tools/ca-all.pem"; mkdir -p "$HOME/tools"
+  [ -s "$CA_ALL" ] || cat "$(python3 -m certifi 2>/dev/null || echo /etc/ssl/certs/ca-certificates.crt)" "$CA" > "$CA_ALL"
+  export SSL_CERT_FILE="$CA_ALL" REQUESTS_CA_BUNDLE="$CA_ALL" NODE_EXTRA_CA_CERTS="$CA"; C=(--cert "$CA_ALL")
+fi
 
 # 1) البحث الأكاديمي: paper-search (CLI + مهارة). لا تفعّل مصدر sci-hub.
 if command -v paper-search >/dev/null 2>&1 || uv tool install -q paper-search-mcp >/dev/null 2>&1; then

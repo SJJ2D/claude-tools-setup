@@ -102,4 +102,17 @@
 | MCP: chrome-devtools 1.12.0، memory 2.1.0، sequential-thinking 2.1.1، fetch | ChromeDevTools / modelcontextprotocol | Apache-2.0 / MIT | memory يحفظ في `memory/memory.jsonl` داخل المستودع (بدون بيانات طلاب). |
 | CATT + BAREC (عند الطلب: installers/arabic-nlp.sh) | abjadai/catt، CAMeL-Lab | Apache-2.0 / MIT | تشكيل وقياس مستوى القراءة؛ ~1–2GB؛ النتائج تحتاج مراجعة. |
 
-**مؤجّلة (ثقيلة، تُركّب عند الحاجة):** CAMeL Tools، Docling، Qari-OCR، Blender MCP، ACE-Step، Manim، rembg، Real-ESRGAN، Habibi-TTS (غير تجاري، لا بحريني)، Anki/Zotero MCP (تحتاج تطبيقات على جهازك).
+## أدوات ثقيلة عند الطلب (installers/on-demand.sh)
+| الأداة | المصدر | الرخصة | الحالة |
+|---|---|---|---|
+| rembg (نموذج isnet-general-use) | danielgatis/rembg | MIT | مُختبرة |
+| Real-ESRGAN ONNX x2/x4 | SceneWorks/real-esrgan-onnx | BSD-3 | مُختبرة (`tools/upscale.py`) |
+| Manim 0.22 | ManimCommunity/manim | MIT | مُختبرة مع خط عربي |
+| Blender 4.5 LTS | download.blender.org | GPL | مُختبرة (EEVEE وCycles بدون واجهة). بدل blender-mcp نكتب سكربتات `-b -P` مباشرة لأنها أوثق في حاوية بلا شاشة. |
+| Docling | docling-project/docling | MIT | مُختبرة (Word بجدول عربي → Markdown) |
+| CAMeL Tools 1.6 | CAMeL-Lab/camel_tools | MIT | مُختبرة (تحليل صرفي) |
+| Qari-OCR v0.3 | NAMAA-Space | Apache-2.0 | السكربت جاهز (`tools/arabic_ocr.py`)؛ لم يُختبر لضيق المساحة (~7GB) |
+| Habibi-TTS | SWivid/Habibi-TTS | كود MIT؛ نماذج SAU/UAE غير تجارية | السكربت جاهز؛ لم يُختبر (~6GB) |
+| ACE-Step 1.5 | ace-step/ACE-Step-1.5 | MIT | السكربت جاهز؛ لم يُختبر (~15GB) |
+
+**لم تُركّب:** Anki MCP وZotero MCP (يحتاجان تطبيقات على جهازك، لا تعمل في الحاوية السحابية).

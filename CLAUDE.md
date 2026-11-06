@@ -15,9 +15,10 @@
   - `skills/study-tools/SKILL.md`: أدوات الدراسة المحلية (أبحاث، APA، تشكيل، مستوى القراءة، خرائط ذهنية، خطوط، lip sync، أصول 3D).
   - `skills/design-toolkit/SKILL.md`: واجهات وحركة (GSAP، Lenis، React Bits، 21st.dev).
 - قبل أي مهمة فيديو أو صوت أو تعليم أو تصميم: اقرأ المهارة المناسبة من `skills/` وطبّقها.
-- سجل التركيب: `/tmp/claude-tools-install.log`. إن نقصت أداة: `bash install-all.sh`. الأدوات الثقيلة تُركّب عند الحاجة (انظر `docs/CATALOG.md`).
+- سجل التركيب: `/tmp/claude-tools-install.log`. إن نقصت أداة: `bash install-all.sh`.
+- الأدوات الثقيلة (Blender، Manim، rembg، تكبير الصور، Docling، CAMeL، Qari-OCR، Habibi-TTS، ACE-Step) لا تُركّب عند بداية الجلسة: إذا احتاجتها المهمة شغّل `bash installers/on-demand.sh <أداة>` تلقائياً بدون انتظار أمر، ثم أكمل. الجدول في `skills/study-tools/SKILL.md`.
 - لا تُرسل أسراراً أو بيانات طلاب لأي مصدر خارجي (Context7، fetch، بحث الأبحاث، ElevenLabs...). ذاكرة MCP (`memory/`) للحقائق العامة فقط.
-- في هذه الحاوية: أدوات بايثون التي تتصل بالإنترنت تحتاج `REQUESTS_CA_BUNDLE=/root/.ccr/ca-bundle.crt SSL_CERT_FILE=/root/.ccr/ca-bundle.crt`، وpip يحتاج `--cert /root/.ccr/ca-bundle.crt`.
+- في هذه الحاوية: أدوات بايثون التي تتصل بالإنترنت تحتاج `REQUESTS_CA_BUNDLE=~/tools/ca-all.pem SSL_CERT_FILE=~/tools/ca-all.pem` وpip يحتاج `--cert ~/tools/ca-all.pem` (شهادات certifi + شهادة البروكسي؛ شهادة البروكسي وحدها تفشل مع بعض المواقع). سكربتات `installers/` تنشئ الملف.
 
 ## 3) الفيديو والصوت (من ملاحظاته على إعلان «الحرب العظمى»)
 - **الكاميرا:** ثابتة بحركات ناعمة. لا اهتزاز مستمر ولا اهتزاز قوي مع الخطوات أو الضربات؛ عند الحاجة اهتزاز خفيف قصير على ضربة مهمة فقط.

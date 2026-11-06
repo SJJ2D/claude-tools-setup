@@ -7,7 +7,7 @@ description: أدوات سجاد المحلية للعمل الجامعي وال
 اقرأ أولاً `profile/study-guide.md` في المستودع لأي مهمة دراسية.
 
 ## الشبكة في الحاوية
-قبل أدوات بايثون التي تتصل بالإنترنت: `export REQUESTS_CA_BUNDLE=/root/.ccr/ca-bundle.crt SSL_CERT_FILE=/root/.ccr/ca-bundle.crt`
+قبل أدوات بايثون التي تتصل بالإنترنت: `export REQUESTS_CA_BUNDLE=~/tools/ca-all.pem SSL_CERT_FILE=~/tools/ca-all.pem` (الملف = شهادات certifi العامة + شهادة البروكسي؛ تنشئه سكربتات installers تلقائياً. شهادة البروكسي وحدها تفشل مع مواقع مثل raw.githubusercontent).
 
 ## البحث عن مصادر
 - `paper-search search "<query>" -s crossref,openalex,semantic -n 10` (JSON). تنزيل: `paper-search download <source> <id> -o ./papers`.
@@ -38,3 +38,20 @@ description: أدوات سجاد المحلية للعمل الجامعي وال
 
 ## MCP المركّبة
 chrome-devtools (متصفح حقيقي لفحص المواقع والألعاب)، memory (ذاكرة في `memory/memory.jsonl` داخل المستودع؛ لا بيانات طلاب)، sequential-thinking، fetch.
+
+## أدوات ثقيلة عند الطلب: `bash <المستودع>/installers/on-demand.sh <أداة>`
+لا تعمل عند بداية الجلسة. إذا احتاجت المهمة أداة منها: ركّبها أولاً (idempotent، يتحقق من المساحة)، ثم استخدمها.
+| الأداة | متى | الاستخدام بعد التركيب | المساحة |
+|---|---|---|---|
+| `rembg` | إزالة خلفية صورة | `~/tools/media-venv/bin/rembg i -m isnet-general-use in.png out.png` (لا تستخدم النموذج الافتراضي bria: رخصته تجارية) | ~0.5GB |
+| `upscale` | تكبير/تحسين صورة لبوستر | `~/tools/media-venv/bin/python <المستودع>/tools/upscale.py in.png out.png x4` (~10ث لصورة 320px) | ~0.2GB |
+| `manim` | أنيميشن رياضيات/علوم | `~/tools/media-venv/bin/manim -qh scene.py Scene`؛ عربي: `Text("...", font="Almarai")` (مُختبر، الحروف متصلة صحيحة) | ~0.3GB |
+| `blender` | نمذجة/رندر 3D احترافي | `~/tools/blender/blender -b -P script.py` (4.5 LTS؛ EEVEE وCycles يعملان على CPU؛ احذف مكعب المشهد الافتراضي أولاً) | ~1GB |
+| `docling` | PDF معقد بجداول | `~/tools/arabic-venv/bin/docling file.pdf --to md --output out/` | ~1.5GB |
+| `camel` | صرف عربي (جذر، وزن، نوع الكلمة)، لهجات | `~/tools/camel-venv/bin/python` + `camel_tools.morphology` (مثال مُختبر: المدرسة → د.ر.س) | ~2GB |
+| `qari` | OCR لكتاب عربي مصوّر | `~/tools/arabic-venv/bin/python <المستودع>/tools/arabic_ocr.py page.png` (دقائق للصفحة على CPU) | ~7GB |
+| `habibi` | صوت خليجي (سعودي/إماراتي) | `~/tools/habibi-venv/bin/habibi-tts_infer-cli --dialect SAU ...` (لا بحريني؛ SAU/UAE غير تجاري) | ~6GB |
+| `acestep` | توليد موسيقى حقيقية | `~/tools/ACE-Step-1.5` (اقرأ README) | ~15GB |
+| `arabic` | تشكيل + مستوى القراءة | انظر القسم أعلاه | ~1.5GB |
+
+المساحة محدودة في الحاوية (~8GB حرة في جلسة نموذجية): لا تركّب qari وhabibi وacestep معاً. نظّف قبلها: `rm -rf ~/.cache/pip ~/.cache/uv` وحذف أدوات غير مطلوبة من `~/tools`.
