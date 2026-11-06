@@ -74,3 +74,6 @@
 - **CallMe** (ZeframLou/call-me): يتصل بجوالك عبر مزوّد هاتف (Telnyx) ومفتاح OpenAI ونفق ngrok يعرّض خادماً محلياً للإنترنت.
 - **تطبيقات لا مهارات:** OpenMausBot، وتطبيقات المدونة المفتوحة (AppFlowy وOpenProject وChatwoot وCap وCal.diy وOpenWhispr). منها Open Generative AI وVoiceStudio وOpenSEO مضافة أصلاً.
 - تدوينات الأنيميشن (19 ستايل): برومتات فقط وليست مهارات.
+
+## مهارات خاصة بي (skills-own/)
+- `animation-styles`: 19 ستايل أنيميشن من تدوينتَي nexcode مع قالب البرومت وكتلة التنفيذ (seek(t)) وسكربت التصدير إلى mp4 وجدول توجيه للمهارات الأخرى. تُنسخ تلقائياً في `install-all.sh`. الستايل 19 وصل مبتوراً من الصفحة فبطاقته مختصرة.

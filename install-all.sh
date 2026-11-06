@@ -88,6 +88,12 @@ for t in install-teacher-toolkit.sh install-dev-design-toolkit.sh install-video-
   [ -f "$HERE/teacher-toolkit/$t" ] && { bash "$HERE/teacher-toolkit/$t" || FAIL=1; }
 done
 
+# مهاراتي الخاصة المحفوظة داخل المستودع (skills-own/)
+for d in "$HERE"/skills-own/*/; do
+  [ -f "$d/SKILL.md" ] || continue
+  rm -rf "$SKILLS/$(basename "$d")" && cp -R "${d%/}" "$SKILLS/$(basename "$d")" && ok "مهارة خاصة: $(basename "$d")"
+done
+
 [ "${SKIP_HEAVY:-0}" != 1 ] && [ -f "$HERE/teacher-toolkit/install-rea-callme.sh" ] && { bash "$HERE/teacher-toolkit/install-rea-callme.sh" || FAIL=1; }
 
 echo
