@@ -9,7 +9,7 @@ Goal: a voice that sounds like the user, in the dialect asked, and not like AI. 
 ## 1. Choose the engine (most important decision)
 | Situation | Engine |
 |---|---|
-| The user's voice, any dialect, best quality | **ElevenLabs** with the user's voice (the cloned voice `T.Sajjad`, from `creative_list_voices`) on `eleven_v4` (or `eleven_v3`) |
+| The user's voice, any dialect, best quality | **ElevenLabs** with the user's voice `T.Sajjad` (`voice_id GYQVQTYvlwEHrFDjXtC4`, cloned, ar-bahraini) on `eleven_v4` (or `eleven_v3`) |
 | The user forbids ElevenLabs or wants something local | Chatterbox Multilingual (`references/local-fallback.md`). Tell him plainly: it pronounces dialect words, but its intonation leans MSA and it sounds more "AI" |
 | A real recording of the user is available | Use it as the clone reference (not ElevenLabs output: cloning a clone loses quality) |
 
@@ -21,7 +21,7 @@ Do not switch to ElevenLabs without the user's consent if he said "not from Elev
 - Short sentences with natural punctuation. «…» gives a dramatic pause, «،» a short breath, «—» a quick cut.
 - Names and difficult words: on v4/v3 write the pronunciation in IPA between `/…/` if the model misreads them, but show the normal spelling in the captions.
 
-## 3. Tone and emotion (v4/v3 audio tags)
+## 3. Tone and emotion (v4/v3 audio tags) — full table and measurements in `references/emotions.md`
 Tags are in English, inside brackets, placed right before the words they colour, and they last until the next tag. Examples:
 - Trailer: `[dramatically] في عالم... ما فيه قانون... [pause] [sarcastic] ولا حتى واي فاي.`
 - Comedy: `[mischievously] سليلي الكيوت... [whispers] لا يغرّك شكله.`
