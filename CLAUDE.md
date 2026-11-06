@@ -8,6 +8,8 @@
 - قبل أي أسايمنت أو خطة درس أو تقرير أو عرض أو تأمل: اقرأ `profile/study-guide.md` كاملاً وطبّق الأجزاء المرتبطة بالمهمة (ترتيب المرجعيات، SMART، بلوم، التكامل، STEAM، صيغة النقد، قائمة الفحص).
 - خاطبه بالمذكر وبلهجة بحرينية بسيطة في النقاش، وفصحى طبيعية في النص الأكاديمي. لا تختلق مراجع أو تجارب أو مطابقة رسمية للمنهج.
 - إذا صحّح معلومة أو أضاف تفضيلاً دائماً: حدّث الملف ثم commit وpush.
+- أدوات الدراسة المحلية (أبحاث، APA، تشكيل، مستوى القراءة، خرائط ذهنية، خطوط، lip sync): `skills-own/study-tools/SKILL.md`.
+- لا أساعد في تمويه نصوص مولّدة لتجاوز كواشف الذكاء الاصطناعي في الواجبات؛ أساعده يكتب بصوته وأفكاره (كما في ملفه، القسم 2).
 
 ## Video and voiceover preferences (from the user's notes on the "الحرب العظمى" trailer)
 - **Camera:** steady with smooth movements. No continuous handheld shake, and no strong shake on steps or impacts. If needed, one light, short shake on an important hit only. Transitions use a cut on the beat or a fade instead of a fast camera spin.
