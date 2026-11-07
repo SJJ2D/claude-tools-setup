@@ -34,7 +34,7 @@ take calesthio/generative-media-skills 8c85352d5d75d4dcbe58480bd138e37b9742bab1 
 take iart-ai/motion-design-skills 3c129f769d90a1328c209c386492333c9ac62312 skills/motion-art-direction skills/shot-composition skills/beat-sync-editing   # beat-sync-editing يخص المونتاج
 take iart-ai/freelance-motion-skills d85c2b484693d0387333c778d9c95230fa1856ce skills/creative-brief
 take jtydhr88/screenwriting-skills 51115f18d160aa8b2ac5813e4432b6f0b425358f plugins/screenwriting/skills/sw-sitcom-comedy plugins/screenwriting/skills/sw-scene-craft
-take social-media-skills/skills f28cef2b7067ec64e79c9d85421c022c06659e03 skills/scripting-and-storyboarding
+take social-media-skills/skills f28cef2b7067ec64e79c9d85421c022c06659e03 skills/scripting-and-storyboarding skills/thumbnail-design skills/infographic-and-data-viz   # الأخيرتان: صور مصغّرة وإنفوجرافيك (تصميم)
 
 # ───────── 2) التصميم ─────────
 # color-expert: CC BY 4.0 (النص الأصلي)، وملفات references لأصحابها (THIRD_PARTY_NOTICES). معرفة ألوان عميقة (OKLCH، تباين APCA/WCAG، طباعة/شاشة).
@@ -45,6 +45,14 @@ take narumiruna/skills 5b10d1cf0d834337534549c3d14c738ffd68458f skills/optional/
 take mengto/skills 5ea1661a0e05d82b054553daaa6baf6d0233c33c agent-skills/illustration/illustration-flat agent-skills/illustration/illustration-one-line agent-skills/illustration/illustration-ink-sketch agent-skills/illustration/illustration-vintage-emblem   # MIT: أساليب رسم SVG
 # better-icons (MIT): المهارة فقط. الأداة تُشغَّل عند الحاجة: npx -y better-icons@1.0.4 ... (لا تشغّل "better-icons setup": يكتب في إعدادات Claude). الشبكة: api.iconify.design فقط.
 takeas better-auth/better-icons 033316ecb8f4982235af4111a2257e80231f5ab1 better-icons skills SKILL.md
+
+# Three.js (MIT، cloudai-x، ~24 ألف تثبيت): أساسيات وإضاءة ومواد وظلال ومعالجة صورة وأداء — لمشاهدنا ثلاثية الأبعاد
+CX=skills/threejs; take cloudai-x/threejs-skills 0e181866f095b5f06d005133876e926515390d95 $CX-fundamentals $CX-animation $CX-lighting $CX-materials $CX-geometry $CX-shaders $CX-postprocessing $CX-performance $CX-loaders $CX-asset-pipeline $CX-interaction $CX-react-three-fiber
+take lottiefiles/motion-design-skill f9a8a041b85185ee4881b3471d3415e939aac772 skills/motion-design                           # MIT، LottieFiles الرسمية: مبادئ حركة وتوجيه
+take iart-ai/kinetic-typography-skills fccc94bd325d824235ee9e715e65abde57b6513a skills/kinetic-typography                     # MIT: نصوص متحركة (للعربي: لا تقسيم حرفي)
+take iart-ai/data-animation-skills 8ce2709c3992490251e8a991535b1945f01c6865 skills/animated-infographic                       # MIT: إنفوجرافيك متحرك
+take antvis/chart-visualization-skills a105fa12a9fa41fccccc2eba7f4b34973628f5d3 skills/antv-infographic                      # MIT، AntV: إنفوجرافيك (ثبّت إصدار المكتبة بدل @latest)
+take omer-metin/skills-for-antigravity e8dcf4e8737921a10088bd5c9eb65e81f74c051f skills/pixel-art skills/pixel-art-sprites      # Apache-2.0: بكسل آرت وسبرايتس (لشخصياتنا البكسلية)
 
 # ───────── 3) المونتاج ─────────
 # ffmpeg-skill (MIT): 42 أداة بايثون فوق ffmpeg (قص الصمت، تثبيت، LUT، جهارة، كشف مشاهد، كابشن بخط حسب اللغة). بلا المثبّت npm ولا خادم MCP.

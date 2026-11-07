@@ -157,6 +157,12 @@
 | | create-svg-illustrations، design-slide-colors (فيها سكربت تباين) | narumiruna/skills | MIT |
 | | illustration-flat، -one-line، -ink-sketch، -vintage-emblem (أساليب SVG) | mengto/skills | MIT |
 | | better-icons (المهارة فقط؛ الأداة `npx -y better-icons@1.0.4`؛ لا تشغّل `setup`) | better-auth/better-icons | MIT، الأيقونات حسب مجموعتها |
+| | threejs-* (12 مهارة: أساسيات، حركة، إضاءة، مواد، هندسة، shaders، معالجة صورة، أداء، تحميل، أصول glTF، تفاعل، R3F) | cloudai-x/threejs-skills (~24 ألف تثبيت) | MIT |
+| | motion-design (مبادئ الحركة والتوقيت) | lottiefiles/motion-design-skill (الرسمية) | MIT |
+| | kinetic-typography، animated-infographic | iart-ai | MIT |
+| | antv-infographic (يحمّل مكتبة AntV: ثبّت الإصدار بدل @latest) | antvis/chart-visualization-skills | MIT |
+| | thumbnail-design، infographic-and-data-viz | social-media-skills/skills | MIT |
+| | pixel-art، pixel-art-sprites (بكسل آرت وسبرايتس) | omer-metin/skills-for-antigravity | Apache-2.0 |
 | **المونتاج** | ffmpeg-skill (42 أداة بايثون، بلا npm/MCP) | kajisho5/ffmpeg-skill | MIT |
 | | auto-editor + -export/-transcribe/-effects/-transitions | WyattBlue/auto-editor | Unlicense |
 | | ffmpeg-stabilize، ffmpeg-lut-grade، media-scenedetect، otio-convert، media-subtitle-sync (مختارة؛ الحزمة كاملة فيها hooks) | damionrashford/media-os | MIT |
@@ -167,4 +173,5 @@
 
 **مصادر صوت إضافية (يدوياً عند الحاجة):** حزم OpenGameArt CC0 (روابط مباشرة تعمل)، HoliznaCC0 (موسيقى CC0)، Incompetech (CC BY: حقوق إلزامية)، Meta Oculus Audio Pack (CC BY). **محجوبة/مقيّدة:** Freesound (403 من الحاوية)، Pixabay وZapsplat (403)، Mixkit (لا إعادة نشر)، BBC (شخصي/تعليمي فقط)، Sonniss (لا إعادة نشر، والنسخ المنشورة غير رسمية)، وأرشيف الإنترنت (رخص غير موثوقة).
 **نماذج توليد الصوت:** MusicGen/AudioGen/AudioLDM غير تجارية؛ Stable Audio Open Small مقيدة ويتطلب مساحة غير متاحة؛ ACE-Step (MIT) ~10GB لا يتسع حالياً.
+**فحص الفجوات (جولة ثانية):** بحثت عن three.js، بكسل آرت، الصور المصغّرة، النص المتحرك، Lottie، الإنفوجرافيك، Voxel، فن الألعاب، إعادة التأطير العمودي، وأضفت ما سبق. لم أضف: مهارات Voxel/فن الألعاب (تثبيتات قليلة جداً أو تعتمد Blender/منصات)، layer-pixel-art (منصة Layer)، صور مصغّرة عبر Higgsfield/muapi (خدمات مدفوعة)، baoyu-infographic (صور نقطية تحتاج مولّد صور)، k2f (تحذيرات أمان ولم يُختبر بالعربي)، web-typography (تكرار)، fcp-xml (للبريمير فقط)، ffsubsync (لا يُبنى هنا).
 **مرفوضة:** cinetic (19MB، تحذير Socket)، take-one (روابط تسويق)، motion-director من baoyu (يعتمد مادة بلا رخصة)، web-design-guidelines من Vercel (يجلب قواعده من الشبكة كل تشغيل)، logo-generator/guizang (بلا رخصة)، claude-shorts (torch وmediapipe)، cut-as-code (160MB وخدمة دائمة)، earshot (يعتمد Freesound وtorch)، حزمة media-os كاملة (hooks على كل أمر).
