@@ -63,11 +63,16 @@ acestep(){ need_gb 15 || return; local d="$T/ACE-Step-1.5" v
   v=$(venv acestep-venv); "$v/bin/python" -c "import acestep" 2>/dev/null || pipi "$v" "${TORCH_IDX[@]}" -e "$d" || { bad acestep; return; }
   ok "ACE-Step 1.5: $d (اقرأ README للأوامر؛ النماذج تُنزّل أول تشغيل؛ على CPU دقائق للمقطع)"; }
 
-ALL="rembg upscale manim blender docling camel qari habibi acestep"
+careerops(){ need_gb 1 || return; local d="$T/career-ops"
+  [ -d "$d/.git" ] || git clone -q --depth 1 https://github.com/career-ops-hq/career-ops "$d" && git -C "$d" fetch -q --depth 1 origin 0339acb4176f67ba3eee76e16276998d87ed869a && git -C "$d" checkout -q 0339acb4176f67ba3eee76e16276998d87ed869a || { bad careerops; return; }
+  (cd "$d" && npm i -s --no-audit --no-fund >/dev/null 2>&1)
+  ok "career-ops (MIT): $d. افتح Claude داخل المجلد؛ يخزّن سيرتك الذاتية فيه (بيانات شخصية: لا ترفعه لأي مستودع). لم يُختبر."; }
+
+ALL="rembg upscale manim blender docling camel qari habibi acestep careerops"
 [ $# -eq 0 ] && set -- list
 for t in "$@"; do case "$t" in
   list) echo "الأدوات: $ALL"; for x in $ALL; do printf '  %-8s' "$x"; done; echo;;
-  rembg|upscale|manim|blender|docling|camel|qari|habibi|acestep) "$t";;
+  rembg|upscale|manim|blender|docling|camel|qari|habibi|acestep|careerops) "$t";;
   arabic) bash "$HERE/installers/arabic-nlp.sh" || RC=1;;
   *) bad "أداة غير معروفة: $t";;
 esac; done
