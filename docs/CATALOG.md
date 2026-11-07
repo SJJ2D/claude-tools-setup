@@ -118,6 +118,11 @@
 
 **لم تُركّب:** Anki MCP وZotero MCP (يحتاجان تطبيقات على جهازك، لا تعمل في الحاوية السحابية).
 
+## تحديث HyperFrames (نوفمبر 2026)
+- commit `555c788`: استبدال المهارات القديمة + مهارات «العقيدة» من `.claude/skills` (motion-doctrine، seam-craft، cut-the-curve، captions-overlay، oversized-cursor). لم يُضف changelog-video (خاص بمنتجهم وفيه خطوط تجارية).
+- مكتبة القوالب (210 قالب، منها ثلاثية الأبعاد) تُنسخ إلى `~/tools/hyperframes-registry` (~109MB).
+- اتصالات الشبكة في سكربتاتها اختيارية (مفتاح Gemini، حساب HeyGen، بحث Openverse)، وتتبّع PostHog في media-use يُعطَّل بـ`DO_NOT_TRACK=1`.
+
 ## مهارات إضافية (install-extra-skills.sh، نوفمبر 2026)
 | المهارة | المصدر | الرخصة | الحالة |
 |---|---|---|---|

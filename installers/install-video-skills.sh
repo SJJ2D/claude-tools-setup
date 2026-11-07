@@ -13,9 +13,14 @@ fetch(){ git clone -q --filter=blob:none "https://github.com/$1" "$3" 2>/dev/nul
 put(){ [ -f "$1/SKILL.md" ] && [ ! -e "$SKILLS/$(basename "$1")" ] && cp -R "$1" "$SKILLS/$(basename "$1")"; }
 
 # 1) HyperFrames (HeyGen، Apache-2.0): فيديو من HTML. تنبيه: مهارة media-use فيها تتبّع استخدام (PostHog) يُعطَّل بـ DO_NOT_TRACK=1
-if fetch heygen-com/hyperframes f98218a224ba5b3ad0591485d9b1b9344ba0ce11 "$WORK/hf"; then
-  n=0; for s in "$WORK"/hf/skills/*/; do put "${s%/}" && n=$((n+1)); done
-  ok "HyperFrames: $n مهارات (شغّل مع DO_NOT_TRACK=1 لتعطيل التتبّع)"
+if fetch heygen-com/hyperframes 555c788a333c592e9878139db318ea52f1315cec "$WORK/hf"; then
+  # تحديث نوفمبر 2026: نستبدل النسخ القديمة، ونضيف مهارات «العقيدة» الداخلية (ربط المشاهد كحركة كاميرا واحدة، الانتقالات، منع الوميض، الكابشن، المؤشر).
+  # changelog-video لم يُضف: خاص بمنتجهم وفيه خطوط تجارية.
+  n=0; for s in "$WORK"/hf/skills/*/ "$WORK"/hf/.claude/skills/{motion-doctrine,seam-craft,cut-the-curve,captions-overlay,oversized-cursor}/; do
+    [ -f "$s/SKILL.md" ] || continue; rm -rf "$SKILLS/$(basename "$s")"; cp -R "${s%/}" "$SKILLS/$(basename "$s")" && n=$((n+1)); done
+  # مكتبة القوالب (210 قالب، منها 3D: extruded-logo، glass-shard-title، cuboid-carousel، gallery-tunnel، exploded-stack...) نسخة محلية للقراءة
+  mkdir -p "$HOME/tools/hyperframes-registry" && cp -R "$WORK/hf/registry/." "$HOME/tools/hyperframes-registry/" 2>/dev/null
+  ok "HyperFrames: $n مهارات + قوالب في ~/tools/hyperframes-registry (شغّل مع DO_NOT_TRACK=1 لتعطيل التتبّع)"
 else bad "HyperFrames"; fi
 
 # 2) Lemo Opuscar (MIT): المهارة تحمّل المكتبة؛ نحمّلها نحن مثبّتة في ~/lemo-opuscar
