@@ -68,4 +68,12 @@ take damionrashford/media-os 5014c1e8b23fd3e18d49926d9aa147d15a3aa08e skills/ffm
 if take barty-bart/motion-graphics 3d83d987d658601d8a1269eb691622bdcd427335 skills/sound-effects && [ -f "$SKILLS/sound-effects/SKILL.md" ] && ! grep -q "سياسة محلية" "$SKILLS/sound-effects/SKILL.md"; then
   printf '\n## سياسة محلية (claude-tools-setup)\nابحث أولاً في مكتبة alvana-audio المسجّلة (1213 مؤثر و157 مقطوعة، CC0 غالباً): `python3 <المستودع>/tools/sfx_fetch.py search <كلمات>` ثم `get`. استخدم Mixkit فقط إن لم يوجد بديل، وفي مجلد المشروع، ولا تحفظه في المستودع. أي رخصة CC-BY تحتاج سطر حقوق (`sfx_fetch.py credits`).\n' >> "$SKILLS/sound-effects/SKILL.md"
 fi
+# ───────── 5) مشاهدة الفيديو (روابط السوشال أو ملفات محلية) ─────────
+# watch (MIT، bradautomates/claude-video ~20 ألف نجمة): لقطات + نص من الترجمة المرفقة. المحرك المحلي فقط افتراضياً.
+#   Gemini/Groq/OpenAI اختيارية وترسل الفيديو/الصوت لجهات خارجية: لا تُفعّل بلا موافقة، ولا لبيانات طلاب. لم نأخذ hooks الإضافة.
+if take bradautomates/claude-video 03ceb42f7fa2c4439aca01752118044baabffb8f skills/watch && [ -f "$SKILLS/watch/SKILL.md" ] && ! grep -q "سياسة محلية" "$SKILLS/watch/SKILL.md"; then
+  printf '\n## سياسة محلية (claude-tools-setup)\nفي الحاوية السحابية: `setup.py --engine local --backend none --detail balanced` (لا WhisperX: يحتاج 3GB). إن لم توجد ترجمة مرفقة فرّغ الصوت بـ faster-whisper المركّب (`vad_filter=False`). يوتيوب كثيراً ما يحجب السيرفرات: اطلب من المستخدم رفع الملف أو ملف cookies من متصفحه. لا تستخدم محرك Gemini إلا بموافقة صريحة (يرسل الفيديو لجوجل).\n' >> "$SKILLS/watch/SKILL.md"
+fi
+command -v yt-dlp >/dev/null 2>&1 || python3 -m pip install -q --cert "${HOME}/tools/ca-all.pem" yt-dlp >/dev/null 2>&1 || python3 -m pip install -q yt-dlp >/dev/null 2>&1
+command -v yt-dlp >/dev/null 2>&1 && ok "yt-dlp" || bad "yt-dlp"
 exit $FAIL
