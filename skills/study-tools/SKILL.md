@@ -53,6 +53,7 @@ chrome-devtools (متصفح حقيقي لفحص المواقع والألعاب)
 | `habibi` | صوت خليجي (سعودي/إماراتي) | `~/tools/habibi-venv/bin/habibi-tts_infer-cli --dialect SAU ...` (لا بحريني؛ SAU/UAE غير تجاري) | ~6GB |
 | `acestep` | توليد موسيقى حقيقية | `~/tools/ACE-Step-1.5` (اقرأ README) | ~15GB |
 | `arabic` | تشكيل + مستوى القراءة | انظر القسم أعلاه | ~1.5GB |
+| `edittools` | قص تلقائي، كشف مشاهد، كابشن ASS، جهارة، تصدير لـ Premiere/Resolve، تتبع الوجه لـ9:16 | `~/tools/bin/auto-editor`، `scenedetect`، `ffmpeg-normalize`، `python3 -c 'import pysubs2, opentimelineio'`، `~/tools/models/face_detection_yunet_2023mar.onnx` | ~0.1GB |
 | `careerops` | بحث عن وظائف وسيرة ذاتية | `~/tools/career-ops` (افتح Claude داخله؛ بيانات شخصية، لا ترفعه) | ~0.3GB |
 
 المساحة محدودة في الحاوية (~8GB حرة في جلسة نموذجية): لا تركّب qari وhabibi وacestep معاً. نظّف قبلها: `rm -rf ~/.cache/pip ~/.cache/uv` وحذف أدوات غير مطلوبة من `~/tools`.

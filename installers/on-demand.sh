@@ -68,11 +68,23 @@ careerops(){ need_gb 1 || return; local d="$T/career-ops"
   (cd "$d" && npm i -s --no-audit --no-fund >/dev/null 2>&1)
   ok "career-ops (MIT): $d. افتح Claude داخل المجلد؛ يخزّن سيرتك الذاتية فيه (بيانات شخصية: لا ترفعه لأي مستودع). لم يُختبر."; }
 
-ALL="rembg upscale manim blender docling camel qari habibi acestep careerops"
+edittools(){ need_gb 1 || return; mkdir -p "$T/bin" "$T/models"
+  # auto-editor 31.8.0 (Unlicense): ثنائي واحد، نتحقق من بصمته
+  local AE="$T/bin/auto-editor" SUM=ab6da1fb01019505eea416b948d053b4d5918778ddaeea9955b90bafd8227713
+  if [ ! -x "$AE" ]; then curl -fsSL -o "$AE.tmp" https://github.com/WyattBlue/auto-editor/releases/download/31.8.0/auto-editor-linux-x86_64 \
+    && [ "$(sha256sum "$AE.tmp" | cut -d' ' -f1)" = "$SUM" ] && mv "$AE.tmp" "$AE" && chmod +x "$AE" || { rm -f "$AE.tmp"; bad "auto-editor (البصمة لم تطابق)"; }; fi
+  # مكتبات بايثون صغيرة: كابشن ASS مُنسَّق (pysubs2)، جهارة EBU R128، كشف المشاهد (بلا opencv إضافي)، تصدير الخط الزمني OTIO/FCPXML/EDL (ffsubsync أُسقط: تعتمد حزمه على بناء يفشل هنا)
+  python3 -m pip install -q "${C[@]}" pysubs2 ffmpeg-normalize opentimelineio otio-fcpx-xml-adapter otio-cmx3600-adapter click platformdirs tqdm 2>/dev/null \
+    && python3 -m pip install -q "${C[@]}" --no-deps scenedetect 2>/dev/null || bad "edit python libs"
+  # كاشف الوجوه YuNet (MIT، ~230KB) لإعادة تأطير 16:9 → 9:16 يتبع الوجه بـ OpenCV
+  [ -s "$T/models/face_detection_yunet_2023mar.onnx" ] || curl -fsSL -o "$T/models/face_detection_yunet_2023mar.onnx" https://huggingface.co/opencv/face_detection_yunet/resolve/main/face_detection_yunet_2023mar.onnx
+  "$AE" --version >/dev/null 2>&1 && ok "edittools: $AE، pysubs2، ffmpeg-normalize، scenedetect، OTIO، YuNet ($T/models)"; }
+
+ALL="rembg upscale manim blender docling camel qari habibi acestep careerops edittools"
 [ $# -eq 0 ] && set -- list
 for t in "$@"; do case "$t" in
   list) echo "الأدوات: $ALL"; for x in $ALL; do printf '  %-8s' "$x"; done; echo;;
-  rembg|upscale|manim|blender|docling|camel|qari|habibi|acestep|careerops) "$t";;
+  rembg|upscale|manim|blender|docling|camel|qari|habibi|acestep|careerops|edittools) "$t";;
   arabic) bash "$HERE/installers/arabic-nlp.sh" || RC=1;;
   *) bad "أداة غير معروفة: $t";;
 esac; done

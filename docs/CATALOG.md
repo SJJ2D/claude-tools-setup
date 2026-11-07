@@ -140,3 +140,31 @@
 - **claude-mem:** يلتقط كل ما يفعله الوكيل ويحفظه، ويشغّل خدمة خلفية، وتحليلات الاستخدام مفعّلة افتراضياً. هذا يتعارض مع قاعدة عدم تمرير بيانات الطلاب.
 - **GSD (get-shit-done):** يضيف 13 hook تغيّر سلوك كل جلسة وفحص تحديثات من الشبكة. يناسب مشروعاً كبيراً بعينه: يُشغَّل داخل مجلد ذلك المشروع فقط عند الحاجة (`npx get-shit-done-cc`).
 - **superpowers وgraphify وimpeccable وhyperframes:** كانت مركّبة أصلاً.
+
+## مهارات الحِرفة (installers/install-craft-skills.sh، نوفمبر 2026)
+بحث عميق بأربعة باحثين (إخراج، تصميم، مونتاج، صوت): كل مهارة قُرئ SKILL.md وسكربتاتها، وفُحصت الرخصة والحجم وتدقيقات skills.sh (Gen/Socket/Snyk)، وثُبّتت على commit. تُجلب بـ sparse checkout (الملفات المطلوبة فقط).
+
+| المجال | المهارات | المصدر | الرخصة |
+|---|---|---|---|
+| **الإخراج** | storyboard-previsualization، cinematic-shot-direction، cinematic-trailer-production، educational-animation-production، performance-direction، character-design-continuity، color-grading-finishing، editing-montage | calesthio/generative-media-skills | MIT (نصوص فقط) |
+| | motion-art-direction، shot-composition، beat-sync-editing | iart-ai/motion-design-skills | MIT |
+| | creative-brief | iart-ai/freelance-motion-skills | MIT |
+| | sw-sitcom-comedy، sw-scene-craft (كوميديا وبناء المشهد؛ النص صيني والرد بلغة المستخدم) | jtydhr88/screenwriting-skills | MIT |
+| | scripting-and-storyboarding (سكربت عمودين، قائمة لقطات، حساب المدة) | social-media-skills/skills | MIT (فيه إعلانات لمنتجهم) |
+| **التصميم** | color-expert (ألوان عميقة) | meodai/skill.color-expert | CC BY 4.0 + حقوق المراجع لأصحابها |
+| | better-typography، better-layout | jakubkrehel/skills | MIT |
+| | algorithmic-art (p5.js) | anthropics/skills | Apache-2.0 |
+| | create-svg-illustrations، design-slide-colors (فيها سكربت تباين) | narumiruna/skills | MIT |
+| | illustration-flat، -one-line، -ink-sketch، -vintage-emblem (أساليب SVG) | mengto/skills | MIT |
+| | better-icons (المهارة فقط؛ الأداة `npx -y better-icons@1.0.4`؛ لا تشغّل `setup`) | better-auth/better-icons | MIT، الأيقونات حسب مجموعتها |
+| **المونتاج** | ffmpeg-skill (42 أداة بايثون، بلا npm/MCP) | kajisho5/ffmpeg-skill | MIT |
+| | auto-editor + -export/-transcribe/-effects/-transitions | WyattBlue/auto-editor | Unlicense |
+| | ffmpeg-stabilize، ffmpeg-lut-grade، media-scenedetect، otio-convert، media-subtitle-sync (مختارة؛ الحزمة كاملة فيها hooks) | damionrashford/media-os | MIT |
+| | أدوات عند الطلب `on-demand.sh edittools`: auto-editor 31.8.0 (ثنائي بتحقق sha256)، pysubs2، ffmpeg-normalize، scenedetect، OpenTimelineIO+محوّلات FCPXML/EDL، كاشف وجوه YuNet | PyPI / GitHub / HF | MIT/BSD/Apache/Unlicense |
+| **الصوت** | sound-design-foley، audio-mixing-mastering، music-supervision-scoring (منهجية) | calesthio | MIT |
+| | sound-effects (103 مؤثر CC0 + sound_pass.py للمزج والـducking و−16 LUFS) + سياسة محلية: alvana أولاً، Mixkit داخل المشروع فقط | barty-bart/motion-graphics | MIT |
+| | مكتبة alvana-audio (1213 مؤثر مسجّل و157 مقطوعة، CC0 غالباً، 5 مقطوعات CC BY) عبر `tools/sfx_fetch.py` ملفاً ملفاً | seyedpouramir/alvana-audio (commit 2f72421) | CC0 / CC BY 4.0 |
+
+**مصادر صوت إضافية (يدوياً عند الحاجة):** حزم OpenGameArt CC0 (روابط مباشرة تعمل)، HoliznaCC0 (موسيقى CC0)، Incompetech (CC BY: حقوق إلزامية)، Meta Oculus Audio Pack (CC BY). **محجوبة/مقيّدة:** Freesound (403 من الحاوية)، Pixabay وZapsplat (403)، Mixkit (لا إعادة نشر)، BBC (شخصي/تعليمي فقط)، Sonniss (لا إعادة نشر، والنسخ المنشورة غير رسمية)، وأرشيف الإنترنت (رخص غير موثوقة).
+**نماذج توليد الصوت:** MusicGen/AudioGen/AudioLDM غير تجارية؛ Stable Audio Open Small مقيدة ويتطلب مساحة غير متاحة؛ ACE-Step (MIT) ~10GB لا يتسع حالياً.
+**مرفوضة:** cinetic (19MB، تحذير Socket)، take-one (روابط تسويق)، motion-director من baoyu (يعتمد مادة بلا رخصة)، web-design-guidelines من Vercel (يجلب قواعده من الشبكة كل تشغيل)، logo-generator/guizang (بلا رخصة)، claude-shorts (torch وmediapipe)، cut-as-code (160MB وخدمة دائمة)، earshot (يعتمد Freesound وtorch)، حزمة media-os كاملة (hooks على كل أمر).
