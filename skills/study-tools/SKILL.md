@@ -56,3 +56,9 @@ chrome-devtools (متصفح حقيقي لفحص المواقع والألعاب)
 | `careerops` | بحث عن وظائف وسيرة ذاتية | `~/tools/career-ops` (افتح Claude داخله؛ بيانات شخصية، لا ترفعه) | ~0.3GB |
 
 المساحة محدودة في الحاوية (~8GB حرة في جلسة نموذجية): لا تركّب qari وhabibi وacestep معاً. نظّف قبلها: `rm -rf ~/.cache/pip ~/.cache/uv` وحذف أدوات غير مطلوبة من `~/tools`.
+
+## مهارات عربية إضافية (مركّبة تلقائياً من install-extra-skills.sh)
+- `arabic-rtl-fixer-ai-skill`: ملفات Word/PowerPoint/PDF/ويب بالعربي. أداتا الفحص والإصلاح (آمنتان: الفحص للقراءة فقط، والإصلاح يكتب ملفاً جديداً ولا يستبدل الأصل):
+  `python3 ~/.claude/skills/arabic-rtl-fixer-ai-skill/scripts/arabic_docx.py audit file.docx` ثم `... repair file.docx fixed.docx --font Almarai` (وكذلك `arabic_pptx.py`). مُختبرة: تكتشف أحرف bidi المخفية واتجاه الفقرات الناقص. بعد الإصلاح ارندر الملف وانظر إليه، ولا تكتفِ بنجاح الفحص.
+- `arabic-design`: عربي نظيف في HTML/CSS/فيديو (لا `letter-spacing` على عنصر فيه عربي، خط عربي صريح، line-height ≥ 1.3، عزل الكلمات اللاتينية).
+- `arabic-writing`: تدقيق وكتابة عربية سليمة (همزات، ة/ه، تطابق، تراكيب المترجَم آلياً). أستخدمها لمراجعة نص سجاد وإصلاح أخطائه بأسلوبه، لا لتغيير نص كي يتخطى كواشف الذكاء الاصطناعي.

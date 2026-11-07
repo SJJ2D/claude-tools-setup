@@ -126,6 +126,9 @@
 | humanizer | blader/humanizer | MIT | نسخة محفوظة في السكربت كي لا تعتمد على مزامنة الحساب. |
 | motion (/motion) | motiondivision/ai-kit (commit 1e42494) | MIT | مركّبة: أفضل ممارسات حركة الويب (CSS أم Motion، React/Vue/vanilla، الأداء) وبحث الوثائق وتوليد CSS springs. معها خادم Motion MCP المجاني (`https://mcp.motion.dev`، بلا حساب). **لم يُفعَّل** خادم Motion+ (يحتاج حساباً/اشتراكاً: تدقيق الأداء MotionScore وشيفرة الأمثلة). استعلامات البحث تذهب لخوادمهم: لا أسرار ولا بيانات طلاب. يظهر الخادم في جلسة جديدة بعد التركيب. |
 | find-skills | vercel-labs/skills (4.2 مليون تثبيت، 38 ألف نجمة، commit d3701c1) | MIT | مركّبة بتعديل محلي: الخطوة 6 الأصلية تثبّت بـ`-y` تلقائياً، فاستبدلتها بقاعدة «راجع الكود وتدقيقات skills.sh أولاً ولا تثبّت إلا بموافقة المستخدم». تبحث بـ`npx skills find` في skills.sh (مُختبر من الحاوية). |
+| arabic-design | JamalMohafil/claude-skills (commit ca8c888) | MIT | مركّبة: قواعد عربي نظيف في الواجهات. نص إرشادي فقط. |
+| arabic-writing | ahmeddabak/claude-arabic-writing (commit 7001831) | MIT | مركّبة: تدقيق وكتابة فصحى سليمة مع ملف للهجة الخليجية. نصوص إرشادية فقط. |
+| arabic-rtl-fixer-ai-skill | ibadwi/arabic-rtl-fixer-ai-skill (commit 015b98f) | MIT (مع جزء من arabic-presentations بـMIT) | مركّبة: أخذت SKILL وreferences وscripts فقط. راجعت سكربتات بايثون (لا شبكة ولا subprocess)، وجربتها على الأمثلة. |
 | career-ops | career-ops-hq/career-ops | MIT | عند الطلب (`on-demand.sh careerops`)؛ وكيل بحث عن وظائف يحتاج مجلده الخاص وسيرتك الذاتية. لم يُختبر. |
 
 **لم تُركّب عمداً:**

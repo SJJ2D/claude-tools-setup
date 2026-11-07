@@ -1,6 +1,6 @@
 #!/bin/bash
 # install-extra-skills.sh — مهارات إضافية (نوفمبر 2026) بعد فحص الكود. كل مصدر على commit مثبّت.
-#   karpathy-guidelines (MIT)، ui-ux-pro-max (MIT)، humanizer (MIT: نسخة داخل المستودع كي لا تعتمد على مزامنة الحساب)، motion (MIT: motion.dev)، find-skills (MIT: vercel-labs).
+#   karpathy-guidelines (MIT)، ui-ux-pro-max (MIT)، humanizer (MIT: نسخة داخل المستودع كي لا تعتمد على مزامنة الحساب)، motion (MIT: motion.dev)، find-skills (MIT: vercel-labs)، وثلاث مهارات عربية: arabic-design وarabic-writing وarabic-rtl-fixer-ai-skill.
 #   لم تُركّب: claude-mem (يلتقط كل ما يفعله الوكيل ويعمل كخدمة خلفية وتحليلات افتراضية)، GSD (يضيف hooks تغيّر سلوك كل جلسة)، career-ops (تُركّب عند الطلب).
 set -uo pipefail
 SKILLS="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills"; WORK="$(mktemp -d)"; trap 'rm -rf "$WORK"' EXIT; mkdir -p "$SKILLS"
@@ -45,4 +45,17 @@ PYEOF
   fi
 fi
 have find-skills && ok "find-skills (مع سياسة: مراجعة قبل التثبيت)" || bad "find-skills"
+
+# مهارات عربية (MIT، راجعتها: نصوص إرشادية فقط، وأدوات rtl-fixer سكربتات OOXML محلية بلا شبكة ولا subprocess)
+have arabic-design || { fetch JamalMohafil/claude-skills ca8c888abeffa8616b611032510c631d43a263ef "$WORK/ad" && put "$WORK/ad/arabic-design"; }
+have arabic-design && ok "arabic-design (عربي نظيف في HTML/CSS)" || bad "arabic-design"
+have arabic-writing || { fetch ahmeddabak/claude-arabic-writing 7001831e49a510f499a22368966fd14fc271b493 "$WORK/aw" && put "$WORK/aw/skills/arabic-writing"; }
+have arabic-writing && ok "arabic-writing (تدقيق وكتابة عربية سليمة)" || bad "arabic-writing"
+if ! have arabic-rtl-fixer-ai-skill; then
+  if fetch ibadwi/arabic-rtl-fixer-ai-skill 015b98f5434580ae439db5c30f1864b64085c872 "$WORK/rf"; then
+    mkdir -p "$WORK/rfs/arabic-rtl-fixer-ai-skill" && for x in SKILL.md LICENSE THIRD_PARTY_LICENSE.md SECURITY.md references scripts; do cp -R "$WORK/rf/$x" "$WORK/rfs/arabic-rtl-fixer-ai-skill/"; done
+    put "$WORK/rfs/arabic-rtl-fixer-ai-skill"
+  fi
+fi
+have arabic-rtl-fixer-ai-skill && ok "arabic-rtl-fixer-ai-skill (RTL في Word/PowerPoint/PDF/ويب)" || bad "arabic-rtl-fixer-ai-skill"
 exit $FAIL
