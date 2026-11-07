@@ -124,6 +124,7 @@
 | karpathy-guidelines | multica-ai/andrej-karpathy-skills (230 ألف نجمة) | MIT | مركّبة: قواعد تقلل أخطاء البرمجة (تغييرات دقيقة، افتراضات صريحة، معيار نجاح قابل للتحقق). |
 | ui-ux-pro-max | nextlevelbuilder/ui-ux-pro-max-skill | MIT | مركّبة ومُختبرة: بحث محلي بسكربت بايثون في قاعدة أنماط وألوان وخطوط، مع دعم `--rtl` للعربية. أخذت المهارة الرئيسية فقط (أخواتها design وbrand وslides تتداخل مع مهارات عندك وبعضها يحمّل صوراً من الإنترنت). |
 | humanizer | blader/humanizer | MIT | نسخة محفوظة في السكربت كي لا تعتمد على مزامنة الحساب. |
+| motion (/motion) | motiondivision/ai-kit (commit 1e42494) | MIT | مركّبة: أفضل ممارسات حركة الويب (CSS أم Motion، React/Vue/vanilla، الأداء) وبحث الوثائق وتوليد CSS springs. معها خادم Motion MCP المجاني (`https://mcp.motion.dev`، بلا حساب). **لم يُفعَّل** خادم Motion+ (يحتاج حساباً/اشتراكاً: تدقيق الأداء MotionScore وشيفرة الأمثلة). استعلامات البحث تذهب لخوادمهم: لا أسرار ولا بيانات طلاب. يظهر الخادم في جلسة جديدة بعد التركيب. |
 | career-ops | career-ops-hq/career-ops | MIT | عند الطلب (`on-demand.sh careerops`)؛ وكيل بحث عن وظائف يحتاج مجلده الخاص وسيرتك الذاتية. لم يُختبر. |
 
 **لم تُركّب عمداً:**

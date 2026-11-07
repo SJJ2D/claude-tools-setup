@@ -14,7 +14,7 @@
   - `skills/animation-styles/SKILL.md`: أنيميشن قصير وستايلات الفيديو.
   - `skills/study-tools/SKILL.md`: أدوات الدراسة المحلية (أبحاث، APA، تشكيل، مستوى القراءة، خرائط ذهنية، خطوط، lip sync، أصول 3D).
   - `skills/design-toolkit/SKILL.md`: واجهات وحركة (GSAP، Lenis، React Bits، 21st.dev).
-  - `skills/motion-craft/SKILL.md`: جودة أي فيديو أو حركة بالكود (مزامنة مع الكلمات، بطاقات، انتقالات، حلقة تحقق، أخطاء HyperFrames، العربي RTL). اقرأها قبل أي فيديو أو تصميم متحرك.
+  - `skills/motion-craft/SKILL.md`: جودة أي فيديو أو حركة بالكود (مزامنة مع الكلمات، بطاقات، انتقالات، حلقة تحقق، أخطاء HyperFrames، العربي RTL). اقرأها قبل أي فيديو أو تصميم متحرك. للحركة داخل صفحات الويب (React/Vue/CSS) استخدم أيضاً مهارة `/motion` (motion.dev) وخادمها.
 - قبل أي مهمة فيديو أو صوت أو تعليم أو تصميم: اقرأ المهارة المناسبة من `skills/` وطبّقها.
 - سجل التركيب: `/tmp/claude-tools-install.log`. إن نقصت أداة: `bash install-all.sh`.
 - الأدوات الثقيلة (Blender، Manim، rembg، تكبير الصور، Docling، CAMeL، Qari-OCR، Habibi-TTS، ACE-Step) لا تُركّب عند بداية الجلسة: إذا احتاجتها المهمة شغّل `bash installers/on-demand.sh <أداة>` تلقائياً بدون انتظار أمر، ثم أكمل. الجدول في `skills/study-tools/SKILL.md`.
