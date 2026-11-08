@@ -220,3 +220,6 @@
 **عند الطلب:** h5p-author (أنشطة H5P لـMoodle؛ ثبّت `h5p-author@0.4.0` لا `@latest`)، statistical-analysis من k-dense-ai (pingouin؛ إحصاء البحث الإجرائي)، k12-teacher-skills من Anthropic (المجلدات فقط، دون `.mcp.json` بخوادمه التسعة)، doi-mcp (`#v7.0.0`)، interview-prep (لم يُقرأ بعد).
 **مفاتيح مقترحة (أسرار البيئة، مجانية):** `OPENALEX_API_KEY` يصلح openalex في paper-search (يعطي 429 بلا مفتاح من الحاوية). Semantic Scholar اختياري.
 **مرفوضة:** humanize-academic-writing (غرضه تجاوز كواشف الذكاء الاصطناعي)، reading-teacher وkids-book-writer (إنجليزي فقط)، anki-markdown (يحتاج AnkiConnect)، flashcards/study-plan من claude-for-legal (لامتحان المحاماة)، qualitative-research (3KB).
+
+### charlie947/motion-graphics-skills (commit 229022e، MIT)
+15 وصفة نصية فوق HyperFrames: animated-chart، apple-launch-film، brand-intake، launch-video، loop-cover، milestone-reveal، model-showdown، motion-brief-writer، motion-effects، newsletter-promo، reel-export، title-sequence-3d، vox-explainer، motion-prompt-writer، reference-to-motion. بلا سكربتات تنفيذية؛ لم تُنسخ assets (13MB). توصياتها بتثبيت مهارات خارجية تُراجع أولاً.

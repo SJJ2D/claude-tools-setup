@@ -73,6 +73,11 @@ note gl-transitions "الحزمة مثبّتة محلياً: ~/tools/js/node_mod
 note text-to-lottie "لا تشغّل npx degit (غير مثبّت الإصدار). للمعاينة: HyperFrames يشغّل Lottie، أو lottie-web من ~/tools/js. لا ترفع ملفات المستخدم لأي خدمة."
 [ -d "$HOME/tools/js/node_modules/gl-transitions" ] || npm i -s --no-audit --no-fund --prefix "$HOME/tools/js" gl-transitions@3.0.0 >/dev/null 2>&1 && ok "gl-transitions@3.0.0 (حزمة GLSL)" || bad "gl-transitions npm"
 
+# charlie947/motion-graphics-skills (MIT، نصوص فقط فوق HyperFrames): 15 وصفة فيديو جاهزة. بلا assets (13MB). توصياتها بتثبيت مهارات أخرى بـnpx: لا تُنفَّذ بلا مراجعة
+CH=skills; take charlie947/motion-graphics-skills 229022ebca76972e119e36ada23a1648d51665ab $CH/animated-chart $CH/apple-launch-film $CH/brand-intake $CH/launch-video \
+  $CH/loop-cover $CH/milestone-reveal $CH/model-showdown $CH/motion-brief-writer $CH/motion-effects $CH/newsletter-promo $CH/reel-export \
+  $CH/title-sequence-3d $CH/vox-explainer $CH/motion-prompt-writer $CH/reference-to-motion
+
 # ───────── 2ج) تصميم وبرمجة (الجولة الثالثة) ─────────
 # logo-design (MIT): شعارات وهوية من الموجز إلى SVG ثم تدقيق وتصدير favicon/أيقونات. بلا مكتبة SVG لعلامات تجارية لغيرنا (14MB).
 if [ -e "$SKILLS/logo-design" ]; then ok "logo-design (موجودة)"
