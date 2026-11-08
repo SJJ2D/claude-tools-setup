@@ -21,6 +21,16 @@ Do not switch to ElevenLabs without the user's consent if he said "not from Elev
 - Short sentences with natural punctuation. «…» gives a dramatic pause, «،» a short breath, «—» a quick cut.
 - Names and difficult words: on v4/v3 write the pronunciation in IPA between `/…/` if the model misreads them, but show the normal spelling in the captions.
 
+## 2b. Prepare the text before any engine (`scripts/prep_text.py`)
+`~/tools/arabic-venv/bin/python scripts/prep_text.py script.txt --dialect msa|gulf --engine chatterbox|eleven [--check] --json > sents.json`
+- **Numbers → words** in the spoken form («عام ألفين وستة وعشرين»), punctuation unified, «...» → «…», Latin words flagged (write them in Arabic letters for local engines).
+- **MSA diacritics (measured, Chatterbox, 7 sentences × 2 takes):** full tashkeel with **waqf** (sukun on the last word before each punctuation mark) gave **2.4% CER**, against 5.1% (word-internal only), 13.5% (shadda/tanween only) and 13.6% (none). Only waqf got «فاجتهد» right (others: «فاشتهد») and a short phrase right. So: **Claude writes the full tashkeel itself** (more accurate than CATT: ~4.7% vs ~20% word errors in published tests), then `--tashkeel keep --check` lets CATT flag disagreements to review. With no tashkeel in the input, the default is CATT + waqf.
+- **Dialect:** no case endings; mark only ambiguous internal vowels (`--tashkeel none` + manual marks).
+- **Chunks:** the tool splits at . ؟ ! … ؛ : (Chatterbox turns … : ؛ into a comma, so the pause would be lost) and **merges any chunk under 4 words into the next** (alone, «الغيمة الصغيرة…» came out as gibberish). The pause inside a merged chunk is cut in at the word boundary by `assemble_vo.py`.
+- **Pauses (s):** ، 0.22 · ؛ : 0.32 · . 0.50 · ؟ ! 0.55 · … 0.75 · — 0.14 · paragraph 1.1. ElevenLabs v3/v4 ignore `<break>`: use «…», `[short pause]`, `[long pause]`.
+- **Assemble:** `~/tts/.venv/bin/python scripts/assemble_vo.py sents.json raw/ out.wav` → best take per chunk by CER (digits normalised), model tail trimmed, inner gaps ≤ 0.24 s, exact pauses, `out.timing.json` with word times for syncing motion to words.
+- CER cannot hear vowels (Whisper writes without them) or ض/ظ (it confuses them itself): listen to the waqf take for case endings.
+
 ## 3. Tone and emotion (v4/v3 audio tags) — full table and measurements in `references/emotions.md`
 Tags are in English, inside brackets, placed right before the words they colour, and they last until the next tag. Examples:
 - Trailer: `[dramatically] في عالم... ما فيه قانون... [pause] [sarcastic] ولا حتى واي فاي.`
