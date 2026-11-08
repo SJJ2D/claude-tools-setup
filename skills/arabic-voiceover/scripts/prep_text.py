@@ -158,7 +158,23 @@ def sentences(t, engine='chatterbox'):
             buf = ''
     if buf.strip():
         out.append({'text': buf.strip(), 'pause': 0.5})
-    return out
+    # مقطع أقصر من 4 كلمات يولّده المحرك وحده كلاماً مشوشاً (جُرّب: «الغيمة الصغيرة…» → «ألو ذيما تستطيع»).
+    # يُدمج مع التالي، و"holds" تحفظ موضع الوقفة: assemble_vo يقصّ عند حدود الكلمة ويضع الصمت.
+    merged, carry = [], None
+    for s in out:
+        if carry:
+            n = len(carry['text'].split())
+            s = {'text': carry['text'] + ' ' + s['text'], 'pause': s['pause'],
+                 'holds': carry.get('holds', []) + [[n + h[0], h[1]] for h in s.get('holds', [])] + [[n, carry['pause']]]}
+            s['holds'].sort()
+            carry = None
+        if engine == 'chatterbox' and len(s['text'].split()) < 4 and s['pause'] < 1.0:
+            carry = s
+        else:
+            merged.append(s)
+    if carry:
+        merged.append(carry)
+    return merged
 
 
 def prep(text, dialect='msa', tashkeel=None, engine='chatterbox'):

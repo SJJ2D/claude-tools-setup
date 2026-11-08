@@ -19,8 +19,17 @@ asr = WhisperModel('medium', device='cpu', compute_type='int8')
 TMP = tempfile.mkdtemp()
 
 
+def digits(s):  # Whisper يكتب الأرقام أرقاماً: حوّلها كلمات قبل المقارنة (وإلا تضخّم CER)
+    try:
+        from num2words import num2words
+        return re.sub(r'\d+', lambda m: num2words(int(m.group(0)), lang='ar'), s)
+    except ImportError:
+        return s
+
+
 def norm(s):
-    s = re.sub(r'[ً-ْٰـ]', '', s)
+    s = re.sub(r'[ً-ْٰـ]', '', digits(s))
+    s = re.sub(r'(ون|ان)(?=\s|$)', 'ين', s)  # عشرون/عشرين، ألفان/ألفين: صيغ نطق لا أخطاء
     s = re.sub('[إأآ]', 'ا', s).replace('ة', 'ه').replace('ى', 'ي')
     return re.sub(r'[^ء-ي]', '', s)
 
@@ -69,11 +78,16 @@ for i, s in enumerate(S):
     if best is None:
         sys.exit(f'لا لقطة صالحة للجملة {i}: {s["text"]}')
     _, f, w, c, ws = best
+    for k, hold in sorted(s.get('holds', []), reverse=True):  # وقفة داخل المقطع المدموج عند حدود الكلمة k
+        if 0 < k < len(ws):
+            cut = int((ws[k - 1][1] + ws[k][0]) / 2 * SR)
+            w = np.concatenate([w[:cut], np.zeros(int(hold * SR), np.float32), w[cut:]])
+            ws = ws[:k] + [(a + hold, b + hold, x) for a, b, x in ws[k:]]
     parts += [w, np.zeros(int(s['pause'] / TEMPO * SR), np.float32)]
     timing.append({'i': i, 'text': s['text'], 'start': round(t / TEMPO, 3), 'end': round((t + len(w) / SR) / TEMPO, 3),
                    'words': [[round((t + x[0]) / TEMPO, 3), round((t + x[1]) / TEMPO, 3), x[2]] for x in ws]})
-    rep.append({'i': i, 'take': os.path.basename(f), 'cer': round(c, 3), 'flag': c > 0.08})
-    print(f"{i} {os.path.basename(f)} CER {c:.3f}{'  ⚠ راجعها' if c > .08 else ''}", flush=True)
+    rep.append({'i': i, 'take': os.path.basename(f), 'cer': round(c, 3), 'flag': c > 0.08, 'heard': ' '.join(x[2] for x in ws)})
+    print(f"{i} {os.path.basename(f)} CER {c:.3f}{'  ⚠ راجعها' if c > .08 else ''} | سُمع: {rep[-1]['heard']}", flush=True)
     t += len(w) / SR + s['pause']
 
 raw = os.path.join(TMP, 'core.wav'); sf.write(raw, np.concatenate(parts[:-1]), SR)
