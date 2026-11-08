@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<!-- built with onetake (PolyForm Noncommercial) · personal, noncommercial intro film for SJJ2D/claude-tools-setup -->
+<html lang="ar"><head><meta charset="utf-8"><title>claude-tools-setup · intro</title>
+<style>html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#08070b}canvas{position:absolute;left:0;top:0;width:1920px;height:1080px}</style>
+<script src="fonts.js"></script><script src="motion.js"></script>
+</head><body><canvas id="c"></canvas><script>
+'use strict';
+const {clamp, lerp, seg, sstep, ssstep, ease, spring, ring} = OM;
+const W = 1920, H = 1080, DUR = 19.4;
+const C = { ground:'#15131c', deep:'#08070b', card:'#1f1c29', line:'#34313f', mute:'#807c8c', ink:'#efece6', accent:'#7c6cff', accent2:'#f4c64f', dim:'#2a2735' };
+const cv = document.getElementById('c'), g = cv.getContext('2d');
+const DPR = window.devicePixelRatio || 1; cv.width = W * DPR; cv.height = H * DPR;
+const F = { mono: s => `500 ${s}px MONO, monospace`, ar: (s, w = 500) => `${w} ${s}px AR, sans-serif` };
+
+// ── timeline (seconds). VO line starts are filled from vo/timing.json at build time ──
+const V = /*VO*/{"l1":0.62,"l2":1.95,"l3":3.95,"l4":8.4,"l5":11.2,"l6":13.9}/*END*/;
+const CMD = '$ bash install-all.sh', T_TYPE = 0.55, CPS = 19, T_ENTER = T_TYPE + CMD.length / CPS + 0.18;   // ≈1.88
+const LOG = ['arabic-voiceover', 'animation-styles', 'study-tools', 'profile', 'design-toolkit', 'installers',
+  'on-demand', 'paper-search', 'humanizer', 'hyperframes', 'graphify', 'superpowers', 'ui-ux-pro-max', 'karpathy',
+  'arabic-voiceover/emotion_bank', 'study-tools/apa', 'study-tools/tashkeel', 'animation-styles/19', 'installers/blender',
+  'installers/manim', 'memory', 'docs/CATALOG'];
+const NAMED = [ // log index → name, icon, depart, land
+  { i: 0, ar: 'صوت', icon: 'wave' }, { i: 1, ar: 'حركة', icon: 'arc' }, { i: 2, ar: 'دراسة', icon: 'book' } ];
+const T_LINE = LOG.map((_, i) => i < 6 ? T_ENTER + 0.3 + [0, .22, .4, .55, .68, .79][i] : 6.75 + (i - 6) * 0.06);
+const T_PROFILE = V.l4 - 0.1, T_CARD_OUT = V.l5 - 0.85, T_DIM = V.l5 - 0.35, T_RELIGHT = V.l5 + 0.2;
+const T_GATHER = V.l6 - 1.15, T_DOT = T_GATHER + 0.75, T_HOP1 = T_DOT + 0.32, T_LAND = T_HOP1 + 0.38;
+
+// ── world layout ──
+const CMD_X = 230, CMD_Y = 300, LOG_X = 262, LOG_Y = 368, LOG_DY = 42;
+const BR = { x: 1480, y: 520 };                       // brain centre
+const MARK = { x: 1480, y: 520 };                     // wordmark centre
+let LINKS = [], SLOTS = [], CELLS = [], MW = 0, CHAR = 0, CARD = null, CORE = 0;
+
+function measure() {
+  g.font = F.mono(40); CHAR = g.measureText('m').width;
+  g.font = F.ar(118, 600); MW = g.measureText('claude-tools-setup').width;
+  // brain slots: hex grid inside two hemispheres with a fissure
+  const sp = 74, pts = [];
+  for (let r = -6; r <= 6; r++) for (let q = -9; q <= 9; q++) {
+    const x = q * sp + (r & 1 ? sp / 2 : 0), y = r * sp * 0.866;
+    const inL = ((x + 175) / 300) ** 2 + (y / 235) ** 2 < 1, inR = ((x - 175) / 300) ** 2 + (y / 235) ** 2 < 1;
+    const stem = Math.abs(x - 60) < 70 && y > 150 && y < 260;
+    if ((inL || inR) && Math.abs(x) > 26 && y > -235 + Math.abs(x) * 0.08 || stem) pts.push({ x: BR.x + x, y: BR.y + y });
+  }
+  pts.sort((a, b) => Math.hypot(a.x - BR.x, a.y - BR.y) - Math.hypot(b.x - BR.x, b.y - BR.y));
+  SLOTS = pts;
+  CORE = 0;                                           // nearest slot to the centre = the profile cell
+  // which slots the named three take: left upper, left lower, right
+  const pick = (dx, dy) => { let best = -1, bd = 1e9; SLOTS.forEach((s, k) => { if (k === CORE || CELLS.some(c => c.slot === k)) return; const d = Math.hypot(s.x - (BR.x + dx), s.y - (BR.y + dy)); if (d < bd) { bd = d; best = k; } }); return best; };
+  CELLS = [];
+  const landN = [V.l3 + 0.05, V.l3 + 1.47, V.l3 + 2.79], departN = landN.map((x, n) => x - (n ? 0.66 : 0.72));
+  [[-240, -80], [210, -110], [-130, 140]].forEach(([dx, dy], n) => CELLS.push({ log: NAMED[n].i, slot: pick(dx, dy), named: NAMED[n], t0: departN[n], t1: landN[n] }));
+  CELLS.push({ log: 3, slot: CORE, profile: true, t0: V.l4 - 0.7, t1: V.l4 - 0.2 });
+  // the rest: fill remaining slots from the remaining log lines, in a burst; spare slots come from lines reused
+  const free = SLOTS.map((_, k) => k).filter(k => !CELLS.some(c => c.slot === k));
+  free.sort((a, b) => SLOTS[a].x - SLOTS[b].x);
+  free.forEach((k, j) => { const li = 4 + (j % (LOG.length - 4)); const t0 = Math.max(T_LINE[li] + 0.12, 6.95 + j * 0.03); CELLS.push({ log: li, slot: k, t0, t1: t0 + 0.42 }); });
+  LINKS = []; const bySlot = {}; CELLS.forEach((c, n) => bySlot[c.slot] = n);
+  for (let a = 0; a < SLOTS.length; a++) for (let b = a + 1; b < SLOTS.length; b++) { const d = Math.hypot(SLOTS[a].x - SLOTS[b].x, SLOTS[a].y - SLOTS[b].y); if (d < 80 && (a * 7 + b * 3) % 3 !== 0) LINKS.push([bySlot[a], bySlot[b]]); }
+  CARD = { w: 560, h: 250, x: BR.x - 280, y: BR.y - 125 };
+}
+
+// ── camera ──
+let KEYS = [], HITS = [];
+function keys() {
+  const io = ease.expoInOut, si = ease.sineInOut, cu = ease.cubicInOut;
+  const caretX = t => CMD_X + Math.min(CMD.length, Math.max(0, (t - T_TYPE) * CPS)) * CHAR;
+  const N = CELLS.slice(0, 3).map(c => SLOTS[c.slot]), N0t = CELLS[0].t1, N1t = CELLS[1].t1, N2t = CELLS[2].t1;
+  KEYS = [
+    { t: 0, x: CMD_X + 40, y: CMD_Y - 14, zoom: 2.3 },
+    { t: T_TYPE + 0.15, x: CMD_X + 40, y: CMD_Y - 14, zoom: 2.3 },
+    { t: T_ENTER - 0.05, x: caretX(T_ENTER) - 170, y: CMD_Y - 8, zoom: 2.05, curve: si },
+    { t: T_ENTER + 0.55, x: 500, y: 410, zoom: 1.55, curve: io },
+    { t: N0t - 0.75, x: 520, y: 405, zoom: 1.55, curve: cu },
+    { t: N0t, x: lerp(520, N[0].x, 0.8), y: N[0].y - 20, zoom: 1.32, curve: si },
+    { t: N1t, x: lerp(N[0].x, N[1].x, 0.7), y: lerp(N[0].y, N[1].y, 0.6), zoom: 1.4, curve: si },
+    { t: N2t, x: lerp(N[1].x, N[2].x, 0.6), y: N[2].y - 30, zoom: 1.42, curve: si },
+    { t: N2t + 0.55, x: 1080, y: 500, zoom: 0.86, curve: io },
+    { t: T_PROFILE - 0.15, x: 1160, y: 505, zoom: 0.84, curve: cu },
+    { t: T_PROFILE + 0.35, x: BR.x, y: BR.y, zoom: 1.32, curve: io },
+    { t: T_CARD_OUT, x: BR.x, y: BR.y, zoom: 1.36, curve: cu },
+    { t: T_DIM + 0.2, x: BR.x, y: BR.y + 10, zoom: 1.08, curve: io },
+    { t: T_GATHER, x: BR.x, y: BR.y, zoom: 1.12, curve: cu },
+    { t: T_DOT, x: BR.x, y: BR.y, zoom: 1.75, curve: io },
+    { t: T_LAND + 0.05, x: MARK.x + 60, y: MARK.y + 40, zoom: 1.0, curve: io },
+    { t: DUR, x: MARK.x, y: MARK.y + 40, zoom: 1.0, curve: cu },
+  ];
+  HITS = [[T_ENTER, 7, 9], [N0t, 5, 9], [N1t, 4, 10], [N2t, 4, 10], [T_RELIGHT, 3, 8], [T_LAND, 9, 8]];
+}
+const handEnv = t => sstep(0.3, 1.2, t) * (1 - sstep(T_LAND + 0.4, T_LAND + 1.2, t)) * (1 - 0.85 * sstep(T_PROFILE + 0.4, T_PROFILE + 0.9, t) * (1 - sstep(T_CARD_OUT - 0.2, T_CARD_OUT, t)));
+function camAt(t) {
+  const c = OM.camera(t, KEYS), e = handEnv(t) * 3.6;
+  let x = c.x + e * (Math.sin(1.7 * t) + 0.6 * Math.sin(2.9 * t + 1)) / c.zoom, y = c.y + e * (Math.sin(1.3 * t + 2) + 0.5 * Math.sin(3.3 * t)) / c.zoom, rot = c.rot;
+  for (const [th, amp, dec] of HITS) { const s = OM.shake(t, th, { amp, decay: dec, seed: Math.round(th * 100) }); x += s.x / c.zoom; y += s.y / c.zoom; rot += s.rot; }
+  return { x, y, zoom: c.zoom, rot };
+}
+
+// ── cell state at t (pure) ──
+function tickPos(li) { return { x: LOG_X - 32, y: LOG_Y + li * LOG_DY - 9 }; }
+function logScroll(t) { return 0; }
+function cellAt(c, t) {
+  const s = SLOTS[c.slot], from = tickPos(c.log);
+  if (t < c.t0) return null;
+  const k = ease.smoother(seg(t, c.t0, c.t1));
+  const h = c.named ? 230 : c.profile ? 160 : 120;
+  const p = OM.hop(t, c.t0, c.t1, from, s, { height: h, curve: c.named ? ease.cubicInOut : ease.smoother });
+  const im = OM.impact(t, c.t1, { decay: 8, omega: 24 });
+  let size = c.named ? lerp(22, 54, k) * (1 + 1.0 * Math.sin(Math.PI * k)) : lerp(16, 42, k);
+  if (c.profile) size = lerp(22, 54, k) * (1 + 0.5 * Math.sin(Math.PI * k));
+  return { x: p.x, y: p.y, size, sx: t >= c.t1 ? im.sx : 1, sy: t >= c.t1 ? im.sy : 1, k, landed: t >= c.t1 };
+}
+
+// ── drawing helpers ──
+function rr(x, y, w, h, r) { g.beginPath(); g.roundRect(x, y, w, h, r); }
+function ground() {
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const gr = g.createRadialGradient(W / 2, H * 0.46, 80, W / 2, H / 2, 1150); gr.addColorStop(0, C.ground); gr.addColorStop(1, C.deep);
+  g.fillStyle = gr; g.fillRect(0, 0, W, H);
+}
+function latticeDraw(cam) {
+  const L = OM.lattice(cam, { depth: 1.2, spacing: 48, px: 1.4 }), M = L.matrix;
+  g.setTransform(M[0] * DPR, M[1] * DPR, M[2] * DPR, M[3] * DPR, M[4] * DPR, M[5] * DPR);
+  g.fillStyle = 'rgba(128,124,140,0.22)';
+  for (let x = L.x0; x <= L.x1; x += L.spacing) for (let y = L.y0; y <= L.y1; y += L.spacing) { g.beginPath(); g.arc(x, y, L.r, 0, 6.2832); g.fill(); }
+}
+function vignette() {
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const v = g.createRadialGradient(W / 2, H / 2, 420, W / 2, H / 2, 1100); v.addColorStop(0, 'rgba(8,7,11,0)'); v.addColorStop(1, 'rgba(8,7,11,0.78)');
+  g.fillStyle = v; g.fillRect(0, 0, W, H);
+}
+function icon(kind, x, y, s, col, t) {
+  g.save(); g.translate(x, y); g.scale(s / 62, s / 62); g.strokeStyle = col; g.fillStyle = col; g.lineCap = 'round'; g.lineWidth = 4.2;
+  if (kind === 'wave') { [10, 22, 14, 26, 12].forEach((hh, j) => { const a = hh * (0.75 + 0.25 * Math.sin(t * 9 + j)); g.beginPath(); g.moveTo(-16 + j * 8, -a / 2); g.lineTo(-16 + j * 8, a / 2); g.stroke(); }); }
+  else if (kind === 'arc') { g.beginPath(); g.arc(-4, 6, 14, Math.PI * 1.05, Math.PI * 1.75); g.stroke(); g.beginPath(); g.arc(10, -6, 6, 0, 6.2832); g.fill(); }
+  else if (kind === 'book') { g.beginPath(); g.moveTo(0, -12); g.lineTo(0, 14); g.moveTo(0, -12); g.quadraticCurveTo(-10, -16, -18, -12); g.lineTo(-18, 12); g.quadraticCurveTo(-10, 8, 0, 14); g.moveTo(0, -12); g.quadraticCurveTo(10, -16, 18, -12); g.lineTo(18, 12); g.quadraticCurveTo(10, 8, 0, 14); g.stroke(); }
+  else if (kind === 'person') { g.beginPath(); g.arc(0, -8, 8, 0, 6.2832); g.fill(); g.beginPath(); g.arc(0, 18, 16, Math.PI * 1.1, Math.PI * 1.9); g.stroke(); }
+  g.restore();
+}
+
+// ── the frame ──
+let CAM = null, VIEW = null, TRACK = {}, EVENTS = [];
+function seek(t) {
+  CAM = camAt(t); VIEW = OM.view(CAM);
+  ground(); latticeDraw(CAM);
+  const M = VIEW; g.setTransform(M[0] * DPR, M[1] * DPR, M[2] * DPR, M[3] * DPR, M[4] * DPR, M[5] * DPR);
+  g.textBaseline = 'alphabetic';
+
+  // terminal: command line + log (fades as the brain takes over)
+  const termOp = 1 - 0.75 * sstep(7.6, 8.4, t) - 0.25 * sstep(T_GATHER - 0.6, T_GATHER, t);
+  const ty = OM.typeOn(t, T_TYPE, CMD, { cps: CPS, blink: 2.2 });
+  const enter = OM.press(t, T_ENTER, { depth: 0.1 });
+  g.globalAlpha = termOp; g.font = F.mono(40); g.textAlign = 'left';
+  g.fillStyle = C.mute; g.fillText(ty.str.slice(0, 1), CMD_X, CMD_Y);
+  g.fillStyle = C.ink; g.fillText(ty.str.slice(1), CMD_X + CHAR, CMD_Y);
+  if (t >= T_ENTER) { const fl = Math.exp(-6 * (t - T_ENTER)); if (fl > 0.02) { g.globalAlpha = termOp * fl * 0.5; g.fillStyle = C.accent; rr(CMD_X - 14, CMD_Y - 40, CMD.length * CHAR + 28, 54, 10); g.fill(); g.globalAlpha = termOp; } }
+  // caret: blinking bar while typing; at Enter it drops to the first log line as a dot (the subject)
+  const cx = CMD_X + ty.n * CHAR + 4;
+  if (t < T_ENTER) { if (ty.caret) { g.fillStyle = C.accent2; g.fillRect(cx, CMD_Y - 34, 5, 42); } }
+  else if (t < T_LINE[0] + 0.05) {
+    const k = ease.expoOut(seg(t, T_ENTER, T_LINE[0])); const im = OM.impact(t, T_LINE[0], {});
+    const x = lerp(cx + 2, LOG_X - 32, k), y = lerp(CMD_Y - 13, LOG_Y - 9, k);
+    g.fillStyle = C.accent2; g.beginPath(); g.ellipse(x, y, lerp(2.5, 9, k) * (1 + 0.6 * (1 - k)), lerp(21, 9, k), 0, 0, 6.2832); g.fill();
+  }
+  // log lines
+  g.font = F.mono(26);
+  LOG.forEach((name, i) => {
+    if (t < T_LINE[i]) return;
+    const r = OM.maskRise(t, T_LINE[i], 0, { dist: 16 }); const y = LOG_Y + i * LOG_DY + r.y * 1;
+    const gone = CELLS.find(c => c.log === i && t >= c.t0);
+    g.globalAlpha = termOp * clamp((t - T_LINE[i]) * 10, 0, 1);
+    g.fillStyle = C.mute; g.textAlign = 'left'; g.fillText(name, LOG_X, y);
+    if (!gone) { const tk = OM.tick(t, T_LINE[i]); g.fillStyle = C.accent; g.save(); g.translate(LOG_X - 32, y - 9); g.scale(tk.s, tk.s); g.font = F.ar(26, 700); g.textAlign = 'center'; g.fillText('✓', 0, 9); g.restore(); g.font = F.mono(26); }
+  });
+  g.globalAlpha = 1;
+
+  // brain cells
+  const dimK = sstep(T_DIM, T_DIM + 0.25, t), relightR = Math.max(0, (t - T_RELIGHT) * 1400);
+  const gk = t >= T_GATHER ? 1 : 0;
+  let dotR = 0;
+  if (t < T_DOT) {   // neural links between landed neighbours
+    g.lineWidth = 2.5; g.strokeStyle = C.accent;
+    for (const [a, b] of LINKS) {
+      const A = CELLS[a], B = CELLS[b]; if (!A || !B) continue; const ta = Math.max(A.t1, B.t1); if (t < ta) continue;
+      const pa = SLOTS[A.slot], pb = SLOTS[B.slot], grow = ease.expoOut(seg(t, ta, ta + 0.35));
+      const da = Math.hypot(pa.x - BR.x, pa.y - BR.y), lit = dimK * (1 - sstep(da - 60, da + 60, relightR));
+      g.globalAlpha = (0.5 - 0.36 * lit) * (1 - sstep(T_GATHER, T_GATHER + 0.25, t));
+      g.beginPath(); g.moveTo(pa.x, pa.y); g.lineTo(lerp(pa.x, pb.x, grow), lerp(pa.y, pb.y, grow)); g.stroke();
+    }
+    g.globalAlpha = 1;
+  }
+  CELLS.forEach((c, n) => {
+    let s = cellAt(c, t); if (!s) return;
+    let x = s.x, y = s.y, size = s.size, op = 1;
+    if (t >= T_GATHER) {   // everything folds into one dot at the centre
+      const gt = OM.gather(t, T_GATHER, T_DOT - 0.2, n % 9, 9, { x, y }, BR, { stagger: 0.025, arc: 40, spin: 0.3 });
+      x = gt.x; y = gt.y; size = lerp(size, 14, gt.k); op = 1 - sstep(0.85, 1, gt.k);
+    }
+    if (c.profile && t >= T_PROFILE && t < T_CARD_OUT + 0.45) return;   // drawn as the card
+    const d = Math.hypot(x - BR.x, y - BR.y), lit = dimK * (1 - sstep(d - 60, d + 60, relightR));
+    const col = c.named ? C.accent2 : c.profile ? C.ink : C.accent;
+    g.save(); g.translate(x, y); g.scale(s.sx, s.sy); g.globalAlpha = op;
+    g.fillStyle = lit > 0.5 ? C.dim : C.card; rr(-size / 2, -size / 2, size, size, size * 0.28); g.fill();
+    g.lineWidth = 2; g.strokeStyle = lit > 0.5 ? C.line : col; g.globalAlpha = op * (lit > 0.5 ? 0.6 : 0.9); g.stroke();
+    g.globalAlpha = op;
+    const iconCol = lit > 0.5 ? C.mute : col;
+    if (c.named) icon(c.named.icon, 0, 0, size * 0.78, iconCol, t);
+    else if (c.profile) icon('person', 0, 0, size * 0.72, iconCol, t);
+    else { g.fillStyle = iconCol; g.globalAlpha = op * (lit > 0.5 ? 0.5 : 0.85); g.beginPath(); g.arc(0, 0, size * 0.09, 0, 6.2832); g.fill(); }
+    g.restore();
+    if (c.named && t < c.t1 + 1.1) {   // the label rides with the named piece, then fades
+      const la = sstep(c.t0 + 0.05, c.t0 + 0.3, t) * (1 - sstep(c.t1 + 0.6, c.t1 + 1.1, t));
+      g.globalAlpha = la; g.font = F.ar(44, 600); g.fillStyle = C.ink; g.textAlign = 'center'; g.direction = 'rtl';
+      g.fillText(c.named.ar, x, y - size / 2 - 22); g.direction = 'ltr'; g.globalAlpha = 1;
+    }
+  });
+
+  // profile card grows out of the core cell and folds back
+  if (t >= T_PROFILE && t < T_CARD_OUT + 0.45) {
+    const core = SLOTS[CORE], A = { x: core.x - 27, y: core.y - 27, w: 54, h: 54 };
+    const open = OM.morphRect(t, T_PROFILE, T_PROFILE + 0.55, A, CARD, { curve: ease.expoOut });
+    const close = OM.morphRect(t, T_CARD_OUT, T_CARD_OUT + 0.45, CARD, A, { curve: ease.expoInOut });
+    const R = t < T_CARD_OUT ? open : close;
+    g.fillStyle = C.card; g.strokeStyle = C.ink; g.lineWidth = 2; rr(R.x, R.y, R.w, R.h, Math.min(28, R.w * 0.28)); g.fill(); g.globalAlpha = 0.35; g.stroke(); g.globalAlpha = 1;
+    const ca = sstep(T_PROFILE + 0.3, T_PROFILE + 0.6, t) * (1 - sstep(T_CARD_OUT - 0.05, T_CARD_OUT + 0.12, t));
+    if (ca > 0) {
+      g.save(); g.beginPath(); g.rect(R.x, R.y, R.w, R.h); g.clip(); g.globalAlpha = ca; g.direction = 'rtl'; g.textAlign = 'right';
+      const w1 = OM.wordRise(t, T_PROFILE + 0.3), w2 = OM.wordRise(t, T_PROFILE + 0.45), w3 = OM.wordRise(t, T_PROFILE + 0.6);
+      icon('person', CARD.x + CARD.w - 70, CARD.y + 78, 74, C.ink, t);
+      g.fillStyle = C.ink; g.font = F.ar(64, 700); g.fillText('سجاد', CARD.x + CARD.w - 128, CARD.y + 100 + w1.y);
+      g.fillStyle = C.mute; g.font = F.ar(30, 400); g.fillText('كلية المعلمين · الحلقة الأولى', CARD.x + CARD.w - 46, CARD.y + 168 + w2.y);
+      g.fillStyle = C.accent2; g.font = F.ar(26, 500); g.fillText('الصفوف ١–٣', CARD.x + CARD.w - 46, CARD.y + 212 + w3.y);
+      g.restore(); g.direction = 'ltr';
+    }
+  }
+
+  // "new session" label while the brain relights
+  { const a = sstep(T_DIM, T_DIM + 0.2, t) * (1 - sstep(T_GATHER - 0.35, T_GATHER, t));
+    if (a > 0) { const w = OM.wordRise(t, T_DIM + 0.05); g.globalAlpha = a * w.op; g.font = F.ar(34, 500); g.fillStyle = C.mute; g.textAlign = 'center'; g.direction = 'rtl'; g.fillText('جلسة جديدة', BR.x, BR.y - 290 + w.y); g.direction = 'ltr'; g.globalAlpha = 1; } }
+
+  // the dot: born from the gather, hops to the end of the wordmark and becomes its caret
+  const markL = MARK.x - MW / 2, markEnd = markL + MW + 18;
+  if (t >= T_DOT - 0.25) {
+    const born = OM.popIn(t, T_DOT - 0.25, { rise: 0, s0: 0.2, ds: 0.8 });
+    const hp = OM.hop(t, T_HOP1, T_LAND, BR, { x: markEnd + 8, y: MARK.y - 40 }, { height: 170, curve: ease.cubicInOut });
+    const im = OM.impact(t, T_LAND, { decay: 7, omega: 26, sqx: 0.35, sqy: 0.4 });
+    const toBar = ease.expoOut(seg(t, T_LAND + 0.32, T_LAND + 0.7));
+    const blinkOn = t < T_LAND + 1.2 || Math.floor((t - T_LAND - 1.2) * 1.8) % 2 === 0;
+    const x = t < T_HOP1 ? BR.x : hp.x, y = t < T_HOP1 ? BR.y : hp.y;
+    const rx = 16 * born.s * (t >= T_LAND ? im.sx : 1), ry = 16 * born.s * (t >= T_LAND ? im.sy : 1);
+    g.fillStyle = C.accent2; g.globalAlpha = blinkOn ? 1 : 0.0;
+    if (toBar <= 0) { g.beginPath(); g.ellipse(x, y, rx, ry, 0, 0, 6.2832); g.fill(); }
+    else { const bw = lerp(32, 9, toBar), bh = lerp(32, 104, toBar); rr(x - bw / 2, y + 16 - bh / 2 - lerp(16, 0, toBar) - toBar * 2, bw, bh, lerp(16, 2, toBar)); g.fill(); }
+    g.globalAlpha = 1;
+    TRACK.dot = OM.projectBox(VIEW, { x: x - 18, y: y - 52, w: 36, h: 104 });
+  }
+  // wordmark letters drop as the dot travels
+  if (t >= T_HOP1 + 0.05) {
+    g.font = F.ar(118, 600); g.textAlign = 'left'; g.fillStyle = C.ink; let xx = markL; const word = 'claude-tools-setup';
+    for (let i = 0; i < word.length; i++) {
+      const ld = OM.letterDrop(t, T_HOP1 + 0.05, i, { stagger: 0.028 }); const ch = word[i], w = g.measureText(ch).width;
+      g.save(); g.globalAlpha = ld.op; g.translate(xx + w / 2, MARK.y + ld.y); g.scale(ld.sx, ld.sy); g.fillStyle = (ch === '-') ? C.mute : C.ink; g.fillText(ch, -w / 2, 0); g.restore(); xx += w;
+    }
+    TRACK.mark = OM.projectBox(VIEW, { x: markL - 10, y: MARK.y - 100, w: MW + 60, h: 130 });
+    const tg = OM.wordRise(t, V.l6 + 0.25), ur = OM.wordRise(t, V.l6 + 0.9);
+    g.globalAlpha = tg.op; g.font = F.ar(50, 500); g.textAlign = 'center'; g.direction = 'rtl'; g.fillStyle = C.ink;
+    g.fillText('عقلُ Claude، في مستودعٍ واحد', MARK.x, MARK.y + 118 + tg.y); g.direction = 'ltr';
+    g.globalAlpha = ur.op; g.font = F.mono(26); g.fillStyle = C.mute; g.fillText('github.com/SJJ2D/claude-tools-setup', MARK.x, MARK.y + 190 + ur.y); g.globalAlpha = 1;
+  }
+  vignette();
+  return true;
+}
+
+// ── events for the score ──
+function events() {
+  const E = [];
+  for (let i = 1; i < CMD.length; i++) E.push([T_TYPE + i / CPS, 'key', 0]);
+  E.push([T_ENTER, 'enter', 0]);
+  LOG.forEach((_, i) => i < 6 && E.push([T_LINE[i], 'tick', 0]));
+  CELLS.forEach(c => { if (c.named || c.profile) { E.push([c.t0, 'lift', 0]); E.push([c.t1, c.profile ? 'soft' : 'land', 0]); } });
+  E.push([6.95, 'burst', 0]);
+  E.push([T_PROFILE, 'open', 0], [T_CARD_OUT, 'close', 0], [T_DIM, 'dim', 0], [T_RELIGHT, 'relight', 0]);
+  E.push([T_GATHER, 'gather', 0], [T_HOP1, 'hop', 0], [T_LAND, 'final', 0]);
+  return E.sort((a, b) => a[0] - b[0]);
+}
+
+// ── contract ──
+window.__meta = { dur: DUR, fps: 30, inFrame: { mark: [T_LAND + 0.3, DUR, 'whole'] } };
+window.__seek = async t => { TRACK = {}; seek(t); return true; };
+window.__track = t => { TRACK = {}; seek(t); return TRACK; };
+window.__events = () => events();
+window.__motion = (t0, t1) => {
+  const a = camAt(t0), b = camAt(t1), m = camAt((t0 + t1) / 2); let px = OM.screenTravel(a, b, m);
+  const Va = OM.view(a), Vb = OM.view(b);
+  for (const c of CELLS) { const s0 = cellAt(c, t0), s1 = cellAt(c, t1); if (s0 && s1) { const p0 = OM.project(Va, s0.x, s0.y), p1 = OM.project(Vb, s1.x, s1.y); px = Math.max(px, Math.hypot(p1[0] - p0[0], p1[1] - p0[1])); } }
+  if (t1 >= T_HOP1 && t0 <= T_LAND + 0.1) px = Math.max(px, 90);
+  return px;
+};
+window.__ready = document.fonts.load(F.ar(40)).then(() => document.fonts.load(F.mono(40))).then(() => document.fonts.ready).then(() => { measure(); keys(); seek(0); return true; });
+const q = new URLSearchParams(location.search);
+if (q.has('t')) window.__ready.then(() => seek(parseFloat(q.get('t'))));
+if (q.has('play')) window.__ready.then(() => { const s = performance.now(); const f = () => { seek(((performance.now() - s) / 1000) % DUR); requestAnimationFrame(f); }; f(); });
+</script></body></html>

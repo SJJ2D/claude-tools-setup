@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<!-- original voxel/pixel short about waiting for GTA 6 · personal, non-commercial -->
+<html lang="ar"><head><meta charset="utf-8"><title>GTA 6 voxel</title>
+<style>html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#0b0710}canvas{position:absolute;left:0;top:0;width:1920px;height:1080px}</style>
+<script src="fonts.js"></script><script src="motion.js"></script><script src="three.min.js"></script>
+</head><body><canvas id="gl"></canvas><canvas id="ui"></canvas><script>
+'use strict';
+const {clamp, lerp, seg, sstep, ease, spring} = OM;
+const W = 1920, H = 1080;
+// ── timeline: VO line starts + word times (filled from vo/timing.json) ──
+const VO = /*VO*/{"lines": {"l1": [0.5, 3.15], "l2": [3.6, 6.0], "l3": [6.6, 9.12], "l4": [9.6, 11.79], "l5": [12.3, 13.87], "l6": [14.3, 17.46], "l7": [18.3, 20.23]}, "words": {"l1": [[0.5, "الكل"], [0.98, "قاعد"], [1.52, "يسأل"], [2.4, "نفس"], [2.68, "السؤال."]], "l2": [[3.6, "متى"], [4.0, "بينزل"], [4.44, "جي"], [4.6, "تي"], [4.74, "أي"], [4.86, "سِكس؟"]], "l3": [[6.6, "أجّلوه"], [7.16, "مرة،"], [7.54, "وأجّلوه"], [8.32, "مرة"], [8.66, "ثانية."]], "l4": [[9.6, "واحنا"], [10.06, "كل"], [10.32, "يوم"], [10.62, "نطالع"], [11.16, "نفس"], [11.42, "التريلر."]], "l5": [[12.3, "بس"], [12.58, "هالمرة؟"], [13.04, "جهّزنا"], [13.54, "كل"], [13.74, "شي."]], "l6": [[14.3, "القهوة،"], [15.18, "المجلس،"], [16.06, "وإجازة"], [16.94, "من"], [17.12, "الدوام."]], "l7": [[18.3, "جي"], [18.65, "تي"], [19.0, "أي"], [19.3, "سِكس،"], [19.76, "قرّب."]]}}/*END*/;
+const L = k => VO.lines[k][0], LE = k => VO.lines[k][1];
+const DUR = LE('l7') + 2.6;
+const T = {
+  q: L('l2') + 0.1,                       // monitor shows the question
+  dis1: LE('l2') + 0.15,                  // pixel dissolve → calendar
+  stamp1: null, stamp2: null,             // set from word times ("مرة", "ثانية")
+  dis2: LE('l3') + 0.12,                  // dissolve → back to desk (sad)
+  jump: L('l5') + 0.05,
+  whip: L('l5') + 0.55,
+  c1: null, c2: null, c3: null,           // checklist pops on القهوة / المجلس / إجازة
+  fly: L('l7') - 0.45,
+  title: L('l7') + 0.35,
+  end: DUR - 0.55,
+};
+function wordT(line, i, fb) { const w = VO.words[line]; return w && w[i] ? w[i][0] : fb; }
+
+// ── fonts ──
+const F = (s, w = 700) => `${w} ${s}px AR, sans-serif`, FZ = s => `${s}px LZ, AR, sans-serif`;
+
+// ── three ──
+const gl = document.getElementById('gl'), ui = document.getElementById('ui'), g = ui.getContext('2d');
+const DPR = window.devicePixelRatio || 1; ui.width = W * DPR; ui.height = H * DPR;
+const R = new THREE.WebGLRenderer({ canvas: gl, antialias: true, preserveDrawingBuffer: true });
+R.setPixelRatio(DPR); R.setSize(W, H, false); R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap;
+R.outputColorSpace = THREE.SRGBColorSpace; R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.35;
+const S = new THREE.Scene(); S.background = new THREE.Color('#2a1238'); S.fog = new THREE.Fog('#3a1a40', 90, 330);
+const CAM = new THREE.PerspectiveCamera(42, W / H, 0.1, 900);
+const BOX = new THREE.BoxGeometry(1, 1, 1), MATS = {};
+const mat = (c, o = {}) => { const k = c + JSON.stringify(o); return MATS[k] || (MATS[k] = new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: 0.85, metalness: 0 }, o))); };
+function box(x0, y0, z0, x1, y1, z1, c, o, parent = S) { // world-aligned box from min to max corner
+  const m = new THREE.Mesh(BOX, mat(c, o)); m.scale.set(x1 - x0, y1 - y0, z1 - z0); m.position.set((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
+  m.castShadow = m.receiveShadow = true; parent.add(m); return m;
+}
+const canvasTex = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return { c, x: c.getContext('2d'), t }; };
+
+// ── pixel art (16×24) ──
+const PAL = { k: '#16121a', c: '#d62839', C: '#9e1b2a', h: '#2a1a10', s: '#c68642', S: '#9c6430', e: '#120c0c', m: '#7a2e2e', t: '#1fb5a6', T: '#158276', w: '#f2f2f2', p: '#2b3a67', P: '#1d2849', g: '#3a3a3a' };
+const IDLE = ['....kkkkkkkk....', '...kcccccccck...', '..kcccccccccck..', '..kCCCCCCCCCCCCk', '..khhhhhhhhhhk..', '..khsssssssshk..', '..ksseesssseesk.', '..kssssssssssk..', '..ksssssmmsssk..', '...kSssssssSk...', '......kssk......', '...kkttttttkk...', '..kttttttttttk..', '.kTttttttttttTk.', '.kTttttwwttttTk.', '.kTttttttttttTk.', '.ksttttttttttsk.', '..kttttttttttk..', '..kppppppppppk..', '..kpppppPppppk..', '..kppppk..kppppk', '..kppppk..kppppk', '..kggggk..kggggk', '..kkkkkk..kkkkkk'];
+function frameFrom(base, edits) { const f = base.map(r => (r + '................').slice(0, 16).split('')); edits(f); return f.map(r => r.join('')); }
+const HAPPY = frameFrom(IDLE, f => { // arms up, open mouth
+  for (let r = 13; r <= 16; r++) { f[r][1] = '.'; f[r][14] = '.'; f[r][2] = 'k'; f[r][13] = 'k'; }
+  for (let r = 4; r <= 12; r++) { f[r][0] = 'k'; f[r][1] = r < 6 ? 's' : 'T'; f[r][15] = 'k'; f[r][14] = r < 6 ? 's' : 'T'; }
+  f[3][0] = 'k'; f[3][1] = 'k'; f[3][15] = 'k'; f[8] = '..ksssskmmksssk.'.split(''); f[9] = '...kSsskksSk....'.split('');
+});
+const SAD = frameFrom(IDLE, f => { f[6] = '..ksskksssskksk.'.split(''); f[8] = '..ksssssssssk...'.split(''); f[9] = '...kSssmmssSk...'.split(''); });
+function spriteTex(frame) {
+  const { c, x, t } = canvasTex(16, 24); frame.forEach((r, j) => r.split('').forEach((ch, i) => { if (PAL[ch]) { x.fillStyle = PAL[ch]; x.fillRect(i, j, 1, 1); } }));
+  t.magFilter = THREE.NearestFilter; t.minFilter = THREE.NearestFilter; t.generateMipmaps = false; t.needsUpdate = true; return t;
+}
+const TEX = { idle: spriteTex(IDLE), happy: spriteTex(HAPPY), sad: spriteTex(SAD) };
+const heroMat = new THREE.SpriteMaterial({ map: TEX.idle, transparent: true });
+const hero = new THREE.Sprite(heroMat); hero.center.set(0.5, 0); S.add(hero);
+// a soft blob shadow under the sprite
+const blob = new THREE.Mesh(new THREE.CircleGeometry(1, 24), new THREE.MeshBasicMaterial({ color: '#000', transparent: true, opacity: 0.35, depthWrite: false }));
+blob.rotation.x = -Math.PI / 2; S.add(blob);
+
+// ── the room (1 unit ≈ 10 cm) ──
+const WOOD = '#8a4b2a', WOOD2 = '#6e3a20', WALL = '#3a1e2c', WALL2 = '#2c1622', FLOOR = '#5a2f22';
+box(-22, -1, -16, 22, 0, 18, FLOOR);                                   // floor
+for (let x = -22; x < 22; x += 4) box(x, 0, -16, x + 0.08, 0.02, 18, '#4a2519');   // floor boards
+box(-22, 0, -16, 4, 24, -15, WALL); box(14, 0, -16, 22, 24, -15, WALL);          // back wall with a window gap 4..14
+box(4, 0, -16, 14, 5, -15, WALL); box(4, 16, -16, 14, 24, -15, WALL);
+box(4, 4.6, -16.2, 14, 5, -14.4, WOOD); box(3.6, 4.6, -16.2, 4, 16.4, -14.6, WOOD); box(14, 4.6, -16.2, 14.4, 16.4, -14.6, WOOD); box(3.6, 16, -16.2, 14.4, 16.4, -14.6, WOOD);
+box(8.9, 5, -15.8, 9.1, 16, -15.6, WOOD2);                                          // window mullion
+box(-23, 0, -16, -22, 24, 18, WALL2);                                               // left wall
+box(22, 0, -16, 23, 24, 18, WALL2);                                                 // right wall
+for (let i = 0; i < 9; i++) box(-21.9, 1 + i * 2.4, -16, -21.7, 1.2 + i * 2.4, 18, i % 2 ? '#d62839' : '#1fb5a6', { emissive: i % 2 ? '#3a0710' : '#06302c' }); // stripe wallpaper accent
+// desk + monitor + keyboard + lamp + plant
+box(-14, 7, -14.5, -1, 7.6, -8, WOOD); box(-13.6, 0, -14, -12.8, 7, -8.6, WOOD2); box(-2.2, 0, -14, -1.4, 7, -8.6, WOOD2);
+box(-8.4, 7.6, -13.2, -5.6, 8, -11.8, '#222'); box(-7.3, 8, -12.8, -6.7, 9.6, -12.2, '#222');      // stand
+box(-11.6, 9.4, -13.2, -2.4, 15.2, -12.4, '#151318');                                               // monitor body
+const SCR = canvasTex(640, 400); const scrMesh = new THREE.Mesh(new THREE.PlaneGeometry(8.8, 5.4), new THREE.MeshBasicMaterial({ map: SCR.t, toneMapped: false }));
+scrMesh.position.set(-7, 12.3, -12.38); S.add(scrMesh);
+const scrLight = new THREE.PointLight('#5ce0ff', 30, 30, 1.6); scrLight.position.set(-7, 12, -9); S.add(scrLight);
+box(-10.5, 7.6, -11, -4, 7.9, -9.4, '#2a2a30'); for (let i = 0; i < 12; i++) box(-10.3 + i * 0.52, 7.9, -10.8, -9.9 + i * 0.52, 8.1, -9.6, '#4a4a55');
+box(-13.2, 7.6, -13.6, -12.2, 7.9, -12.6, '#222'); box(-12.85, 7.9, -13.25, -12.55, 11.5, -12.95, '#333');
+box(-13.8, 11.2, -13.9, -11.6, 12.4, -11.9, '#f4c64f', { emissive: '#f4a000', emissiveIntensity: 1.4 });  // lamp shade
+const lamp = new THREE.PointLight('#ffb35c', 260, 55, 1.6); lamp.position.set(-12.6, 10.6, -11.5); lamp.castShadow = true; lamp.shadow.mapSize.set(512, 512); S.add(lamp);
+box(-3.4, 7.6, -13.6, -2.2, 9, -12.4, '#a0522d'); for (const [x, y, z] of [[-2.8, 9.6, -13], [-3.3, 10.4, -12.7], [-2.3, 10.2, -13.3], [-2.8, 11.1, -12.9]]) box(x - 0.45, y - 0.45, z - 0.45, x + 0.45, y + 0.45, z + 0.45, '#3f8f3a');
+box(-12.5, 0, -7.5, -8.5, 4.6, -4, '#3a2840'); box(-12.5, 4.6, -4.6, -8.5, 10, -4, '#3a2840');                          // chair (back faces camera side)
+// bookshelf on the left wall
+box(-21.8, 0, 6, -18.8, 16, 14, WOOD2); const BOOK = ['#d62839', '#1fb5a6', '#f4c64f', '#e8e2d0', '#7c6cff'];
+for (let sh = 0; sh < 4; sh++) { box(-21.6, 3.5 + sh * 3.6, 6.2, -19, 3.8 + sh * 3.6, 13.8, WOOD); for (let b = 0; b < 9; b++) { const hgt = 2 + ((b * 7 + sh * 3) % 5) * 0.25; box(-21.4, 3.8 + sh * 3.6, 6.4 + b * 0.82, -19.4, 3.8 + sh * 3.6 + hgt, 7.0 + b * 0.82, BOOK[(b + sh) % 5]); } }
+// calendar on the left wall (canvas)
+const CAL = canvasTex(512, 600); const calMesh = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 7.5), new THREE.MeshStandardMaterial({ map: CAL.t, roughness: 0.95, color: '#a89f92' }));
+calMesh.rotation.y = Math.PI / 2; calMesh.position.set(-21.65, 12, -6.5); S.add(calMesh); box(-21.9, 15.6, -9.4, -21.6, 16, -3.6, '#222');
+// majlis corner (right): floor cushions along the right wall + low table, dallah and cups
+const CUSH = ['#b3202f', '#1a6f68'];
+for (let i = 0; i < 4; i++) { box(18, 0, -8 + i * 5, 21.8, 1.8, -3.2 + i * 5, CUSH[i % 2]); box(20.6, 1.8, -8 + i * 5, 21.8, 5.2, -3.2 + i * 5, CUSH[(i + 1) % 2]); }
+box(8, 0, -2, 16, 0.25, 8, '#7a1424'); for (let i = 0; i < 6; i++) box(8.4 + i * 1.3, 0.25, -1.6, 9.0 + i * 1.3, 0.3, 7.6, '#c99a3a');   // rug
+box(10, 0.3, 1, 14.5, 2.2, 4.5, WOOD); box(10.3, 2.2, 1.3, 14.2, 2.5, 4.2, WOOD2);                                      // low table
+const DALLAH = new THREE.Group(); S.add(DALLAH); const GOLD = '#d9a93a', GOLD2 = '#a87a1f';
+box(-0.9, 0, -0.9, 0.9, 0.6, 0.9, GOLD, {}, DALLAH); box(-0.75, 0.6, -0.75, 0.75, 1.9, 0.75, GOLD, { metalness: 0.4, roughness: 0.4 }, DALLAH); box(-0.45, 1.9, -0.45, 0.45, 2.7, 0.45, GOLD2, {}, DALLAH);
+box(-0.6, 2.7, -0.6, 0.6, 3.0, 0.6, GOLD, {}, DALLAH); box(-0.15, 3.0, -0.15, 0.15, 3.5, 0.15, GOLD2, {}, DALLAH); box(0.7, 1.4, -0.15, 1.6, 1.7, 0.15, GOLD2, {}, DALLAH); box(1.5, 1.7, -0.15, 1.8, 2.5, 0.15, GOLD2, {}, DALLAH);
+box(-1.1, 1.0, -0.12, -0.75, 2.4, 0.12, GOLD2, {}, DALLAH); DALLAH.position.set(11.4, 2.5, 2.6);
+for (const [x, z] of [[13.2, 2], [13.9, 3.2], [12.9, 3.6]]) box(x - 0.3, 2.5, z - 0.3, x + 0.3, 3.1, z + 0.3, '#f2efe6');
+// ── the city outside the window (sunset, neon) ──
+const SKY = canvasTex(1024, 512); { const x = SKY.x, gr = x.createLinearGradient(0, 0, 0, 512); gr.addColorStop(0, '#1c0d38'); gr.addColorStop(0.45, '#7b2a7a'); gr.addColorStop(0.72, '#ff6a4d'); gr.addColorStop(1, '#ffc05a'); x.fillStyle = gr; x.fillRect(0, 0, 1024, 512);
+  x.fillStyle = '#ffe6a0'; x.beginPath(); x.arc(512, 400, 90, 0, 7); x.fill(); x.fillStyle = 'rgba(123,42,122,.85)'; for (let i = 0; i < 7; i++) x.fillRect(380, 360 + i * 16, 264, 5 + i * 0.8); SKY.t.needsUpdate = true; }
+const sky = new THREE.Mesh(new THREE.PlaneGeometry(1400, 700), new THREE.MeshBasicMaterial({ map: SKY.t, fog: false, toneMapped: false })); sky.position.set(30, 200, -340); S.add(sky);
+box(-300, -2, -360, 360, -0.5, -40, '#1a1030');                                                                          // ground
+box(-300, -1.4, -150, 360, -0.6, -60, '#2a2a6a', { emissive: '#3a1a5a', emissiveIntensity: 0.6, roughness: 0.2 });       // water
+const NEON = ['#ff3d8b', '#2ef2e2', '#ffb02e', '#8a5cff'], rnd = OM.rng(7);
+for (let i = 0; i < 70; i++) { const x = -160 + (i % 14) * 26 + rnd() * 10, z = -170 - Math.floor(i / 14) * 34 - rnd() * 12, w = 8 + rnd() * 10, h = 16 + rnd() * (i % 14 > 4 && i % 14 < 10 ? 90 : 45);
+  box(x, -0.5, z, x + w, h, z + w, i % 3 ? '#1b1230' : '#241640'); const n = NEON[i % 4]; box(x - 0.2, h - 1, z - 0.2, x + w + 0.2, h - 0.4, z + w + 0.2, n, { emissive: n, emissiveIntensity: 3 }); if (i % 2) box(x - 0.15, h * 0.55, z + w, x + w + 0.15, h * 0.55 + 0.6, z + w + 0.25, n, { emissive: n, emissiveIntensity: 2.4 });
+  for (let k = 0; k < 9; k++) if (rnd() > 0.3) { const wx = x + 1 + rnd() * (w - 3), wy = 4 + rnd() * (h - 8); box(wx, wy, z + w + 0.05, wx + 1.1, wy + 1.5, z + w + 0.3, '#ffd88a', { emissive: '#ffb84a', emissiveIntensity: 1.8 }); } }
+function palm(x, z, h) { for (let i = 0; i < h; i++) box(x - 0.6 + Math.sin(i * 0.4) * 0.3, i, z - 0.6, x + 0.6 + Math.sin(i * 0.4) * 0.3, i + 1, z + 0.6, i % 2 ? '#3b2416' : '#4a2e1c');
+  for (let a = 0; a < 6; a++) { const dx = Math.cos(a), dz = Math.sin(a); for (let j = 1; j < 6; j++) box(x + dx * j - 0.5, h - j * 0.35, z + dz * j - 0.5, x + dx * j + 0.5, h - j * 0.35 + 0.5, z + dz * j + 0.5, '#145a3a'); } }
+for (let i = 0; i < 14; i++) palm(-120 + i * 18, -48 - (i % 3) * 5, 16 + (i % 4) * 3);
+box(-300, -0.4, -58, 360, 0.2, -50, '#2b2b3a'); for (let i = 0; i < 30; i++) box(-150 + i * 12, 0.2, -54.3, -146 + i * 12, 0.25, -53.7, '#f4c64f');   // the coast road
+// lights
+S.add(new THREE.HemisphereLight('#ffd8c0', '#3a1828', 1.7)); S.add(new THREE.AmbientLight('#5a3550', 0.6));
+const sun = new THREE.DirectionalLight('#ff8a6a', 2.4); sun.position.set(30, 60, -200); sun.target.position.set(0, 0, 0); sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024); Object.assign(sun.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40, near: 1, far: 400 }); S.add(sun, sun.target);
+const fill = new THREE.PointLight('#ff6fa8', 160, 70, 1.4); fill.position.set(14, 14, 6); S.add(fill);
+
+// ── checklist cards (world sprites) ──
+function cardTex(text) { const { c, x, t } = canvasTex(512, 160); x.fillStyle = '#16121a'; x.beginPath(); x.roundRect(6, 6, 500, 148, 30); x.fill(); x.lineWidth = 6; x.strokeStyle = '#2ef2e2'; x.stroke();
+  x.fillStyle = '#2ef2e2'; x.font = F(84, 800); x.textAlign = 'left'; x.fillText('✓', 40, 112); x.fillStyle = '#fff'; x.direction = 'rtl'; x.textAlign = 'right'; x.font = F(72, 800); x.fillText(text, 470, 108); t.needsUpdate = true; return t; }
+const CARDS = [['القهوة', [11.6, 7.6, 2.6]], ['المجلس', [19, 8.2, 3]], ['إجازة', [-17, 19.5, -6.5]]].map(([txt, p]) => { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: cardTex(txt), transparent: true, depthTest: false })); s.position.set(...p); s.renderOrder = 5; S.add(s); return s; });
+
+// ── camera keys: {t, p:[x,y,z], l:[x,y,z], fov} ──
+let KEYS = [];
+function keys() {
+  const io = ease.cubicInOut, xo = ease.expoInOut, so = ease.sineInOut;
+  KEYS = [
+    { t: 0, p: [6, 15, 40], l: [-6, 9, -10], f: 40 },
+    { t: L('l1') + 0.2, p: [4, 14, 32], l: [-6, 9, -10], f: 40, c: so },
+    { t: LE('l1'), p: [-3, 12.5, 4], l: [-8, 10, -11], f: 40, c: io },                // push towards the gamer
+    { t: T.q + 0.35, p: [-7, 12.3, -6.9], l: [-7, 12.3, -13], f: 40, c: xo },          // into the monitor
+    { t: T.dis1 + 0.02, p: [-7, 12.3, -7.6], l: [-7, 12.3, -13], f: 40, c: so },
+    { t: T.dis1 + 0.03, p: [-12.5, 12.2, -6.5], l: [-22, 12, -6.5], f: 42 },            // (behind the dissolve) the calendar
+    { t: T.dis2, p: [-13.5, 12.2, -6.5], l: [-22, 12, -6.5], f: 42, c: so },
+    { t: T.dis2 + 0.01, p: [1, 11, 4], l: [-8, 9, -9], f: 44 },                         // (behind the dissolve) slumped gamer + trailer
+    { t: L('l5') - 0.05, p: [0, 10.5, 1.5], l: [-8.5, 9, -9], f: 44, c: so },
+    { t: T.whip + 0.55, p: [1, 10, 15], l: [14, 4.5, 0.5], f: 46, c: xo },                  // whip to the majlis
+    { t: L('l6') + 0.6, p: [2, 9.5, 13], l: [14, 5, 0.5], f: 44, c: so },
+    { t: LE('l6') - 0.1, p: [-2, 14, 16], l: [-6, 13, -6], f: 46, c: io },               // sweep to see all three ticks
+    { t: T.fly, p: [8, 10.5, 6], l: [9, 10.5, -20], f: 46, c: io },                      // line up with the window
+    { t: T.fly + 1.6, p: [9, 9.5, -40], l: [10, 14, -200], f: 50, c: ease.quintInOut },   // through the window
+    { t: DUR, p: [10, 12, -60], l: [12, 16, -220], f: 50, c: so },
+  ];
+}
+const V3 = (a, b, k) => [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(a[2], b[2], k)];
+function camAt(t) {
+  if (t <= KEYS[0].t) return KEYS[0]; const N = KEYS.length; if (t >= KEYS[N - 1].t) return KEYS[N - 1];
+  let i = 0; while (KEYS[i + 1].t < t) i++; const A = KEYS[i], B = KEYS[i + 1], k = (B.c || ease.cubicInOut)(seg(t, A.t, B.t));
+  return { p: V3(A.p, B.p, k), l: V3(A.l, B.l, k), f: lerp(A.f, B.f, k) };
+}
+
+// ── screen + calendar drawing ──
+function drawScreen(t) {
+  const x = SCR.x; x.fillStyle = '#0d1020'; x.fillRect(0, 0, 640, 400);
+  if (t < T.q - 0.05) { // desktop: code-ish lines + search bar typing
+    x.fillStyle = '#16213a'; x.fillRect(0, 0, 640, 40); for (let i = 0; i < 9; i++) { x.fillStyle = ['#2ef2e2', '#ff3d8b', '#ffb02e', '#8a5cff'][i % 4]; x.fillRect(40, 70 + i * 34, 80 + ((i * 53) % 260), 12); }
+  } else if (t < T.dis2) { // the question
+    const k = spring(t - T.q, 0.5, 14); x.save(); x.translate(320, 210); x.scale(0.6 + 0.4 * k, 0.6 + 0.4 * k);
+    x.fillStyle = '#ff3d8b'; x.font = FZ(140); x.textAlign = 'center'; x.fillText('GTA 6', -40, 40); x.fillStyle = '#fff'; x.font = FZ(150); x.save(); x.translate(205, 40); x.rotate(0.12 * Math.sin(t * 7)); x.fillText('؟', 0, 0); x.restore(); x.restore();
+  } else { // the trailer on loop + the watch counter
+    const gr = x.createLinearGradient(0, 0, 0, 400); gr.addColorStop(0, '#2a0f4a'); gr.addColorStop(0.6, '#ff5e5b'); gr.addColorStop(1, '#ffb347'); x.fillStyle = gr; x.fillRect(0, 0, 640, 400);
+    x.fillStyle = '#ffe6a0'; x.beginPath(); x.arc(320, 300, 70, 0, 7); x.fill(); x.fillStyle = '#1b1230'; for (let i = 0; i < 12; i++) { const hh = 60 + ((i * 37) % 120); x.fillRect(i * 56, 400 - hh, 44, hh); }
+    x.fillStyle = 'rgba(0,0,0,.45)'; x.fillRect(0, 330, 640, 70); x.fillStyle = '#fff'; x.beginPath(); x.moveTo(300, 180); x.lineTo(350, 210); x.lineTo(300, 240); x.fill();
+    const n = 847 + Math.floor(clamp((t - L('l4') - 0.6) / 0.35, 0, 3)); x.font = F(38, 700); x.direction = 'rtl'; x.textAlign = 'right'; x.fillStyle = '#fff';
+    x.fillText('مشاهدة رقم ' + n.toLocaleString('ar-EG'), 610, 378); x.direction = 'ltr';
+  }
+  SCR.t.needsUpdate = true;
+}
+function drawCalendar(t) {
+  const x = CAL.x; x.fillStyle = '#f2efe6'; x.fillRect(0, 0, 512, 600); x.fillStyle = '#d62839'; x.fillRect(0, 0, 512, 110);
+  x.fillStyle = '#fff'; x.font = F(56, 800); x.textAlign = 'center'; x.fillText('GTA 6', 256, 78);
+  const page = (t >= T.stamp2 ? 2 : t >= T.stamp1 ? 1 : 0); x.fillStyle = '#2a2a2a'; x.font = FZ(230); x.fillText(String(page + 1), 256, 380);
+  for (const [ts, i] of [[T.stamp1, 0], [T.stamp2, 1]]) { if (t < ts) continue; const k = OM.impact(t, ts, { decay: 10, omega: 30 }), s = 1 + Math.max(0, 0.6 * (1 - (t - ts) * 9)) ;
+    x.save(); x.translate(256, 330 + i * 60); x.rotate(-0.22 + i * 0.1); x.scale(s * k.sx, s * k.sy); x.globalAlpha = 0.92; x.strokeStyle = '#d62839'; x.lineWidth = 12; x.strokeRect(-190, -70, 380, 140);
+    x.fillStyle = '#d62839'; x.font = F(96, 800); x.direction = 'rtl'; x.fillText('تأجيل', 0, 34); x.direction = 'ltr'; x.restore(); }
+  CAL.t.needsUpdate = true;
+}
+
+// ── captions (word by word, RTL, stacked) ──
+const EMPH = { l1: [3, 4], l2: [2, 3, 4, 5], l3: [0, 2], l4: [4, 5], l5: [1, 2], l6: [0, 1, 2], l7: [4] };   // word indices drawn big
+const COL = { l1: '#ff3d8b', l2: '#2ef2e2', l3: '#ff3d8b', l4: '#ffb02e', l5: '#2ef2e2', l6: '#2ef2e2', l7: '#ff3d8b' };
+function captionWords(id) { const w = VO.words[id]; if (w && w.length) return w; // fallback: spread the line's words evenly
+  const txt = { l1: 'الكل قاعد يسأل نفس السؤال.', l2: 'متى بينزل جي تي أي سِكس؟', l3: 'أجّلوه مرة، وأجّلوه مرة ثانية.', l4: 'واحنا كل يوم نطالع نفس التريلر.', l5: 'بس هالمرة؟ جهّزنا كل شي.', l6: 'القهوة، المجلس، وإجازة من الدوام.', l7: 'جي تي أي سِكس، قرّب.' }[id].split(' ');
+  const [a, b] = VO.lines[id]; return txt.map((s, i) => [a + (b - a) * i / txt.length, s]); }
+function drawCaption(t) {
+  let id = null; for (const k of Object.keys(VO.lines)) { const [a, b] = VO.lines[k]; if (t >= a - 0.05 && t < b + 0.45) id = k; }
+  if (!id || id === 'l7') return;
+  const ws = captionWords(id), out = Math.max(0, (t - VO.lines[id][1] - 0.25) / 0.2);
+  // layout: groups into rows of ≤3 words, right-aligned stack at the left third (RTL reading block)
+  const rows = []; let row = [];
+  ws.forEach((w, i) => { row.push([w, i]); if (row.length === 3 || EMPH[id].includes(i) && row.length >= 2) { rows.push(row); row = []; } }); if (row.length) rows.push(row);
+  const x0 = 1760, y0 = 190; let y = y0;
+  g.save(); g.direction = 'rtl'; g.textAlign = 'right'; g.textBaseline = 'alphabetic';
+  rows.forEach((r, ri) => {
+    const big = r.some(([, i]) => EMPH[id].includes(i)), size = big ? 104 : 54; y += size * (ri ? 1.12 : 1);
+    let x = x0 - (ri % 2) * 40;
+    r.forEach(([[ts, word], i]) => {
+      if (t < ts - 0.02) return; const em = EMPH[id].includes(i), sz = em ? size : 54, k = spring(t - ts, 0.55, 22);
+      g.font = em ? FZ(sz) : F(sz, 700); const wd = g.measureText(word).width;
+      g.save(); g.globalAlpha = clamp(k * 1.6, 0, 1) * (1 - clamp(out, 0, 1)); g.translate(x - wd / 2, y - sz * 0.35); g.scale(0.7 + 0.3 * k, 0.7 + 0.3 * k); g.translate(0, (1 - k) * 22);
+      g.fillStyle = 'rgba(0,0,0,.45)'; g.fillText(word, wd / 2 + 4, sz * 0.35 + 5); g.fillStyle = em ? COL[id] : '#fff'; g.fillText(word, wd / 2, sz * 0.35); g.restore();
+      x -= wd + 22;
+    });
+  });
+  g.restore();
+}
+
+// ── pixel dissolve (red / white / black squares cover, then clear) ──
+function dissolve(t, t0, dur = 0.5) {
+  const u = (t - t0) / dur; if (u < -0.5 || u > 0.5) return; const cov = 1 - Math.abs(u) * 2; const cs = 80, nx = W / cs, ny = Math.ceil(H / cs), r = OM.rng(Math.round(t0 * 100));
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const th = r(), c = r(); if (th > cov * 1.15) continue; g.fillStyle = c < 0.55 ? '#d62839' : c < 0.85 ? '#f2efe6' : '#120a18'; g.fillRect(i * cs, j * cs, cs + 1, cs + 1); }
+}
+// ── title at the end: scramble-decoded "GTA 6", then «قرّب» ──
+function drawTitle(t) {
+  if (t < T.title) return; const k = spring(t - T.title, 0.55, 12), target = 'GTA 6', glyphs = '01#%/+-';
+  const n = Math.floor(clamp((t - T.title) / 0.7, 0, 1) * target.length); let s = '';
+  for (let i = 0; i < target.length; i++) s += i < n || target[i] === ' ' ? target[i] : glyphs[(Math.floor(t * 30) + i * 3) % glyphs.length];
+  g.save(); g.textAlign = 'center'; g.globalAlpha = clamp(k * 1.5, 0, 1); g.translate(W / 2, 470); g.scale(0.85 + 0.15 * k, 0.85 + 0.15 * k);
+  g.font = FZ(230); g.fillStyle = 'rgba(0,0,0,.35)'; g.fillText(s, 8, 10); g.fillStyle = '#fff'; g.fillText(s, 0, 0); g.restore();
+  const w2 = wordT('l7', 4, L('l7') + 1.2), k2 = spring(t - w2, 0.45, 16);
+  if (t >= w2) { g.save(); g.textAlign = 'center'; g.direction = 'rtl'; g.translate(W / 2, 680); g.scale(0.6 + 0.4 * k2, 0.6 + 0.4 * k2); g.font = FZ(190); g.fillStyle = '#ff3d8b'; g.fillText('قرّب', 0, 0); g.restore(); }
+}
+
+// ── the frame ──
+let EVENTS = [];
+function seek(t) {
+  // hero state + placement
+  const happy = (t >= T.jump && t < LE('l6') + 0.4) || t >= T.title, sad = t >= T.dis2 && t < T.jump;
+  heroMat.map = happy ? TEX.happy : sad ? TEX.sad : TEX.idle;
+  const atDesk = t < T.whip + 0.2, jumpY = t >= T.jump && t < T.jump + 0.6 ? Math.sin(Math.PI * seg(t, T.jump, T.jump + 0.6)) * 2.4 : 0;
+  const mv = ease.cubicInOut(seg(t, T.whip, T.whip + 0.7)), hx = atDesk ? -10.5 : lerp(-10.5, 18, mv), hz = atDesk ? -6 : lerp(-6, -5.6, mv);
+  const bob = sad ? 0 : Math.abs(Math.sin(t * 3.2)) * 0.25;
+  hero.position.set(hx, lerp(4.6, 1.8, atDesk ? 0 : mv) + jumpY + bob - (sad ? 0.6 : 0), hz); hero.scale.set(6, 9 * (sad ? 0.94 : 1), 1); blob.position.set(hx, 0.05, hz); blob.scale.setScalar(2.6 - jumpY * 0.3);
+  // checklist cards
+  CARDS.forEach((c, i) => { const ts = [T.c1, T.c2, T.c3][i], k = t >= ts ? spring(t - ts, 0.45, 16) : 0, out = 1 - sstep(T.fly - 0.2, T.fly + 0.3, t);
+    c.material.opacity = clamp(k * 1.5, 0, 1) * out; c.scale.set(5.2 * (0.3 + 0.7 * k), 1.62 * (0.3 + 0.7 * k), 1); });
+  DALLAH.rotation.y = t >= T.c1 ? OM.ring(t - T.c1, 6, 18) * 0.25 : 0;
+  drawScreen(t); drawCalendar(t);
+  const c = camAt(t); CAM.position.set(...c.p); CAM.lookAt(...c.l); CAM.fov = c.f; CAM.updateProjectionMatrix();
+  R.render(S, CAM);
+  // 2D layer
+  g.setTransform(DPR, 0, 0, DPR, 0, 0); g.clearRect(0, 0, W, H);
+  const v = g.createRadialGradient(W / 2, H / 2, 380, W / 2, H / 2, 1150); v.addColorStop(0, 'rgba(10,5,14,0)'); v.addColorStop(1, 'rgba(10,5,14,.55)'); g.fillStyle = v; g.fillRect(0, 0, W, H);
+  drawCaption(t); drawTitle(t);
+  dissolve(t, T.dis1); dissolve(t, T.dis2); dissolve(t, T.end, 0.9);
+  if (t > T.end) { g.fillStyle = `rgba(18,10,24,${clamp((t - T.end) / 0.45, 0, 1)})`; g.fillRect(0, 0, W, H); }
+  return true;
+}
+function events() {
+  const E = [[T.q, 'q'], [T.dis1, 'dissolve'], [T.stamp1, 'stamp'], [T.stamp2, 'stamp'], [T.dis2, 'dissolve'], [T.jump, 'jump'], [T.whip, 'whip'], [T.c1, 'tick'], [T.c2, 'tick'], [T.c3, 'tick'], [T.fly, 'fly'], [T.title, 'title'], [wordT('l7', 4, L('l7') + 1.2), 'hit'], [T.end, 'dissolve']];
+  for (const k of Object.keys(VO.lines)) captionWords(k).forEach(([ts], i) => EMPH[k].includes(i) && E.push([ts, 'word']));
+  return E.sort((a, b) => a[0] - b[0]);
+}
+function finalize() {
+  T.stamp1 = wordT('l3', 1, L('l3') + 0.5); T.stamp2 = wordT('l3', 4, L('l3') + 1.9);
+  T.c1 = wordT('l6', 0, L('l6') + 0.05); T.c2 = wordT('l6', 1, L('l6') + 0.8); T.c3 = wordT('l6', 2, L('l6') + 1.5);
+  keys();
+}
+window.__meta = { dur: DUR, fps: 30 };
+window.__seek = async t => seek(t);
+window.__events = () => events();
+window.__ready = document.fonts.load(F(40)).then(() => document.fonts.load(FZ(40))).then(() => document.fonts.ready).then(() => { finalize(); seek(0); return true; });
+const q = new URLSearchParams(location.search);
+if (q.has('t')) window.__ready.then(() => seek(parseFloat(q.get('t'))));
+</script></body></html>
