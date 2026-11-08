@@ -45,4 +45,4 @@
 - Use `prep_text.py --dialect gulf` (numbers in spoken Gulf form: «خمسة وعشرين»، «مية») with `--tashkeel none`.
 
 ## User notes (add his corrections here)
-- (empty)
+- Nov 2026: of the local takes he preferred standard spelling, but said it **has no Bahraini accent and sounds AI**. Local engines cannot fix this (no open Bahraini model or data). Order of solutions for Bahraini: (1) his own recording of the lines (cleaned with `on-demand.sh denoise`, cut and synced by us); (2) ElevenLabs with his cloned voice, with his consent; (3) local only as a draft, with a 30–60 s real Bahraini recording of him as the reference instead of the ElevenLabs-made bank.

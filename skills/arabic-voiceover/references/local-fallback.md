@@ -10,7 +10,7 @@ Install (CPU, ~2 GB + ~3 GB weights): `bash <repo>/installers/on-demand.sh tts` 
 | CER without tashkeel | 13.6% | 9.3% |
 | Raw take length (tail mumbling) | 7.9 s | 4.1 s |
 | Generation time per line | 47 s | 27 s |
-V3 nearly removes the mumbling after the sentence and is ~40% faster. Keep generating 2 takes per line and let `assemble_vo.py` pick.
+**User's choice by ear (Nov 2026): MSA = V2 (default `from_pretrained(device='cpu')`) + waqf tashkeel.** Use V3 only when speed matters: it nearly removes the mumbling after the sentence and is ~40% faster. Keep generating 2 takes per line and let `assemble_vo.py` pick.
 Known weakness in both: ج sometimes comes out like ش without tashkeel («فاشتهد»); full waqf tashkeel fixed it in our test. ض/ظ cannot be judged by Whisper (it confuses them itself).
 
 Settings that worked (Arabic, the user's voice):
