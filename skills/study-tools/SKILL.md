@@ -12,7 +12,20 @@ description: أدوات سجاد المحلية للعمل الجامعي وال
 ## البحث عن مصادر
 - `paper-search search "<query>" -s crossref,openalex,semantic -n 10` (JSON). تنزيل: `paper-search download <source> <id> -o ./papers`.
 - لا تستخدم مصدر sci-hub. تحقّق من كل مرجع (DOI، السنة، المؤلف) قبل كتابته؛ لا تخترع مراجع.
-- أبحاث التربية: ابدأ بـ crossref وopenalex وsemantic وdoaj وeric إن توفر.
+- أبحاث التربية: ابدأ بـ **ERIC** (أكبر قاعدة بحوث تربوية، مجانية بلا مفتاح، مع مرجع APA جاهز):
+  `python3 <المستودع>/tools/eric_search.py "phonological awareness first grade" --n 10 --since 2016 --peer` (`--full` للملخص كاملاً، `--json`).
+  ثم crossref (يعمل بلا مفتاح). **openalex وsemantic يعطيان 429 من الحاوية** (حصة بلا مفتاح مشتركة ونافدة): يحلّها مفتاح OpenAlex مجاني (`OPENALEX_API_KEY` في أسرار البيئة) أو موصل OpenAlex الرسمي `https://mcp.openalex.org/mcp` يضيفه سجاد في claude.ai.
+- **قبل التسليم:** مهارة `citation-verification` تفحص كل مرجع (يكشف DOI مختلقاً أو لبحث آخر). `apa7` للتنسيق، و`reference-manager-interop` لتحويل BibTeX/RIS/CSL-JSON (Zotero، Mendeley).
+- مراجعة أدبيات منهجية: `systematic-review-prisma` (سلسلة بحث، حذف التكرار، مخطط PRISMA).
+
+## الكتابة العربية والتعلم (مهارات مركّبة)
+- `arabic-academic-skill` (بحث، IMRaD، مراجعة أدبيات، ملخص، توثيق). مثاله في APA يذكر مدينة الناشر (APA 6): اتبع APA 7 و`profile/study-guide.md`.
+- `arabic-editing-skill` (تقرير تحرير بطبقات يحفظ صوت الكاتب)، `arabic-grammar-skill` (تصحيح نحوي وإعراب بجدول)، `arabic-children-story-skill` (حكايات وأناشيد حسب العمر).
+- بطاقات مراجعة: `anki-flashcards` تنتج `.apkg` يفتح في Anki على الجوال/الحاسوب (شغّل سكربتها بـ`--no-import`؛ genanki مركّب).
+- مذاكرته: `retrieve-first-gate` (استرجع قبل الشرح)، `teach-back-evaluator` (اشرح لي وأسألك)، `confidence-calibration-check`.
+- التأمل والبحث الإجرائي: `reflective-practice-prompt-generator`، `experiential-learning-cycle-designer` (Kolb)، `teacher-inquiry-cycle-designer`، `lesson-study-cycle-designer`، `lesson-observation-protocol-designer`. نموذج Gibbs في `profile/study-guide.md` §16.
+- رياضيات الصفوف الأولى: `cpa-sequence-designer` (محسوس ← صوري ← مجرد). نصوص القراءة: `text-complexity-analyser` مع BAREC أدناه.
+- أوراق عمل وشهادات وبوسترات PDF بالعربي: `bash installers/on-demand.sh typst` ثم مهارة `typst` (`~/tools/bin/typst compile x.typ --font-path ~/.local/share/fonts/arabic`).
 
 ## APA 7
 - اكتب Markdown مع `[@key]` وملف `.bib`، ثم:
@@ -54,6 +67,8 @@ chrome-devtools (متصفح حقيقي لفحص المواقع والألعاب)
 | `acestep` | توليد موسيقى حقيقية | `~/tools/ACE-Step-1.5` (اقرأ README) | ~15GB |
 | `arabic` | تشكيل + مستوى القراءة | انظر القسم أعلاه | ~1.5GB |
 | `edittools` | قص تلقائي، كشف مشاهد، كابشن ASS، جهارة، تصدير لـ Premiere/Resolve، تتبع الوجه لـ9:16 | `~/tools/bin/auto-editor`، `scenedetect`، `ffmpeg-normalize`، `python3 -c 'import pysubs2, opentimelineio'`، `~/tools/models/face_detection_yunet_2023mar.onnx` | ~0.1GB |
+| `typst` | أوراق عمل وشهادات وبوسترات PDF عربية | `~/tools/bin/typst compile in.typ out.pdf --font-path ~/.local/share/fonts/arabic` + مهارة typst | ~0.05GB |
+| `denoise` | إزالة ضوضاء تسجيل صوتي (DeepFilterNet) | `~/tools/bin/deep-filter -o out/ in.wav` + مهارة media-denoise-ai | ~0.04GB |
 | `careerops` | بحث عن وظائف وسيرة ذاتية | `~/tools/career-ops` (افتح Claude داخله؛ بيانات شخصية، لا ترفعه) | ~0.3GB |
 
 المساحة محدودة في الحاوية (~8GB حرة في جلسة نموذجية): لا تركّب qari وhabibi وacestep معاً. نظّف قبلها: `rm -rf ~/.cache/pip ~/.cache/uv` وحذف أدوات غير مطلوبة من `~/tools`.

@@ -116,7 +116,7 @@
 | Habibi-TTS | SWivid/Habibi-TTS | كود MIT؛ نماذج SAU/UAE غير تجارية | السكربت جاهز؛ لم يُختبر (~6GB) |
 | ACE-Step 1.5 | ace-step/ACE-Step-1.5 | MIT | السكربت جاهز؛ لم يُختبر (~15GB) |
 
-**لم تُركّب:** Anki MCP وZotero MCP (يحتاجان تطبيقات على جهازك، لا تعمل في الحاوية السحابية).
+**لم تُركّب:** Anki MCP (يحتاج تطبيق Anki على جهازك؛ البديل المركّب: مهارة anki-flashcards تنتج `.apkg`). zotero-mcp (54yyyu، MIT) يعمل من الحاوية بوضع Web API لو استخدمت Zotero: يحتاج مفتاح API ورقم المكتبة كأسرار بيئة.
 
 ## تحديث HyperFrames (نوفمبر 2026)
 - commit `555c788`: استبدال المهارات القديمة + مهارات «العقيدة» من `.claude/skills` (motion-doctrine، seam-craft، cut-the-curve، captions-overlay، oversized-cursor). لم يُضف changelog-video (خاص بمنتجهم وفيه خطوط تجارية).
@@ -207,3 +207,16 @@
 **عند الطلب لاحقاً (لم تُركّب):** Supabase skill (W011 منخفض)، web-quality-audit (تداخل)، media-demucs (torch ~1GB)، Audar-TTS-V1-Flash (خليجي، يحتاج توكن HF لـNeuCodec)، NAMAA-Saudi-TTS (MIT، 2.1GB)، كاشف الفونيمات wav2vec2-arabic-phoneme-asr (لفحص المخارج، 1.26GB)، قاعدة CAMeL الخليجية، Sawtak Arabi (لهجة بحرينية، API مدفوع: بموافقته فقط).
 **مرجع فقط:** cc-blender-skill (لخادم Blender MCP، وAPI قديم للضبابية)، emilkowalski choreograph (قواعد التتابع؛ أُخذت في motion-craft §7أ).
 **مرفوضة:** openmontage (AGPL)، remotion skills (فشل Gen، ومنظومتنا HyperFrames)، LYGIA (غير تجاري)، Theatre.js (متوقف 2024)، flubber (2019)، RIFE (torch/Vulkan؛ الرسوم ترندر 60fps مباشرة)، shadertoy من terma (CC BY-SA)، deploy-to-vercel (ينشر علناً بـ`-y`)، firebase (`@latest` + Socket Warn)، voice-isolator (يرسل الصوت لـElevenLabs)، Fish/Higgs/Voxtral/OmniVoice TTS (غير تجارية)، mkhlab tashkeel (يرسل النص لخوادم خارجية)، mkhlab saudi-tts (حزمة غير موجودة)، lahja (بحريني ضعيف).
+
+### الدراسة والبحث الأكاديمي (الجولة الثالثة، `install-teacher-toolkit.sh` §8)
+| المهارة | المصدر (commit) | الرخصة | ملاحظة |
+|---|---|---|---|
+| citation-verification، apa7، reference-manager-interop، systematic-review-prisma | kalarislabs/research-agent-skills (29fe36d) | MIT | مكتبة قياسية فقط؛ جُرّب كشف DOI مختلق |
+| arabic-academic-skill، arabic-editing-skill، arabic-grammar-skill، arabic-children-story-skill | specailm5 (3794abd، 6c276ba، 9b61efd، a300b7b) | MIT | نصوص فقط؛ تدقيقات Pass×3 |
+| anki-flashcards (+ genanki 0.13.1) | Dooc-Nuken/teaching-skills (a3c86e2) | MIT | جُرّب: مجموعة عربية تُستورد في Anki |
+| 11 مهارة مفعّلة من مكتبة المعلم الموجودة (تأمل، بحث إجرائي، دراسة الدرس، CPA، تعقيد النص، روبرك النقطة الواحدة، مهارات مذاكرة الطالب) | GarethManning/education-agent-skills (135d627) | CC BY-SA 4.0 | |
+| `tools/eric_search.py` | خاص بي (ERIC API، بلا مفتاح) | — | مرجع APA 7 لكل نتيجة |
+
+**عند الطلب:** h5p-author (أنشطة H5P لـMoodle؛ ثبّت `h5p-author@0.4.0` لا `@latest`)، statistical-analysis من k-dense-ai (pingouin؛ إحصاء البحث الإجرائي)، k12-teacher-skills من Anthropic (المجلدات فقط، دون `.mcp.json` بخوادمه التسعة)، doi-mcp (`#v7.0.0`)، interview-prep (لم يُقرأ بعد).
+**مفاتيح مقترحة (أسرار البيئة، مجانية):** `OPENALEX_API_KEY` يصلح openalex في paper-search (يعطي 429 بلا مفتاح من الحاوية). Semantic Scholar اختياري.
+**مرفوضة:** humanize-academic-writing (غرضه تجاوز كواشف الذكاء الاصطناعي)، reading-teacher وkids-book-writer (إنجليزي فقط)، anki-markdown (يحتاج AnkiConnect)، flashcards/study-plan من claude-for-legal (لامتحان المحاماة)، qualitative-research (3KB).
