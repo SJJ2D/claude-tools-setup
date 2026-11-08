@@ -177,3 +177,33 @@
 
 **فحص الفجوات (جولة ثانية):** بحثت عن three.js، بكسل آرت، الصور المصغّرة، النص المتحرك، Lottie، الإنفوجرافيك، Voxel، فن الألعاب، إعادة التأطير العمودي، وأضفت ما سبق. لم أضف: مهارات Voxel/فن الألعاب (تثبيتات قليلة جداً أو تعتمد Blender/منصات)، layer-pixel-art (منصة Layer)، صور مصغّرة عبر Higgsfield/muapi (خدمات مدفوعة)، baoyu-infographic (صور نقطية تحتاج مولّد صور)، k2f (تحذيرات أمان ولم يُختبر بالعربي)، web-typography (تكرار)، fcp-xml (للبريمير فقط)، ffsubsync (لا يُبنى هنا).
 **مرفوضة:** cinetic (19MB، تحذير Socket)، take-one (روابط تسويق)، motion-director من baoyu (يعتمد مادة بلا رخصة)، web-design-guidelines من Vercel (يجلب قواعده من الشبكة كل تشغيل)، logo-generator/guizang (بلا رخصة)، claude-shorts (torch وmediapipe)، cut-as-code (160MB وخدمة دائمة)، earshot (يعتمد Freesound وtorch)، حزمة media-os كاملة (hooks على كل أمر).
+
+## الجولة الثالثة (نوفمبر 2026): موشن بكل أنواعه، 3D، تصميم، برمجة، مونتاج، صوت عربي
+أربعة باحثين + `npx skills find` (~200 بحث). كل مهارة: قراءة SKILL.md والسكربتات، تدقيقات skills.sh، الرخصة، commit مثبّت. في `install-craft-skills.sh` (أقسام 2ب و2ج) و`on-demand.sh`.
+
+| المجال | المهارات | المصدر (commit) | الرخصة |
+|---|---|---|---|
+| **موشن حتمي** | threejs-scene-composition، gsap-animation-composition، manim-explainer-animation، procedural-canvas-animation، lottie-animation-delivery، audio-reactive-video-composition، 2d-character-rig-animation | calesthio/generative-media-skills (8c85352) | MIT |
+| | logo-animation، after-effects، color-motion (OKLCH) | iart-ai/motion-design-skills (3c129f7) | MIT (فيها روابط تسويقية) |
+| | gsap-core، -timeline، -plugins، -utils، -performance (الرسمية، ~80 ألف تثبيت) | greensock/gsap-skills (aed9cfd) | MIT |
+| | gl-transitions + حزمة `gl-transitions@3.0.0` في `~/tools/js` (125 انتقال GLSL) | gl-transitions/gl-transitions (531feb8) | MIT |
+| | shader-dev (36 تقنية GLSL) | minimax-ai/skills (60aaae5) | MIT (الأصول ShaderToy غير منسوبة) |
+| | particle-system، shader-glsl | iart-ai/webgl-animation-skills (50697d6) | MIT |
+| | text-to-lottie (+ملاحظة محلية: لا `npx degit`؛ Snyk Warn بسببه) | diffusionstudio/lottie (3c72912) | MIT |
+| | manimce-best-practices | adithya-s-k/manim_skill (cef0450) | MIT |
+| | webgpu-threejs-tsl (بلا GPU يرجع لـWebGL2) | dgreenheck/webgpu-claude-skill (af2319b) | MIT (README) |
+| **تصميم** | logo-design (بلا مكتبة شعارات العلامات التجارية 14MB؛ PNG عبر cairosvg لأن Chrome يعلق) | kaankiziltug/logo-design-skill (bbf31e5) | MIT |
+| | canva، design-and-templates (مع Canva MCP المتصل) | social-media-skills/skills (f28cef2) | MIT |
+| **برمجة** | react-best-practices (Vercel، 880 ألف تثبيت) | vercel-labs/agent-skills (1a2c79d) | MIT |
+| | pygame-core، create-game-assets | gamedev-skills/awesome-gamedev-agent-skills (19d93f9) | Apache-2.0 |
+| | pwa-development (تطبيقات صف بلا إنترنت) | alinaqi/maggy (55aabe2) | MIT |
+| | jupyter-notebook | openai/skills (49f948f) | Apache-2.0 |
+| **عند الطلب** | `on-demand.sh typst`: Typst 0.15.1 (sha256 مثبّت) + مهارة typst (بوسترات وشهادات وأوراق عمل PDF؛ العربي سليم) | typst/typst، lucifer1004/claude-skill-typst (4f98454) | Apache-2.0 / MIT |
+| | `on-demand.sh denoise`: DeepFilterNet 0.5.6 (sha256 مثبّت) + media-denoise-ai | Rikorose/DeepFilterNet، damionrashford/media-os (5014c1e) | MIT/Apache |
+| | svgo: `npx -y svgo@4.1.0` | npm | MIT |
+| **صوت عربي** | `skills/arabic-voiceover/scripts/prep_text.py` (تطبيع، أرقام→كلمات، أنماط تشكيل keep/none/light/inner/waqf/full، مراجعة بـCATT، وقفات حسب الترقيم) و`assemble_vo.py` (أفضل لقطة بالـCER، قص الذيل، الوقفات بالضبط، توقيت الكلمات) | خاص بي | — |
+| | أوزان Chatterbox Multilingual V3 (`t3_mtl23ls_v3`) قيد التجربة | resemble-ai/chatterbox (ab55923) | MIT |
+
+**عند الطلب لاحقاً (لم تُركّب):** Supabase skill (W011 منخفض)، web-quality-audit (تداخل)، media-demucs (torch ~1GB)، Audar-TTS-V1-Flash (خليجي، يحتاج توكن HF لـNeuCodec)، NAMAA-Saudi-TTS (MIT، 2.1GB)، كاشف الفونيمات wav2vec2-arabic-phoneme-asr (لفحص المخارج، 1.26GB)، قاعدة CAMeL الخليجية، Sawtak Arabi (لهجة بحرينية، API مدفوع: بموافقته فقط).
+**مرجع فقط:** cc-blender-skill (لخادم Blender MCP، وAPI قديم للضبابية)، emilkowalski choreograph (قواعد التتابع؛ أُخذت في motion-craft §7أ).
+**مرفوضة:** openmontage (AGPL)، remotion skills (فشل Gen، ومنظومتنا HyperFrames)، LYGIA (غير تجاري)، Theatre.js (متوقف 2024)، flubber (2019)، RIFE (torch/Vulkan؛ الرسوم ترندر 60fps مباشرة)، shadertoy من terma (CC BY-SA)، deploy-to-vercel (ينشر علناً بـ`-y`)، firebase (`@latest` + Socket Warn)، voice-isolator (يرسل الصوت لـElevenLabs)، Fish/Higgs/Voxtral/OmniVoice TTS (غير تجارية)، mkhlab tashkeel (يرسل النص لخوادم خارجية)، mkhlab saudi-tts (حزمة غير موجودة)، lahja (بحريني ضعيف).

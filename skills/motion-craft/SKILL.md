@@ -64,6 +64,39 @@ description: قواعد جودة لأي فيديو أو رسوم متحركة أ
 - خطوط مثبتة عندي: `~/.local/share/fonts/arabic` (Readex Pro وAlmarai وCairo وTajawal وBaloo Bhaijaan 2 للأطفال).
 - النص الفصيح للتعليق، واللهجة البحرينية فقط في المونتاجات الترفيهية عند الطلب.
 
+## 7أ) السلاسة: أرقام لا تُترك للذوق
+| البند | القاعدة |
+|---|---|
+| ضبابية الحركة | غالق 180° افتراضياً: onetake `--shutter 180`؛ HyperFrames `data-motion-blur="on"`؛ أي HTML آخر قابل للـseek: رندر 240fps ثم `ffmpeg -vf "tmix=frames=2,select='not(mod(n\,4))',setpts=N/60/TB" -r 60` (يدمج 2 من كل 4 إطارات؛ جُرّب هنا). لا `filter: blur()` بديلاً عنها |
+| حد السرعة | > 80px للإطار بلا ضبابية = تقطيع (strobing). الحركة السريعة 0.3–0.6ث، وضبابيتها في أسرع إطار: 6–12px للنص و15–20px للإطار كله |
+| منحنى لكل فعل | دخول `cubic-bezier(.16,1,.3,1)`، خروج `(.7,0,.84,0)`، تنقّل داخل الإطار `(.65,0,.35,1)`، ارتداد مرح `(.34,1.56,.64,1)`، الحلقات والآلات خطي فقط |
+| الخروج والمسافة | الخروج 65–75% من زمن الدخول. الزمن يكبر مع المسافة: 100px ×1، 400px ×1.6، عرض الشاشة ×1.8–2 |
+| تسارع غير متماثل | 80–90% من التأثير على جهة التباطؤ (Easy Ease المتماثل 33% يبدو آلياً) |
+| التتابع (stagger) | غير متساوٍ: العنصر القائد يقطع أطول مسافة والفواصل تقصر تدريجياً. لا تحرّك الحاوية وتتابع أبناءها معاً |
+| النوابض | onetake `OM.spring` (ζ≈0.6، ω≈20) واحسب زمن الاستقرار قبل الضربة التالية. squash يحفظ الحجم (~[1.2, 0.8]) |
+| الحتمية | كل قيمة من `t = frame/fps`. المحاكاة (جزيئات، فيزياء) تعيد خطوة ثابتة من بذرة (mulberry32) حتى t، ولا تجمع فروق الإطارات |
+| اللون المتحرك | الاستيفاء في OKLCH (ثبّت L وC وأدر الدرجة) لتجنّب المنتصف الرمادي، مع قاعدة `__lum` للتعريض |
+| انتقالات GLSL | من `~/tools/js/node_modules/gl-transitions` (125 انتقالاً). عيّن كل uniform لقيمته الافتراضية، وافحص progress 0 و0.5 و1 (الطرفان = الصورتان؛ المقلوب = صفوف معكوسة) |
+| Lottie (60fps) | تفاعل صغير 12–30 إطاراً، أيقونة حالة 30–75، شعار 45–120 |
+| الإطار النهائي | المسودات 30fps، والنهائي 60fps مرندر مباشرة (لا استيفاء إطارات للرسوم البرمجية؛ `minterpolate` للتصوير الحقيقي فقط) |
+
+## 7ب) أي مهارة لأي نوع حركة
+| النوع | المهارات |
+|---|---|
+| إعلان منتج / UI | onetake، hyperframes (+ السجل 210 بلوك في `~/tools/hyperframes-registry`)، gsap-core/timeline/plugins، gsap-animation-composition |
+| نصوص حركية | kinetic-typography، gsap-plugins (SplitText للاتيني فقط)، قاعدة العربي §3 |
+| شعار / ستينغر | logo-animation، logo-design (التصميم)، text-to-lottie |
+| 3D | threejs-scene-composition (رندر حتمي)، threejs-*، webgpu-threejs-tsl، img2threejs |
+| شيدر ومؤثرات | shader-dev (36 تقنية)، shader-glsl، particle-system، procedural-canvas-animation |
+| انتقالات | gl-transitions، cut-the-curve، seam-craft، ffmpeg `xfade` (59 انتقالاً جاهزاً) |
+| شرح تعليمي / رياضيات | manim-explainer-animation + manimce-best-practices (`on-demand.sh manim`)، educational-animation-production، whiteboard-animation، diagram-animation |
+| إنفوجرافيك وبيانات | animated-infographic، antv-infographic، dataviz |
+| شخصيات 2D | 2d-character-rig-animation، character-design-continuity، pixel-art-sprites |
+| حركة على الموسيقى | audio-reactive-video-composition، beat-sync-editing |
+| لون وتصحيح | color-motion، color-grading-finishing، ffmpeg-lut-grade |
+| After Effects (إن طلبه) | after-effects (تعابير، تصدير، أداء) |
+التنوّع: قبل كل فيديو اختر من الجدول نوعين على الأقل لم تُستخدم في الفيديو السابق (مثلاً انتقال GLSL + جزيئات)، وثبّت لوحة لون وخطّين ومنحنيات الجدول أعلاه للفيديو كله حتى يبقى متناسقاً.
+
 ## 8) الصوت المصاحب
 - **مؤثرات مسجّلة أولاً:** `python3 <المستودع>/tools/sfx_fetch.py search whoosh|impact|ui|riser|foley ...` ثم `get` (مكتبة alvana-audio، CC0 غالباً)، ومهارة `sound-effects` لتمرير الصوت والمزج. التوليد بالكود (sfx_palette) احتياط فقط.
 - مؤثرات قليلة تتبع أحداث المشهد (`window.__events()`) وفي غرفة واحدة (صدى واحد)، لا نغمة لكل حدث. خلفية هادئة تنخفض تحت الصوت (sidechain).

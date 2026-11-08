@@ -80,11 +80,32 @@ edittools(){ need_gb 1 || return; mkdir -p "$T/bin" "$T/models"
   [ -s "$T/models/face_detection_yunet_2023mar.onnx" ] || curl -fsSL -o "$T/models/face_detection_yunet_2023mar.onnx" https://huggingface.co/opencv/face_detection_yunet/resolve/main/face_detection_yunet_2023mar.onnx
   "$AE" --version >/dev/null 2>&1 && ok "edittools: $AE، pysubs2، ffmpeg-normalize، scenedetect، OTIO، YuNet ($T/models)"; }
 
-ALL="rembg upscale manim blender docling camel qari habibi acestep careerops edittools"
+getbin(){ # $1=المسار $2=sha256 $3=الرابط: تنزيل ثنائي والتحقق من بصمته
+  [ -s "$1" ] && return 0; curl -fsSL -o "$1.tmp" "$3" && [ "$(sha256sum "$1.tmp" | cut -d' ' -f1)" = "$2" ] && mv "$1.tmp" "$1" || { rm -f "$1.tmp"; return 1; }; }
+
+# Typst 0.15.1 (Apache-2.0): بوسترات وشهادات وأوراق عمل PDF بالعربي (جُرّب: الوصل وRTL والجداول سليمة) + مهارة typst (MIT)
+typst(){ need_gb 1 || return; mkdir -p "$T/bin"; local A="$T/typst-0.15.1.tar.xz"
+  getbin "$A" a6d077d0a95eed5a2eba715b2dae06be954f624ccbf85758a03f389ded33118c https://github.com/typst/typst/releases/download/v0.15.1/typst-x86_64-unknown-linux-musl.tar.xz \
+    && tar -xJf "$A" -C "$T" && ln -sf "$T/typst-x86_64-unknown-linux-musl/typst" "$T/bin/typst" && rm -f "$A" || { bad "typst (البصمة)"; return; }
+  local S="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/typst" W; W=$(mktemp -d)
+  [ -e "$S" ] || { git clone -q --filter=blob:none --no-checkout https://github.com/lucifer1004/claude-skill-typst "$W/t" && git -C "$W/t" sparse-checkout set --no-cone '/skills/typst/' '!/skills/typst/data/' \
+    && git -C "$W/t" checkout -q 4f984548fe9d375aaea42bbd2b5cc5b92a38bc13 && cp -R "$W/t/skills/typst" "$S"; }; rm -rf "$W"
+  "$T/bin/typst" --version >/dev/null 2>&1 && ok "Typst: $T/bin/typst compile in.typ out.pdf --font-path ~/.local/share/fonts/arabic (مهارة typst بلا فهرس data/)"; }
+
+# DeepFilterNet 0.5.6 (MIT/Apache): إزالة ضوضاء الكلام بالذكاء الاصطناعي على CPU (جُرّب: 8ث في 4ث، SNR 15→18.7dB). تستخدمه مهارة media-denoise-ai
+denoise(){ need_gb 1 || return; mkdir -p "$T/bin"
+  getbin "$T/bin/deep-filter" 70775e251eee44c0f2451a1e833326cf8bcbbe304d3e7cd12851e6fce72ef7da https://github.com/Rikorose/DeepFilterNet/releases/download/v0.5.6/deep-filter-0.5.6-x86_64-unknown-linux-musl \
+    && chmod +x "$T/bin/deep-filter" || { bad "deep-filter (البصمة)"; return; }
+  local S="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/media-denoise-ai" W; W=$(mktemp -d)
+  [ -e "$S" ] || { git clone -q --filter=blob:none --no-checkout https://github.com/damionrashford/media-os "$W/m" && git -C "$W/m" sparse-checkout set --no-cone '/skills/media-denoise-ai/' \
+    && git -C "$W/m" checkout -q 5014c1e8b23fd3e18d49926d9aa147d15a3aa08e && cp -R "$W/m/skills/media-denoise-ai" "$S"; }; rm -rf "$W"
+  ok "DeepFilterNet: $T/bin/deep-filter -o outdir in.wav (48kHz). المهارة: media-denoise-ai"; }
+
+ALL="rembg upscale manim blender docling camel qari habibi acestep careerops edittools typst denoise"
 [ $# -eq 0 ] && set -- list
 for t in "$@"; do case "$t" in
   list) echo "الأدوات: $ALL"; for x in $ALL; do printf '  %-8s' "$x"; done; echo;;
-  rembg|upscale|manim|blender|docling|camel|qari|habibi|acestep|careerops|edittools) "$t";;
+  rembg|upscale|manim|blender|docling|camel|qari|habibi|acestep|careerops|edittools|typst|denoise) "$t";;
   arabic) bash "$HERE/installers/arabic-nlp.sh" || RC=1;;
   *) bad "أداة غير معروفة: $t";;
 esac; done

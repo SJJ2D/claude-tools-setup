@@ -30,11 +30,16 @@ take calesthio/generative-media-skills 8c85352d5d75d4dcbe58480bd138e37b9742bab1 
   $CAL/creative-direction/cinematic-shot-direction $CAL/content-formats/educational-animation-production \
   $CAL/post-production/color-grading-finishing $CAL/post-production/editing-montage \
   $CAL/creative-direction/performance-direction $CAL/creative-direction/character-design-continuity \
-  $CAL/audio-craft/sound-design-foley $CAL/audio-craft/audio-mixing-mastering $CAL/audio-craft/music-supervision-scoring   # الأخيرة الثلاث تخص الصوت (منهجية فقط)
-take iart-ai/motion-design-skills 3c129f769d90a1328c209c386492333c9ac62312 skills/motion-art-direction skills/shot-composition skills/beat-sync-editing   # beat-sync-editing يخص المونتاج
+  $CAL/audio-craft/sound-design-foley $CAL/audio-craft/audio-mixing-mastering $CAL/audio-craft/music-supervision-scoring \
+  $CAL/runtime-assembly/threejs-scene-composition $CAL/runtime-assembly/gsap-animation-composition $CAL/runtime-assembly/manim-explainer-animation \
+  $CAL/runtime-assembly/procedural-canvas-animation $CAL/runtime-assembly/lottie-animation-delivery $CAL/runtime-assembly/audio-reactive-video-composition \
+  $CAL/creative-direction/2d-character-rig-animation   # الصوت: منهجية فقط. runtime-assembly: رندر حتمي إطاراً بإطار (قسم الحركة)
+take iart-ai/motion-design-skills 3c129f769d90a1328c209c386492333c9ac62312 skills/motion-art-direction skills/shot-composition skills/beat-sync-editing \
+  skills/logo-animation skills/after-effects skills/color-motion   # beat-sync للمونتاج؛ الثلاث الأخيرة للحركة (فيها روابط تسويقية لـiart.ai: تجاهلها)
 take iart-ai/freelance-motion-skills d85c2b484693d0387333c778d9c95230fa1856ce skills/creative-brief
 take jtydhr88/screenwriting-skills 51115f18d160aa8b2ac5813e4432b6f0b425358f plugins/screenwriting/skills/sw-sitcom-comedy plugins/screenwriting/skills/sw-scene-craft
-take social-media-skills/skills f28cef2b7067ec64e79c9d85421c022c06659e03 skills/scripting-and-storyboarding skills/thumbnail-design skills/infographic-and-data-viz   # الأخيرتان: صور مصغّرة وإنفوجرافيك (تصميم)
+take social-media-skills/skills f28cef2b7067ec64e79c9d85421c022c06659e03 skills/scripting-and-storyboarding skills/thumbnail-design skills/infographic-and-data-viz \
+  skills/canva skills/design-and-templates   # الأخيرتان: صور مصغّرة وإنفوجرافيك (تصميم)
 
 # ───────── 2) التصميم ─────────
 # color-expert: CC BY 4.0 (النص الأصلي)، وملفات references لأصحابها (THIRD_PARTY_NOTICES). معرفة ألوان عميقة (OKLCH، تباين APCA/WCAG، طباعة/شاشة).
@@ -53,6 +58,32 @@ take iart-ai/kinetic-typography-skills fccc94bd325d824235ee9e715e65abde57b6513a 
 take iart-ai/data-animation-skills 8ce2709c3992490251e8a991535b1945f01c6865 skills/animated-infographic                       # MIT: إنفوجرافيك متحرك
 take antvis/chart-visualization-skills a105fa12a9fa41fccccc2eba7f4b34973628f5d3 skills/antv-infographic                      # MIT، AntV: إنفوجرافيك (ثبّت إصدار المكتبة بدل @latest)
 take omer-metin/skills-for-antigravity e8dcf4e8737921a10088bd5c9eb65e81f74c051f skills/pixel-art skills/pixel-art-sprites      # Apache-2.0: بكسل آرت وسبرايتس (لشخصياتنا البكسلية)
+
+# ───────── 2ب) الحركة والشيدر والـ3D (الجولة الثالثة، نوفمبر 2026) ─────────
+take greensock/gsap-skills aed9cfd3277740755f6bfc1155c7aa645403b760 skills/gsap-core skills/gsap-timeline skills/gsap-plugins skills/gsap-utils skills/gsap-performance   # MIT، GSAP الرسمية (CustomEase، MorphSVG، SplitText...)
+take gl-transitions/gl-transitions 531feb85ade7d7402d8636f6331adcd1663a4616 skills/gl-transitions   # MIT: ~125 انتقال GLSL؛ استخدم الحزمة المحلية (أدناه) لا روابط @2
+take minimax-ai/skills 60aaae52bb2af8162732751a4332f62a5fef518b skills/shader-dev                  # MIT: 36 تقنية GLSL (raymarching، ضوضاء، سوائل، جزيئات)
+take iart-ai/webgl-animation-skills 50697d659fbf70152f48f9f8aadf1efe78bbdde1 skills/particle-system skills/shader-glsl   # MIT: جزيئات حتمية ببذرة + seek
+take diffusionstudio/lottie 3c72912fad543897f90045ed4d355813837927fc skills/text-to-lottie          # MIT: كتابة Lottie JSON (لا تشغّل npx degit غير المثبّت؛ انظر الملاحظة المحلية)
+take adithya-s-k/manim_skill cef045011722d285692e3381d12d4d637da56e18 skills/manimce-best-practices # MIT: Manim CE (الأداة: on-demand.sh manim)
+take dgreenheck/webgpu-claude-skill af2319bd01bb7cc881267a9ef42cafdaf5e9029d skills/webgpu-threejs-tsl # MIT (README): TSL وجزيئات compute؛ في الرندر بلا GPU يرجع لـWebGL2
+# ملاحظات محلية تُلحق بالمهارات (مرة واحدة)
+note(){ local f="$SKILLS/$1/SKILL.md"; [ -f "$f" ] && ! grep -q 'سياسة محلية' "$f" && printf '\n\n## سياسة محلية (claude-tools-setup)\n%s\n' "$2" >> "$f"; }
+note gl-transitions "الحزمة مثبّتة محلياً: ~/tools/js/node_modules/gl-transitions (الإصدار 3.0.0). حمّل GLSL منها بدل روابط jsDelivr @2 (الإصدار 3 حذف 12 اسماً). عيّن كل uniform لقيمته الافتراضية، وافحص الإطار عند progress 0 و0.5 و1."
+note text-to-lottie "لا تشغّل npx degit (غير مثبّت الإصدار). للمعاينة: HyperFrames يشغّل Lottie، أو lottie-web من ~/tools/js. لا ترفع ملفات المستخدم لأي خدمة."
+[ -d "$HOME/tools/js/node_modules/gl-transitions" ] || npm i -s --no-audit --no-fund --prefix "$HOME/tools/js" gl-transitions@3.0.0 >/dev/null 2>&1 && ok "gl-transitions@3.0.0 (حزمة GLSL)" || bad "gl-transitions npm"
+
+# ───────── 2ج) تصميم وبرمجة (الجولة الثالثة) ─────────
+# logo-design (MIT): شعارات وهوية من الموجز إلى SVG ثم تدقيق وتصدير favicon/أيقونات. بلا مكتبة SVG لعلامات تجارية لغيرنا (14MB).
+if [ -e "$SKILLS/logo-design" ]; then ok "logo-design (موجودة)"
+elif sparse kaankiziltug/logo-design-skill bbf31e521d765eb6d53242549bbee7c2e5bbd6bc "$WORK/logo" '/skills/logo-design/' '!/skills/logo-design/assets/library/svg/' '!/skills/logo-design/assets/library/gallery.html' \
+  && cp -R "$WORK/logo/skills/logo-design" "$SKILLS/"; then ok logo-design; else bad logo-design; fi
+note logo-design "render_png.py يعلق هنا (Chrome بلا --no-sandbox). للـPNG: pip install cairosvg ثم cairosvg in.svg -o out.png -W 1024، أو Playwright. لا تستخدم شعارات علامات تجارية لغيرنا."
+take vercel-labs/agent-skills 1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62 skills/react-best-practices          # MIT، Vercel: أداء React/Next.js
+take gamedev-skills/awesome-gamedev-agent-skills 19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9 skills/other-engines/pygame-core skills/disciplines/create-game-assets   # Apache-2.0: ألعاب بايثون وأصول الألعاب
+take alinaqi/maggy 55aabe2493627e1de9cd09459d555181d66f3111 skills/pwa-development                       # MIT: تطبيقات صف تعمل بلا إنترنت (PWA)
+take openai/skills 49f948faa9258a0c61caceaf225e179651397431 skills/.curated/jupyter-notebook              # Apache-2.0: دفاتر Jupyter (تحليل بحث إجرائي)
+# عند الحاجة (installers/on-demand.sh): typst (بوسترات وشهادات PDF عربية)، denoise (DeepFilterNet). SVG: npx -y svgo@4.1.0 in.svg -o out.svg
 
 # ───────── 3) المونتاج ─────────
 # ffmpeg-skill (MIT): 42 أداة بايثون فوق ffmpeg (قص الصمت، تثبيت، LUT، جهارة، كشف مشاهد، كابشن بخط حسب اللغة). بلا المثبّت npm ولا خادم MCP.
