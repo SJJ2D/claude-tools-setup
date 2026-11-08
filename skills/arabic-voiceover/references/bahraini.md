@@ -38,5 +38,11 @@
 - «حسن محمد البيب... دوم يوصل قبل الكل.»
 - «الشامة بروحها سلاح.» / «وفي الصوب الثاني...» / «خمسة ضد ثنين؟ سهالات... لا والله... مو سهالات!»
 
+## Spelling of g / ch sounds (measured, Chatterbox V3, Bahraini warm reference, 4 lines × 2 takes)
+- **Standard spelling** («قال، سمك، كذا»): 2.3% CER, every line clear; the engine says them the MSA way (q / k).
+- **Phonetic spelling with گ / چ** («گال، سمچ، چذي»): 6.8% CER; Whisper heard «آل»، «سمسا»، «هذي». The local engine does **not** turn گ/چ into g/ch, it blurs them.
+- Rule: for the local engine keep the standard spelling and accept MSA-like q/k. Real Bahraini g/ch («گال»، «چذي»، «باچر») needs ElevenLabs with the user's cloned voice (with his consent). The phonetic spelling there is untested: try two takes.
+- Use `prep_text.py --dialect gulf` (numbers in spoken Gulf form: «خمسة وعشرين»، «مية») with `--tashkeel none`.
+
 ## User notes (add his corrections here)
 - (empty)
