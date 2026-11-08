@@ -101,11 +101,23 @@ denoise(){ need_gb 1 || return; mkdir -p "$T/bin"
     && git -C "$W/m" checkout -q 5014c1e8b23fd3e18d49926d9aa147d15a3aa08e && cp -R "$W/m/skills/media-denoise-ai" "$S"; }; rm -rf "$W"
   ok "DeepFilterNet: $T/bin/deep-filter -o outdir in.wav (48kHz). المهارة: media-denoise-ai"; }
 
-ALL="rembg upscale manim blender docling camel qari habibi acestep careerops edittools typst denoise"
+# TTS عربي محلي بصوتك (بديل ElevenLabs): Chatterbox Multilingual مع أوزان V3 (أسرع 42% وتمتمة ذيل أقل بكثير؛ نفس الدقة؛ مُختبر)
+#   + faster-whisper للفحص + parselmouth لأصوات الشخصيات + num2words. المسار ~/tts/.venv (تستخدمه سكربتات arabic-voiceover)
+tts(){ need_gb 6 || return; local v="$HOME/tts/.venv"
+  [ -x "$v/bin/python" ] || { mkdir -p "$HOME/tts"; uv venv -q --seed -p 3.11 "$v" 2>/dev/null || python3.11 -m venv "$v"; }
+  "$v/bin/python" -c "import chatterbox, faster_whisper, parselmouth, num2words" 2>/dev/null || pipi "$v" "${TORCH_IDX[@]}" "torch==2.6.0+cpu" "torchaudio==2.6.0+cpu" \
+    "chatterbox-tts==0.1.7" "setuptools<81" faster-whisper==1.2.1 praat-parselmouth num2words==0.5.14 librosa soundfile || { bad tts; return; }
+  # الإصدار المنشور 0.1.7 لا يعرف V3: نثبّت الكود من GitHub على commit محدد فوقه بلا تغيير الاعتماديات (جُرّب مع transformers 5.2.0)
+  "$v/bin/python" -c "import inspect; from chatterbox.mtl_tts import ChatterboxMultilingualTTS as C; assert 't3_model' in inspect.signature(C.from_pretrained).parameters" 2>/dev/null \
+    || pipi "$v" --no-deps --force-reinstall "chatterbox-tts @ git+https://github.com/resemble-ai/chatterbox@ab55923c27757c90cfcc407baa57dc25a7d25217" || { bad "chatterbox V3"; return; }
+  "$v/bin/python" -c "from huggingface_hub import snapshot_download as d; d('ResembleAI/chatterbox', allow_patterns=['ve.pt','t3_mtl23ls_v3.safetensors','s3gen.pt','grapheme_mtl_merged_expanded_v1.json','conds.pt','Cangjie5_TC.json'])" >/dev/null 2>&1 \
+    && ok "TTS: $v (ChatterboxMultilingualTTS.from_pretrained(device='cpu', t3_model='v3'))" || bad "أوزان chatterbox"; }
+
+ALL="rembg upscale manim blender docling camel qari habibi acestep careerops edittools typst denoise tts"
 [ $# -eq 0 ] && set -- list
 for t in "$@"; do case "$t" in
   list) echo "الأدوات: $ALL"; for x in $ALL; do printf '  %-8s' "$x"; done; echo;;
-  rembg|upscale|manim|blender|docling|camel|qari|habibi|acestep|careerops|edittools|typst|denoise) "$t";;
+  rembg|upscale|manim|blender|docling|camel|qari|habibi|acestep|careerops|edittools|typst|denoise|tts) "$t";;
   arabic) bash "$HERE/installers/arabic-nlp.sh" || RC=1;;
   *) bad "أداة غير معروفة: $t";;
 esac; done

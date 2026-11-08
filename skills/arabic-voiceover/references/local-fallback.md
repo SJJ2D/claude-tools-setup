@@ -1,10 +1,17 @@
 # Local fallback: Chatterbox Multilingual (only when ElevenLabs is not allowed)
 
-Install (CPU, ~2 GB):
-```bash
-uv venv --seed -p 3.11 ~/tts/.venv && ~/tts/.venv/bin/pip install --cert /root/.ccr/ca-bundle.crt --extra-index-url https://download.pytorch.org/whl/cpu "torch==2.6.0+cpu" "torchaudio==2.6.0+cpu" "chatterbox-tts==0.1.7" "setuptools<81" faster-whisper==1.2.1 praat-parselmouth
-```
-(`setuptools<81` is required for the watermark library; uv in this container needs pip with `--cert`.)
+Install (CPU, ~2 GB + ~3 GB weights): `bash <repo>/installers/on-demand.sh tts` → `~/tts/.venv`
+(chatterbox-tts 0.1.7 dependencies + the GitHub source at commit ab55923, which adds the **V3** multilingual weights; faster-whisper, parselmouth, num2words).
+
+**Use V3:** `ChatterboxMultilingualTTS.from_pretrained(device='cpu', t3_model='v3')`. Measured on the same 7 MSA sentences × 2 takes:
+| | V2 (default) | V3 |
+|---|---|---|
+| CER with waqf tashkeel | 2.4% | 3.5% (same range; one take dropped a ط) |
+| CER without tashkeel | 13.6% | 9.3% |
+| Raw take length (tail mumbling) | 7.9 s | 4.1 s |
+| Generation time per line | 47 s | 27 s |
+V3 nearly removes the mumbling after the sentence and is ~40% faster. Keep generating 2 takes per line and let `assemble_vo.py` pick.
+Known weakness in both: ج sometimes comes out like ش without tashkeel («فاشتهد»); full waqf tashkeel fixed it in our test. ض/ظ cannot be judged by Whisper (it confuses them itself).
 
 Settings that worked (Arabic, the user's voice):
 - Reference: a **calm** 10 s window from the user's voice (the first 6 s matter most), not an excited one. Prefer the user's real recording over ElevenLabs output.
