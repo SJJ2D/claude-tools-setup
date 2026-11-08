@@ -7,13 +7,13 @@ description: Produce a natural, professional Arabic voiceover (Bahraini/Gulf dia
 Goal: a voice that sounds like the user, in the dialect asked, and not like AI. This skill comes from lessons learned in practice: what failed in an earlier video, and why.
 
 ## 1. Choose the engine (most important decision)
+**User's standing decision (Nov 2026): do NOT use ElevenLabs.** Only if he explicitly asks for it again in a new request.
 | Situation | Engine |
 |---|---|
-| The user's voice, any dialect, best quality | **ElevenLabs** with the user's voice `T.Sajjad` (`voice_id GYQVQTYvlwEHrFDjXtC4`, cloned, ar-bahraini) on `eleven_v4` (or `eleven_v3`) |
-| The user forbids ElevenLabs or wants something local | Chatterbox Multilingual (`references/local-fallback.md`). Tell him plainly: it pronounces dialect words, but its intonation leans MSA and it sounds more "AI" |
-| A real recording of the user is available | Use it as the clone reference (not ElevenLabs output: cloning a clone loses quality) |
-
-Do not switch to ElevenLabs without the user's consent if he said "not from ElevenLabs". Generating speech uses his credits; don't repeat a generation for the same text without a reason.
+| **Bahraini** (montage, entertainment) | **His own recording** of the lines (default). Send him the script split into short lines; he records on his phone in a quiet room. We clean it (`on-demand.sh denoise`, DeepFilterNet), cut silences, level to −16 LUFS, and sync motion to the word times (faster-whisper). |
+| Bahraini draft before he records | Local Chatterbox **V2**, standard spelling («قال، سمك، كذا»; his pick #4). Tell him plainly it has no Bahraini accent and sounds AI. |
+| **MSA** | Local Chatterbox **V2** (`from_pretrained(device='cpu')`) + **full tashkeel with waqf** written by Claude (his pick #2). V3 only when speed matters. |
+| A real recording of him is available | Use it as the clone reference instead of the bank. |
 
 ## 2. Write the script in the dialect itself, not "MSA with a few words"
 - **Bahraini:** follow `references/bahraini.md`. Write the words as they are said («بتبدا»، «دوم»، «بروحه»، «الصوب»، «انتو مستعدين؟»). Avoid «هل» and «سوف» and MSA case endings.
