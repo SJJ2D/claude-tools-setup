@@ -12,6 +12,7 @@ CSS6 = r"""
 .c6 ul{margin:0;padding:0 28px 0 0}
 .c6 li{margin:0 0 4px 0}
 .c6 li::marker{color:var(--teal)}
+.sub{font-weight:800;color:var(--coral);font-size:25px!important;margin-top:2px!important}
 .pl{display:inline-block;padding:5px 20px;border-radius:999px;font-weight:800;font-size:25px;color:#fff;background:var(--teal);white-space:nowrap}
 .ot{display:flex;align-items:center;gap:14px;border-radius:20px;padding:11px 18px;flex:1}
 .ot b{font-family:'Baloo Bhaijaan 2';font-size:28px;color:var(--navy);flex:none;width:118px}
@@ -86,10 +87,12 @@ def s3():
     <li>إشراف مستمر وحقيبة إسعافات.</li>
     <li>عند الحرارة أو الغبار: البديل الصفي.</li></ul></div>
   <div class="c6" style="flex:1"><h3>{ic('laptop')} الوسائط الرقمية</h3>
+    <p class="sub">في الصف (شاشة المعلم)</p>
     <ul><li>محتوى المدرسة بلا إعلانات.</li>
     <li>لا تصوير دون موافقة خطية (قانون 30 لسنة 2018).</li>
-    <li>10 دقائق شاشة كحدّ أقصى.</li>
-    <li>أسلاك مثبّتة، وإشراف في البيت.</li></ul></div>
+    <li>10 دقائق شاشة كحدّ أقصى، وأسلاك مثبّتة.</li></ul>
+    <p class="sub">في البيت (التحدي الأسبوعي)</p>
+    <ul><li>بطاقة ورقية بإشراف وليّ الأمر.</li></ul></div>
   </div>
 </div></div>"""
     return frame(3, 'الأدوات وإجراءات السلامة', 'الأدوات <span>والسلامة</span>', 'shield', inner)
@@ -128,10 +131,10 @@ def s5():
     <ul><li>«بحر الساحة الكبير»: خريطة بالطباشير بجزر و«هيرات».</li>
     <li>مسافات أطول، وقفز فوق حبل على الأرض.</li></ul></div>
   <div class="c6" style="flex:1"><h3>{ic('mobile_phone')} التطوير: رقمياً</h3>
-    <ul><li>فيديو تفاعلي على الشاشة الذكية للأيام الحارة.</li>
-    <li>تحدٍّ أسبوعي: 10 دقائق يومياً مع الأسرة.</li></ul></div>
+    <ul><li>في الصف: المعلم يشغّل الفيديو على الشاشة الذكية.</li>
+    <li>في البيت: بطاقة ورقية مع الأسرة.</li></ul></div>
   <div class="c6" style="flex:1"><h3>{ic('manual_wheelchair')} الدمج والتقويم</h3>
-    <ul><li>نسخة جلوس، وثلاثة مستويات، ورفيق مساند.</li>
+    <ul><li>نسخة جلوس ومستويات ورفيق مساند.</li>
     <li>قائمة رصد، وبطاقات المشاعر، وسؤال خروج.</li></ul></div>
 </div>
 <div class="c6" style="flex:1;gap:10px"><h3>{ic('clipboard')} المرفقات والمواد الداعمة</h3>
