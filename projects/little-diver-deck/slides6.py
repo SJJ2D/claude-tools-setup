@@ -33,7 +33,7 @@ table.t6 td:first-child span{font-family:'Tajawal';font-size:23px;font-weight:80
 .mini{flex:1;background:#FFFDF7;border:3px dashed #9ADDE2;border-radius:20px;padding:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center}
 .mini img{width:60px;height:60px}
 .mini p{margin:0;font-size:24px;font-weight:800;color:var(--navy);line-height:1.25}
-.refs{font-size:17px;line-height:1.35;color:var(--muted);border-top:2px dashed #CFE9EC;padding-top:6px;margin:0}
+.c6 p.refs{font-size:16px;line-height:1.45;color:var(--muted);border-top:2px dashed #CFE9EC;padding-top:6px;margin:0}
 """
 
 # 2: title, goal, importance, age, outcomes
@@ -47,15 +47,15 @@ def s2():
     inner = f"""<div class="row" style="height:100%;gap:24px">
 <div style="flex:1;display:flex;flex-direction:column;gap:14px">
   <div class="c6" style="background:linear-gradient(90deg,#FFF6DA,#FFFDF7);"><h3>{ic('bullseye')} العنوان والهدف</h3>
-    <p><b class="k">«الغوّاص الصغير: رحلة البحث عن اللؤلؤ»:</b> نشاط تعاوني بالمحطات ولعب الأدوار؛ المعلم «النوخذة» والطلبة «غوّاصون».</p>
-    <p><b class="k">الهدف:</b> تحقيق الصحة الجسدية للطلبة من خلال الحركة: تقوية العضلات والعظام، وتحسين التوازن والتآزر واللياقة، وبناء عادة النشاط اليومي.</p></div>
+    <p><b class="k">«الغوّاص الصغير»:</b> نشاط تعاوني بالمحطات ولعب الأدوار؛ المعلم «النوخذة» والطلبة «غوّاصون».</p>
+    <p><b class="k">الهدف الأول (صحي):</b> تحقيق الصحة الجسدية بالحركة: تقوية العضلات والعظام، وتحسين التوازن، ورفع اللياقة البدنية.</p>
+    <p><b class="k">الهدف الثاني (هدف الصف):</b> تتعاون السفن الأربع لجمع <b class="k">40 لؤلؤة</b> تُكمل «عقد الصف»، فينجح الجميع معاً.</p></div>
   <div class="c6"><h3>{ic('red_heart')} الأهمية الصحية</h3>
-    <ul><li>24 دقيقة حركة من 60 دقيقة يومياً (منظمة الصحة العالمية، 2020).</li>
-    <li>عادات صحية: الإحماء، والتهدئة، والتنفس العميق، وشرب الماء.</li></ul></div>
+    <ul><li>نحو 24 دقيقة حركة، أي قرابة 40% من الـ60 دقيقة اليومية الموصى بها للأطفال <bdi dir="ltr">(WHO, 2020)</bdi>.</li>
+    <li>عادات صحية: الإحماء والتهدئة والتنفس العميق وشرب الماء.</li></ul></div>
   <div class="c6" style="flex:1"><h3>{ic('books')} الأهمية التربوية</h3>
-    <ul><li>الحركة تعزّز التركيز (يوسف، 2026).</li>
-    <li>التعلّم بالحركة: العدّ والجمع ومفردات التراث.</li>
-    <li>التعاون وانتظار الدور، وتعزيز الهوية الوطنية.</li></ul></div>
+    <ul><li>الحركة الصفية تحسّن التركيز والانتباه <bdi dir="ltr">(CDC, 2018)</bdi>.</li>
+    <li>التعلّم بالحركة: العدّ ومفردات التراث، والتعاون وانتظار الدور.</li></ul></div>
 </div>
 <div class="c6" style="flex:1;gap:12px"><h3>{ic('student')} الفئة العمرية</h3>
   <div style="display:flex;gap:10px;flex-wrap:wrap"><span class="pl">الصف الثاني (7–8 سنوات)</span><span class="pl" style="background:var(--coral)">24 طالباً في 4 سفن</span><span class="pl" style="background:var(--violet)">40 دقيقة</span></div>
@@ -79,20 +79,22 @@ def s3():
     <ul><li>مسافة ذراعين بين الطلبة، وطاولات مُزاحة، ودوائر ملصقة لا تنزلق.</li>
     <li>أحذية رياضية، و«نمشي ولا نركض»، و«هبوط القطة» بركبتين مثنيّتين.</li>
     <li>إشارة التوقف: <b class="k">ضربتان على الطبل + يد مرفوعة = تجمّد</b>.</li>
-    <li>المتعب يستريح في «الميناء»، ومراجعة السجل الصحي (Marotz, 2015).</li></ul></div>
+    <li>المتعب يستريح في «الميناء»، ومراجعة السجل الصحي مسبقاً.</li></ul></div>
   <div class="row" style="gap:14px;flex:1">
   <div class="c6" style="flex:1"><h3>{ic('sun_with_face')} خارج الصف</h3>
-    <ul><li>صباحاً وفي الظل (نوفمبر–مارس).</li>
-    <li>ماء كل 10–15 دقيقة، وفحص الأرضية.</li>
-    <li>إشراف مستمر وحقيبة إسعافات.</li>
-    <li>عند الحرارة أو الغبار: البديل الصفي.</li></ul></div>
+    <p class="sub">سبتمبر–نوفمبر (الحرّ)</p>
+    <ul><li>صباحاً وفي الظل، بملابس فاتحة وقبعات.</li>
+    <li>ماء كل 10–15 دقيقة، والتوقف عند الدوخة <bdi dir="ltr">(AAP, 2026)</bdi>.</li></ul>
+    <p class="sub">ديسمبر–يناير (البرد)</p>
+    <ul><li>إحماء أطول، وسترة تُخلع بعد الإحماء.</li>
+    <li>فحص الأرضية من البلل، وعند الغبار أو الرياح: البديل الصفي.</li></ul></div>
   <div class="c6" style="flex:1"><h3>{ic('laptop')} الوسائط الرقمية</h3>
     <p class="sub">في الصف (شاشة المعلم)</p>
     <ul><li>محتوى المدرسة بلا إعلانات.</li>
     <li>لا تصوير دون موافقة خطية (قانون 30 لسنة 2018).</li>
-    <li>10 دقائق شاشة كحدّ أقصى، وأسلاك مثبّتة.</li></ul>
+    <li>مشاهدة جماعية على السبورة الذكية من مسافة مناسبة.</li></ul>
     <p class="sub">في البيت (التحدي الأسبوعي)</p>
-    <ul><li>بطاقة ورقية بإشراف وليّ الأمر.</li></ul></div>
+    <ul><li>الحركة دون هاتف، والحدّ من استخدامه لفترات طويلة بإشراف وليّ الأمر.</li></ul></div>
   </div>
 </div></div>"""
     return frame(3, 'الأدوات وإجراءات السلامة', 'الأدوات <span>والسلامة</span>', 'shield', inner)
@@ -106,9 +108,9 @@ def s4():
             ('5. التهدئة', '4 د', 'يقود الاستطالة والتنفس العميق', 'يتنفّسون ببطء ويشربون الماء'),
             ('6. الختام', '4 د', 'يطرح سؤالي التأمل ويعلّق «عقد الصف»', 'يرفعون بطاقات المشاعر ويذكرون فائدة للحركة')]
     tr = ''.join(f'<tr><td style="width:22%">{a}<span>{m}</span></td><td style="width:39%">{b}</td><td style="width:39%">{c}</td></tr>' for a, m, b, c in rows)
-    st = [('man_rowing_boat', '#0F9FB2', 'التجديف', '10 للأمام و10 للخلف'),
+    st = [('man_rowing_boat', '#0F9FB2', 'التجديف', 'نجدّف معاً ونعدّ حتى 10'),
           ('diving_mask', '#6C5CE7', 'الغطس', 'ثني الركبتين ولمس القاع ×8'),
-          ('crab', '#F2683F', 'مشية السلطعون', 'مشي جانبي 3 أمتار'),
+          ('crab', '#F2683F', 'مشية السلطعون', 'مشي جانبي ذهاباً وإياباً'),
           ('flamingo', '#F06A9B', 'توازن الفلامنجو', 'قدم واحدة حتى العدّ 5')]
     sc = ''.join(f'<div class="stc" style="background:{c}">{ic(i,64)}<p><b>{n}</b>{d}</p></div>' for i, c, n, d in st)
     inner = f"""<div style="display:flex;flex-direction:column;gap:12px;height:100%">
@@ -131,21 +133,38 @@ def s5():
     <ul><li>«بحر الساحة الكبير»: خريطة بالطباشير بجزر و«هيرات».</li>
     <li>مسافات أطول، وقفز فوق حبل على الأرض.</li></ul></div>
   <div class="c6" style="flex:1"><h3>{ic('mobile_phone')} التطوير: رقمياً</h3>
-    <ul><li>في الصف: المعلم يشغّل الفيديو على الشاشة الذكية.</li>
-    <li>في البيت: بطاقة ورقية مع الأسرة.</li></ul></div>
+    <ul><li>«لوحة اللآلئ الرقمية»: عدّاد تفاعلي يجمع لآلئ السفن حتى يكتمل «عقد الصف» (40).</li>
+    <li>رمز QR على بطاقة كل محطة يفتح مقطع الحركة لتراجعه الأسرة.</li></ul></div>
   <div class="c6" style="flex:1"><h3>{ic('manual_wheelchair')} الدمج والتقويم</h3>
     <ul><li>نسخة جلوس ومستويات ورفيق مساند.</li>
-    <li>قائمة رصد، وبطاقات المشاعر، وسؤال خروج.</li></ul></div>
+    <li>قائمة رصد، وسؤال خروج.</li></ul></div>
 </div>
 <div class="c6" style="flex:1;gap:10px"><h3>{ic('clipboard')} المرفقات والمواد الداعمة</h3>
   <div class="row" style="gap:16px;flex:1">
     <div style="flex:1.3;display:flex;gap:10px">{cards}</div>
-    <div style="width:240px;flex:none;display:flex;flex-direction:column;justify-content:center;gap:6px"><img src="img/sb/01.jpg" style="width:100%;border-radius:14px;border:3px solid #fff;box-shadow:0 6px 14px rgba(14,58,91,.15)"><p style="text-align:center;font-weight:800;color:var(--navy);font-size:22px">فيديو توضيحي (3:10)</p></div>
+    <div style="width:240px;flex:none;display:flex;flex-direction:column;justify-content:center;gap:6px"><img src="img/sb/01.jpg" style="width:100%;border-radius:14px;border:3px solid #fff;box-shadow:0 6px 14px rgba(14,58,91,.15)"><p style="text-align:center;font-weight:800;color:var(--navy);font-size:22px">فيديو توضيحي (3:15)</p></div>
     <div style="flex:1;display:flex;flex-direction:column;gap:6px">{more}</div>
   </div>
-  <p class="refs"><b>المراجع:</b> يوسف، منى إبراهيم. (2026). <i>الأسبوع الثامن: دمج النشاط البدني واللعب في العملية التعليمية اليومية</i> [شرائح]. TCHL418، كلية البحرين للمعلمين. <br><span dir="ltr">Marotz, L. R. (2015). <i>Health, safety, and nutrition for the young child</i> (9th ed.). Cengage.</span> <br><span dir="ltr">World Health Organization. (2020). <i>WHO guidelines on physical activity and sedentary behaviour</i>.</span></p>
+  <p class="refs" dir="ltr" style="text-align:left"><b>References:</b> American Academy of Pediatrics. (2026, July 31). <i>How to keep young athletes &amp; active kids safe in hot weather</i>. HealthyChildren.org. https://www.healthychildren.org/English/health-issues/injuries-emergencies/sports-injuries/Pages/Exercise-Related-Heat-Illness.aspx<br>
+Centers for Disease Control and Prevention. (2018). <i>Strategies for classroom physical activity in schools</i>. U.S. Department of Health and Human Services. https://stacks.cdc.gov/view/cdc/60433<br>
+World Health Organization. (2020). <i>WHO guidelines on physical activity and sedentary behaviour</i>. https://www.who.int/publications/i/item/9789240015128</p>
 </div>
 </div>"""
     return frame(5, 'الإضافة التطويرية والمرفقات', 'التطوير <span>والمرفقات</span>', 'rocket', inner)
 
 ALL = [s2, s3, s4, s5]
+
+CSS6 += r"""
+#s3 .row .c6 li{font-size:23px;line-height:1.42}
+#s3 .row .c6 .sub{font-size:23px!important}
+#s3 .row .c6 h3{font-size:31px}
+#s3 .c6{gap:5px}
+"""
+
+CSS6 += r"""
+#s2 .row>div:first-child .c6 p,#s2 .row>div:first-child .c6 li{font-size:24px;line-height:1.42}
+#s2 .row>div:first-child .c6 h3{font-size:31px}
+#s2 .c6{gap:5px;padding:14px 24px}
+"""
+
+CSS6 += "bdi{white-space:nowrap;unicode-bidi:isolate}"
