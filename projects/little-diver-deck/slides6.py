@@ -142,7 +142,7 @@ def s5():
 <div class="c6" style="flex:1;gap:10px"><h3>{ic('clipboard')} المرفقات والمواد الداعمة</h3>
   <div class="row" style="gap:16px;flex:1">
     <div style="flex:1.3;display:flex;gap:10px">{cards}</div>
-    <div style="width:240px;flex:none;display:flex;flex-direction:column;justify-content:center;gap:6px"><img src="img/sb/01.jpg" style="width:100%;border-radius:14px;border:3px solid #fff;box-shadow:0 6px 14px rgba(14,58,91,.15)"><p style="text-align:center;font-weight:800;color:var(--navy);font-size:22px">فيديو توضيحي (3:15)</p></div>
+    <div style="width:240px;flex:none;display:flex;flex-direction:column;justify-content:center;gap:6px"><img src="img/sb/01.jpg" style="width:100%;border-radius:14px;border:3px solid #fff;box-shadow:0 6px 14px rgba(14,58,91,.15)"><p style="text-align:center;font-weight:800;color:var(--navy);font-size:22px">فيديو توضيحي (3:19)</p></div>
     <div style="flex:1;display:flex;flex-direction:column;gap:6px">{more}</div>
   </div>
   <p class="refs" dir="ltr" style="text-align:left"><b>References:</b> American Academy of Pediatrics. (2026, July 31). <i>How to keep young athletes &amp; active kids safe in hot weather</i>. HealthyChildren.org. https://www.healthychildren.org/English/health-issues/injuries-emergencies/sports-injuries/Pages/Exercise-Related-Heat-Illness.aspx<br>

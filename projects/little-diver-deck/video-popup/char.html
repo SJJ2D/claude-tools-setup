@@ -1,0 +1,44 @@
+<!doctype html><html dir="rtl"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@800&display=swap" rel="stylesheet">
+<style>html,body{margin:0;width:1920px;height:1080px;overflow:hidden}
+#bg{position:absolute;inset:0;width:1920px;height:1080px}
+#rig{position:absolute;left:1180px;top:0;width:0;height:0}
+#rope{position:absolute;left:-3px;top:0;width:6px;background:repeating-linear-gradient(180deg,#C8A06A 0 10px,#A57E4C 10px 20px);border-radius:3px}
+#body{position:absolute;left:-200px;width:400px;height:704px}
+#diver{position:absolute;left:-152px;top:152px;width:704px;height:400px;transform:rotate(-90deg)}
+#bub{position:absolute;left:-560px;top:0;width:330px;height:150px;transform-origin:85% 85%}
+#bub .b{position:absolute;inset:0;background:#fff;border-radius:40px;box-shadow:0 10px 24px rgba(14,58,91,.25);display:flex;align-items:center;justify-content:center;font:800 64px 'Baloo Bhaijaan 2';color:#0E3A5B}
+#bub .tail{position:absolute;right:-26px;bottom:26px;width:0;height:0;border-left:40px solid #fff;border-top:16px solid transparent;border-bottom:16px solid transparent}
+.q{position:absolute;font:800 96px 'Baloo Bhaijaan 2';color:#F2683F;text-shadow:0 3px 0 #fff}
+</style></head><body><img id="bg" src="freeze.png">
+<div id="rig"><div id="rope"></div><div id="body"><img id="diver" src="diver_confused.svg"></div>
+<div id="bub"><div class="b">ما هذا؟!</div><div class="tail"></div></div>
+<div class="q" id="q1">؟</div><div class="q" id="q2">؟</div></div>
+<script>
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const eo=t=>1-Math.pow(1-t,3), ei=t=>t*t*t;
+const back=t=>{const c=1.7;t-=1;return 1+(c+1)*t**3+c*t**2};
+const svgdoc=()=>null;
+window.render=(t)=>{
+  const H=704, rest=-70;               // top of body when settled (head ends ~ y 820)
+  let y;
+  if(t<2.0) y=-H-20+(rest+H+20)*eo(clamp(t/2.0));
+  else if(t<2.25) y=rest+10*Math.sin((t-2.0)/0.25*Math.PI);
+  else if(t<3.15) y=rest;
+  else {const u=clamp((t-3.15)/0.4);const c=1.6;y=rest-(rest+H+80)*(u*u*((c+1)*u-c));}
+  // sway while descending, head-tilt rock while confused
+  let rot=0;
+  if(t<2.0) rot=4*Math.sin(t*3.2)*(1-clamp(t/2));
+  else if(t<3.15) rot=11*Math.sin((t-2.05)*Math.PI*2.2)*clamp((t-2.05)/0.15)*clamp((3.15-t)/0.2);
+  const body=document.getElementById('body');
+  body.style.top=y+'px'; body.style.transformOrigin='50% 0'; body.style.transform=`rotate(${rot}deg)`;
+  document.getElementById('rope').style.height=Math.max(0,y+40)+'px';
+  // bubble
+  const bub=document.getElementById('bub'); const bt=t-2.05;
+  let s=0; if(bt>0&&t<3.05) s=bt<0.3?back(clamp(bt/0.3)):1; if(t>=3.05) s=Math.max(0,1-(t-3.05)/0.1);
+  bub.style.top=(y+H-250)+'px'; bub.style.transform=`scale(${s}) rotate(${-4+3*Math.sin(t*6)}deg)`; bub.style.opacity=s>0?1:0;
+  // question marks pop
+  [['q1',2.3,-150,40],['q2',2.55,120,20]].forEach(([id,t0,dx,dy])=>{const e=document.getElementById(id);const u=t-t0;
+    const sc=u>0&&t<3.1?back(clamp(u/0.25)):0; e.style.left=(dx-20)+'px'; e.style.top=(y+H-380+dy-12*Math.sin(Math.max(0,u)*8))+'px'; e.style.transform=`scale(${sc}) rotate(${id=='q1'?-15:12}deg)`; e.style.opacity=sc>0?1:0;});
+};
+</script></body></html>
