@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 520">
+  <defs>
+    <linearGradient id="hull" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C98446"/>
+      <stop offset="1" stop-color="#8E5326"/>
+    </linearGradient>
+    <linearGradient id="sail" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFDF4"/>
+      <stop offset="1" stop-color="#F3E6C8"/>
+    </linearGradient>
+    <linearGradient id="mast" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7A4520"/>
+      <stop offset="1" stop-color="#A9693A"/>
+    </linearGradient>
+  </defs>
+  <!-- mast -->
+  <path d="M318 352 L338 46 L350 46 L334 352 Z" fill="url(#mast)"/>
+  <!-- flag of Bahrain -->
+  <path d="M344 48 L344 20 L420 20 L420 48 Z" fill="#CE1126"/>
+  <path d="M344 20 L360 20 L370 22.8 L360 25.6 L370 28.4 L360 31.2 L370 34 L360 36.8 L370 39.6 L360 42.4 L370 45.2 L360 48 L344 48 Z" fill="#FFFFFF"/>
+  <!-- yard (spar) -->
+  <path d="M96 196 L506 34 L512 44 L102 206 Z" fill="#8A5228"/>
+  <!-- lateen sail -->
+  <path d="M500 44 C470 150 410 250 352 330 L118 206 C250 170 380 110 500 44 Z" fill="url(#sail)" stroke="#E2D2AC" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M440 82 C410 170 380 230 346 296" fill="none" stroke="#E9DBB9" stroke-width="5" stroke-linecap="round"/>
+  <path d="M360 120 C340 190 320 240 300 282" fill="none" stroke="#EDE1C3" stroke-width="5" stroke-linecap="round"/>
+  <!-- ropes -->
+  <path d="M340 60 L560 300" stroke="#6B3F1D" stroke-width="3"/>
+  <path d="M336 70 L70 318" stroke="#6B3F1D" stroke-width="3"/>
+  <!-- hull -->
+  <path d="M30 300 C120 340 420 352 560 286 L586 262 L596 270 L572 330 C520 410 200 430 92 372 C60 352 40 326 30 300 Z" fill="url(#hull)"/>
+  <path d="M44 312 C140 350 420 362 566 296 L562 312 C420 378 140 368 52 330 Z" fill="#E8B477"/>
+  <path d="M86 340 C170 372 400 378 548 326" fill="none" stroke="#7B4520" stroke-width="4" stroke-dasharray="2 18" stroke-linecap="round"/>
+  <!-- stern cabin -->
+  <path d="M500 296 L506 240 L590 236 L588 270 Z" fill="#B06D37"/>
+  <path d="M506 240 L590 236 L592 226 L504 230 Z" fill="#8A5228"/>
+  <circle cx="530" cy="262" r="8" fill="#FFE7A8"/>
+  <circle cx="560" cy="258" r="8" fill="#FFE7A8"/>
+  <!-- bow tip -->
+  <path d="M30 300 L6 286 L12 280 L44 296 Z" fill="#8A5228"/>
+</svg>

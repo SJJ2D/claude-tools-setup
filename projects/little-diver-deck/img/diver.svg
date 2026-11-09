@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 250">
+  <defs>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F9CB98"/><stop offset="1" stop-color="#E8A86F"/></linearGradient>
+    <linearGradient id="suit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2CCAD3"/><stop offset="1" stop-color="#0E8EA6"/></linearGradient>
+    <linearGradient id="fin" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF8A65"/><stop offset="1" stop-color="#E9532E"/></linearGradient>
+    <radialGradient id="glass" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.35" stop-color="#D9F6FF"/><stop offset="1" stop-color="#8ED8F0"/></radialGradient>
+    <linearGradient id="hair" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5B3A2A"/><stop offset="1" stop-color="#3B2418"/></linearGradient>
+  </defs>
+  <!-- back arm (along body) -->
+  <path d="M168 132 C190 150 214 162 236 168" stroke="#E3A26A" stroke-width="24" stroke-linecap="round" fill="none"/>
+  <circle cx="240" cy="169" r="14" fill="#E3A26A"/>
+  <!-- legs -->
+  <path d="M262 118 C300 108 330 100 360 96" stroke="url(#skin)" stroke-width="28" stroke-linecap="round" fill="none"/>
+  <path d="M262 142 C300 150 330 156 358 160" stroke="#E8A86F" stroke-width="28" stroke-linecap="round" fill="none"/>
+  <!-- fins -->
+  <path d="M352 82 C380 70 410 56 432 50 C428 76 424 98 418 116 C396 112 374 110 356 110 Z" fill="url(#fin)"/>
+  <path d="M352 146 C378 150 404 158 426 170 C414 190 402 206 390 222 C376 204 364 188 350 176 Z" fill="url(#fin)"/>
+  <!-- torso (swimsuit) -->
+  <rect x="140" y="92" width="140" height="74" rx="37" fill="url(#suit)"/>
+  <path d="M176 94 L196 94 L176 166 L156 166 Z" fill="#FFC83A"/>
+  <path d="M212 94 L226 94 L206 166 L192 166 Z" fill="#FFFFFF" opacity=".85"/>
+  <!-- front arm reaching forward (behind head) -->
+  <path d="M168 104 C130 84 90 66 46 50" stroke="url(#skin)" stroke-width="26" stroke-linecap="round" fill="none"/>
+  <circle cx="40" cy="48" r="16" fill="#F9CB98"/>
+  <!-- snorkel -->
+  <path d="M74 152 C96 160 120 154 128 136 C134 116 136 80 140 46" stroke="#FFC83A" stroke-width="13" stroke-linecap="round" fill="none"/>
+  <path d="M134 50 L146 42" stroke="#F2683F" stroke-width="16" stroke-linecap="round"/>
+  <!-- head -->
+  <circle cx="104" cy="112" r="50" fill="url(#hair)"/>
+  <circle cx="96" cy="122" r="46" fill="url(#skin)"/>
+  <ellipse cx="62" cy="140" rx="9" ry="6" fill="#F59C8B" opacity=".7"/>
+  <!-- mask strap -->
+  <path d="M118 112 C132 108 146 104 154 100" stroke="#24344F" stroke-width="10" stroke-linecap="round"/>
+  <!-- mask -->
+  <rect x="48" y="94" width="76" height="44" rx="18" fill="url(#glass)" stroke="#F2683F" stroke-width="8"/>
+  <circle cx="72" cy="117" r="6" fill="#24344F"/><circle cx="100" cy="117" r="6" fill="#24344F"/>
+  <circle cx="74" cy="115" r="2" fill="#FFFFFF"/><circle cx="102" cy="115" r="2" fill="#FFFFFF"/>
+  <path d="M60 104 L70 100" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+  <!-- smile + mouthpiece -->
+  <path d="M70 150 C78 158 90 158 98 152" stroke="#8A3B2A" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <!-- bubbles -->
+  <circle cx="150" cy="22" r="9" fill="none" stroke="#FFFFFF" stroke-width="4"/>
+  <circle cx="168" cy="6" r="5" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+</svg>
