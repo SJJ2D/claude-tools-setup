@@ -1,0 +1,36 @@
+{
+ "bed": "/root/tools/sfx/music/intro/beginning-7.mp3",
+ "bed_start_offset": 0.0,
+ "dur": 71.692,
+ "segments": [
+  {
+   "on": 0.0,
+   "off": 2.883,
+   "gain_db": 0,
+   "fade_in": 0.3,
+   "fade_out": 0.0,
+   "note": "plays from the start, hard stop at end of l1"
+  },
+  {
+   "on": 12.461,
+   "off": 67.109,
+   "gain_db": -4,
+   "fade_in": 0.4,
+   "fade_out": 0.0,
+   "note": "returns quietly at start of l4, hard stop at end of l15"
+  }
+ ],
+ "silent_ranges": [
+  [
+   2.883,
+   12.461
+  ],
+  [
+   67.109,
+   71.692
+  ]
+ ],
+ "s1b_cut": 6.383,
+ "bed_continues": true,
+ "note": "segment 2 continues the bed from where its timeline position is (no restart)"
+}

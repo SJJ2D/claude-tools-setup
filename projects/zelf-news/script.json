@@ -1,0 +1,564 @@
+{
+ "channel_ar": "قناة الزلف الإخبارية",
+ "channel_ar_indep": "قناة الزلف المستقلة",
+ "channel_en": "ZLF NEWS 24",
+ "slogan": "نوصل قبلكم بثانيتين",
+ "anchor_name": "بو شنب",
+ "anchor_role": "كبير مذيعين قناة الزلف",
+ "lead_in": 1.4,
+ "tail": 2.6,
+ "lines": [
+  {
+   "id": "l1",
+   "scene": "S1",
+   "speaker": "anchor",
+   "text": "خبر عاجل يا جماعة…",
+   "est": 1.8,
+   "pause_after": 4.2,
+   "delivery": "أوطى طبقة، بطيء وثقيل، وتوقف فجأة. الصمت اللي بعده هو النكتة."
+  },
+  {
+   "id": "l2",
+   "scene": "S1b",
+   "speaker": "anchor",
+   "text": "نعتذر منكم… الظاهر الصورة غلط.",
+   "est": 2.5,
+   "pause_after": 1.0,
+   "delivery": "تصحيح مهني جاف، بدون أي ابتسامة."
+  },
+  {
+   "id": "l3",
+   "scene": "S1b",
+   "speaker": "anchor",
+   "text": "…لا. هذي هي.",
+   "est": 1.2,
+   "pause_after": 0.5,
+   "delivery": "«لا» قصيرة ناشفة، وبعدها استسلام هادي."
+  },
+  {
+   "id": "l4",
+   "scene": "S1b",
+   "speaker": "anchor",
+   "text": "هذا العليش… والخبر مو عنه. الخبر عن زلفه.",
+   "est": 3.9,
+   "pause_after": 0.6,
+   "delivery": "سريع ومستخف على «مو عنه»، وبطيء وثقيل على «زلفه» كأنك تسمّي رئيس دولة."
+  },
+  {
+   "id": "l5",
+   "scene": "S2",
+   "speaker": "anchor",
+   "text": "مصادر خاصة تؤكّد: زلف العليش… يوصل المجلس قبله بثانيتين.",
+   "est": 4.2,
+   "pause_after": 0.3,
+   "delivery": "صوت العناوين، ووقفة بعد «العليش»، و«بثانيتين» دقيقة كأنها قياس رسمي."
+  },
+  {
+   "id": "l6",
+   "scene": "S2",
+   "speaker": "zelf",
+   "text": "لا تقومون… هو وراي.",
+   "est": 1.6,
+   "pause_after": 0.3,
+   "delivery": "بصوتك العادي ومرتاح، كأنك داخل مجلس وتقول لا تتعبون روحكم. نرفع الطبقة في المونتاج."
+  },
+  {
+   "id": "l7",
+   "scene": "S2",
+   "speaker": "anchor",
+   "text": "الزلف سلّم، وقعد، وشرب الشاي… والعليش توه يفصخ نعاله.",
+   "est": 4.4,
+   "pause_after": 0.8,
+   "delivery": "إيقاع معلّق رياضي على الأفعال الثلاثة، وقفة، وبعدها شفقة باردة، وأبطأ شي على «نعاله»."
+  },
+  {
+   "id": "l8",
+   "scene": "S3",
+   "speaker": "anchor",
+   "text": "ووصلتنا صورة حصرية من الأقمار الصناعية… صوّرها القمر من مسافة شبر.",
+   "est": 4.8,
+   "pause_after": 0.7,
+   "delivery": "فخر بالحصري وبصوت واطي، و«من مسافة شبر» كأنها مواصفة تقنية مبهرة."
+  },
+  {
+   "id": "l9",
+   "scene": "S3",
+   "speaker": "anchor",
+   "text": "الزلف صار عنده سي بي آر بروحه… وقروب بروحه، والعليش مو فيه.",
+   "est": 4.4,
+   "pause_after": 0.7,
+   "delivery": "تصعيد هادي، والضربة على «مو فيه»."
+  },
+  {
+   "id": "l10",
+   "scene": "S4",
+   "speaker": "anchor",
+   "text": "وفي تطور خطير: العليش حاول يخش الزلف. حط فوطة… فوطتين… وغسيل الأسبوع كله.",
+   "est": 5.4,
+   "pause_after": 0.5,
+   "delivery": "إنذار على «تطور خطير»، وبعدها عدّ بطيء يكبر مع كل كلمة."
+  },
+  {
+   "id": "l11",
+   "scene": "S4",
+   "speaker": "anchor",
+   "text": "نسبة النجاح: صفر بالمية… والفوطة، حالتها مستقرة.",
+   "est": 3.5,
+   "pause_after": 0.8,
+   "delivery": "الرقم كأنه نتيجة انتخابات، وبعده صوت متحدث مستشفى هادي."
+  },
+  {
+   "id": "l12",
+   "scene": "S5",
+   "speaker": "anchor",
+   "text": "وهذي… لحظة ما وصله الخبر.",
+   "est": 2.4,
+   "pause_after": 1.6,
+   "delivery": "نبرة وثائقي ناعمة، ووقفة بعد «وهذي»."
+  },
+  {
+   "id": "l13",
+   "scene": "S5",
+   "speaker": "anchor",
+   "text": "محللينا للحين ما يدرون… هو فرحان، لو منصدم.",
+   "est": 3.8,
+   "pause_after": 1.9,
+   "delivery": "بداية فيها ضحكة مكتومة صغيرة، وبعدها ترجع جدي تماماً."
+  },
+  {
+   "id": "l14",
+   "scene": "S6",
+   "speaker": "anchor",
+   "text": "هذا وكان معاكم زلف… قصدي العليش.",
+   "est": 3.0,
+   "pause_after": 0.4,
+   "delivery": "ختام دافي، توقف فجأة بعد «زلف»، وكمّل كأن ما صار شي."
+  },
+  {
+   "id": "l15",
+   "scene": "S6",
+   "speaker": "zelf",
+   "text": "إلى اللقاء!",
+   "est": 0.8,
+   "pause_after": 1.3,
+   "delivery": "مبسوط وسريع، الزلف يسبق المذيع. نرفع الطبقة في المونتاج."
+  },
+  {
+   "id": "l16",
+   "scene": "S6",
+   "speaker": "anchor",
+   "text": "…إلى اللقاء.",
+   "est": 0.9,
+   "pause_after": 0.0,
+   "delivery": "مسطّح ومقهور."
+  }
+ ],
+ "cuts": [
+  {
+   "id": "S1",
+   "at": [
+    "start"
+   ]
+  },
+  {
+   "id": "S1b",
+   "at": [
+    "line_start",
+    "l2",
+    -0.7
+   ]
+  },
+  {
+   "id": "S2",
+   "at": [
+    "line_start",
+    "l5",
+    -0.45
+   ]
+  },
+  {
+   "id": "S3",
+   "at": [
+    "line_start",
+    "l8",
+    -0.5
+   ]
+  },
+  {
+   "id": "S4",
+   "at": [
+    "line_start",
+    "l10",
+    -0.45
+   ]
+  },
+  {
+   "id": "S5",
+   "at": [
+    "line_start",
+    "l12",
+    -0.5
+   ]
+  },
+  {
+   "id": "S6",
+   "at": [
+    "line_start",
+    "l14",
+    -1.3
+   ]
+  }
+ ],
+ "banner": [
+  {
+   "from": [
+    "start",
+    0.9
+   ],
+   "text": "عندنا خبر عاجل"
+  },
+  {
+   "from": [
+    "line_end",
+    "l1",
+    0.9
+   ],
+   "text": "المذيع ساكت"
+  },
+  {
+   "from": [
+    "line_end",
+    "l1",
+    2.4
+   ],
+   "text": "للحين ساكت"
+  },
+  {
+   "from": [
+    "cut_start",
+    "S1b",
+    0.05
+   ],
+   "text": "هذا العليش"
+  },
+  {
+   "from": [
+    "word",
+    "l2",
+    "غلط",
+    0.2
+   ],
+   "text": "نعتذر عن الصورة"
+  },
+  {
+   "from": [
+    "word",
+    "l3",
+    "هذي",
+    0.1
+   ],
+   "text": "تأكيد: هذي هي الصورة"
+  },
+  {
+   "from": [
+    "word",
+    "l4",
+    "زلفه",
+    0.1
+   ],
+   "text": "الخبر عن الزلف"
+  },
+  {
+   "from": [
+    "cut_start",
+    "S2",
+    0.1
+   ],
+   "text": "الزلف يوصل المجلس قبل صاحبه بثانيتين"
+  },
+  {
+   "from": [
+    "cut_start",
+    "S3",
+    0.1
+   ],
+   "text": "صورة حصرية من الأقمار الصناعية"
+  },
+  {
+   "from": [
+    "line_start",
+    "l9",
+    0.1
+   ],
+   "text": "الزلف يطلّع سي بي آر"
+  },
+  {
+   "from": [
+    "cut_start",
+    "S4",
+    0.1
+   ],
+   "text": "محاولة فاشلة لإخفاء الزلف"
+  },
+  {
+   "from": [
+    "cut_start",
+    "S5",
+    0.1
+   ],
+   "text": "لحظة وصول الخبر للعليش"
+  },
+  {
+   "from": [
+    "cut_start",
+    "S6",
+    0.1
+   ],
+   "text": "ختام النشرة"
+  },
+  {
+   "from": [
+    "line_end",
+    "l14",
+    0.1
+   ],
+   "text": "الزلف يطالب بقناة مستقلة"
+  }
+ ],
+ "lower": [
+  {
+   "from": [
+    "start",
+    1.0
+   ],
+   "to": [
+    "line_end",
+    "l1",
+    0.7
+   ],
+   "title": "بو شنب",
+   "sub": "كبير مذيعين قناة الزلف"
+  },
+  {
+   "from": [
+    "line_start",
+    "l4",
+    0.0
+   ],
+   "to": [
+    "cut_start",
+    "S2",
+    -0.2
+   ],
+   "title": "العليش",
+   "sub": "صاحب الزلف (حالياً)"
+  },
+  {
+   "from": [
+    "cut_start",
+    "S2",
+    0.5
+   ],
+   "to": [
+    "line_end",
+    "l6",
+    0.2
+   ],
+   "title": "مباشر من المجلس",
+   "sub": "الزلف وصل، والعليش يبركن"
+  },
+  {
+   "from": [
+    "word",
+    "l7",
+    "والعليش",
+    0.0
+   ],
+   "to": [
+    "cut_start",
+    "S3",
+    -0.2
+   ],
+   "title": "العليش",
+   "sub": "مرافق الزلف"
+  },
+  {
+   "from": [
+    "cut_start",
+    "S3",
+    0.6
+   ],
+   "to": [
+    "line_start",
+    "l9",
+    -0.2
+   ],
+   "title": "زلف سات 1",
+   "sub": "صورة من مسافة شبر"
+  },
+  {
+   "from": [
+    "cut_start",
+    "S4",
+    0.6
+   ],
+   "to": [
+    "line_start",
+    "l11",
+    -0.2
+   ],
+   "title": "العليش",
+   "sub": "الناقل الرسمي للزلف"
+  },
+  {
+   "from": [
+    "cut_start",
+    "S5",
+    0.6
+   ],
+   "to": [
+    "cut_start",
+    "S6",
+    -0.2
+   ],
+   "title": "العليش",
+   "sub": "أول معجب بالزلف"
+  },
+  {
+   "from": [
+    "cut_start",
+    "S6",
+    0.3
+   ],
+   "to": [
+    "line_start",
+    "l15",
+    0.0
+   ],
+   "title": "بو شنب",
+   "sub": "كبير مذيعين قناة الزلف"
+  },
+  {
+   "from": [
+    "line_start",
+    "l15",
+    0.05
+   ],
+   "to": [
+    "end",
+    -0.9
+   ],
+   "title": "الزلف",
+   "sub": "المذيع الجديد"
+  },
+  {
+   "from": [
+    "line_end",
+    "l16",
+    0.5
+   ],
+   "to": [
+    "end",
+    -0.9
+   ],
+   "title": "بو شنب",
+   "sub": "(سابقاً)",
+   "small": true
+  }
+ ],
+ "ticker": [
+  "دراسة: 9 من 10 يسلّمون على الزلف أول",
+  "الحلاق يعتذر: «هذا فوق صلاحياتي»",
+  "العليش: «هو يختار الطريق، أنا بس أسوق»",
+  "تلفون العليش ما يفتح بالوجه… يفتح بالزلف",
+  "الزلف يحجز طاولة حق ثنين: «أنا… واللي معاي»",
+  "مرور: موكب الزلف يسكّر شارع المجلس",
+  "الزلف يرفض التعليق… ويطلب كرك",
+  "الطقس: رطوبة 90%… والزلف ثابت",
+  "عاجل: المشط يطالب ببدل خطر",
+  "الفوطة تطلع من المستشفى… وترفض ترجع الشغل",
+  "الزلف: «ما أعرف العليش شخصياً»",
+  "العليش يؤكّد: «علاقتي بالزلف طيبة… إذا رد عليّ»"
+ ],
+ "txt": {
+  "S1b": {
+   "frame": "الصورة الرسمية",
+   "glitch": "خلل فني",
+   "wait": "لحظة من فضلكم…",
+   "confirm": "تم التأكيد ✓",
+   "notTopic": "مو موضوعنا",
+   "topic": "الموضوع ← الزلف",
+   "ears": "الأذنين: فلتر",
+   "real": "الزلف: حقيقي 100%"
+  },
+  "S2": {
+   "sources": "مصادر خاصة",
+   "plus2": "+2.00 ث",
+   "tea": "حق العليش",
+   "vacant": "شاغر",
+   "v1": "سلّم",
+   "v2": "قعد",
+   "v3": "شرب الشاي",
+   "rank1": "1. الزلف",
+   "rank2": "2. العليش  +2.00 ث",
+   "zelfSays": "لا تقومون… هو وراي"
+  },
+  "S3": {
+   "hud": "زلف سات 1 — بث مباشر",
+   "exclusive": "حصري",
+   "altFrom": "الارتفاع: 400 كم",
+   "altTo": "الارتفاع: شبر واحد",
+   "glasses": "نظارة: بريئة",
+   "ear": "أذن: شاهد",
+   "suspect": "الزلف المشتبه به",
+   "alert": "درجة التأهب: بنفسجي",
+   "loc": "الموقع: صوب الأذن",
+   "idTitle": "بطاقة هوية",
+   "idName": "الاسم: زلف العليش",
+   "idJob": "المهنة: زلف",
+   "idNo": "الرقم الشخصي: ز ل ف - 002",
+   "group": "قروب الزلف (رسمي)",
+   "members": "الأعضاء: الزلف، ظل الزلف، المشط",
+   "join": "العليش طلب ينضم",
+   "rejected": "مرفوض"
+  },
+  "S4": {
+   "headline": "محاولة فاشلة لإخفاء الزلف",
+   "case": "محاولة إخفاء رقم 47",
+   "still": "للحين باين",
+   "t1": "فوطة 1",
+   "t2": "فوطة 2",
+   "laundry": "غسيل الأسبوع",
+   "rate": "نسبة النجاح",
+   "fail": "فشل",
+   "stable": "الفوطة: حالتها مستقرة",
+   "next": "المحاولة رقم 48: قريباً"
+  },
+  "S5": {
+   "title": "لحظة وصول الخبر",
+   "freeze": "تجميد",
+   "news": "الخبر: الزلف شرب شايه",
+   "happy": "فرحان",
+   "shocked": "منصدم",
+   "result": "النتيجة: ما ندري"
+  },
+  "S6": {
+   "late": "تأخّر المذيع",
+   "plus2": "+2.00 ث",
+   "zelfSays": "إلى اللقاء!",
+   "slate": "ZLF NEWS 24 — نوصل قبلكم بثانيتين"
+  }
+ },
+ "scenes": {
+  "S1": "STUDIO OPEN (3D anchor). 0→l1: wide establishing shot with a slow smooth push-in to a medium shot while the channel sting plays (newsui draws the sting/banner). l1 «خبر عاجل يا جماعة…»: mouth flap from ZN.mouth(t), the giant tie gives one small bounce on «عاجل», he leans a little toward the lens on «يا جماعة». Then SILENCE (the music stops dead): he holds an over-serious stare (squint, pupils on the lens); one slow blink at +0.5 s; at +1.0 s the right eyebrow rises, much too high; from +1.5 s to the cut the head tilts painfully slowly to about 0.5 rad while the camera pushes in imperceptibly to a close-up; the moustache staying level is a welcome detail. HARD CUT at maximum tilt. Sound: 'sting' at 0.1, a long soft 'riser' (the tshhh) under the tilt.",
+  "S1b": "THE OFFICIAL PHOTO (P2, dog filter). Hard cut in: P2 fills a gold official-portrait frame labelled txt.frame; 'impact' + 'bark' on the cut and the film's first short light shake (≤0.2 s). Hold ~0.7 s in silence: the deadpan dog-filter face stares back exactly like the anchor did. l2: on «نعتذر منكم» a small txt.glitch tag blinks; on «غلط» the photo slides out and a card txt.wait with a spinner replaces it. During the 1.0 s pause the spinner completes and the SAME photo slides back in, slightly bigger, with a second quieter 'bark'. l3: on «هذي هي» a green stamp txt.confirm thuds onto a corner ('stamp'). l4: on «مو عنه» the whole photo dims to grey with a small tag txt.notTopic; on «زلفه» a red spotlight ring snaps onto the sideburn area at the side of his face (the only spot left in colour) with the label txt.topic, then two fact-check tags: txt.ears small and grey pointing at the filter ears, txt.real big and red. End: the red ring stays as the element that carries into the next scene.",
+  "S2": "PHOTO FINISH AT THE MAJLIS (3D). A majlis doorway seen from inside: floor seating along the walls, a row of big sandals by the door, 3 faceless cartoon guests in white thobes and ghutras (no faces at all), warm practicals but the same grade as the studio. Camera low and steady. A red card txt.sources flashes on «مصادر». l5: on «زلف العليش» the Zelf (a small fuzzy curly dark creature with dot eyes, tiny legs and tiny sandals) trots in through the door alone, very confident; on «يوصل المجلس» it steps out of its two tiny sandals and parks them at the end of the row of big ones; on «قبله» it crosses a glowing threshold line with a photo-finish flash; on «بثانيتين» a big stamp txt.plus2 slams. l6 (the Zelf speaks): the guests start to get up, it lifts one tiny limb to calm them, a subtitle bubble shows txt.zelfSays. l7: a stopwatch starts at 00:00.00 on the first word and runs in REAL TIME; three quick beats on the three verbs, each with a small stamped label (txt.v1 waves, txt.v2 hops onto the cushion at the head of the majlis, txt.v3 sips from a tea glass bigger than itself tagged txt.tea); the stopwatch hits 00:02.00, turns red, 'ding'. On «والعليش توه يفصخ نعاله» a smooth pan back to the door: the Al-Aleish figure (plain cartoon thobe body, his real face from asset p2_face as a flat framed sticker head) hops on one leg fighting a sandal, with a dotted empty outline on his cheek labelled txt.vacant. Last 0.8 s: a results board drops in: txt.rank1 / txt.rank2. Exit: in the last 0.4 s the camera starts rising straight up (the sky-switch he liked); newsui covers the cut.",
+  "S3": "EXCLUSIVE SATELLITE IMAGE (P1, purple side profile). Starts as a satellite HUD (title txt.hud, crosshair, coordinates) descending toward a dot. On «حصرية» a red stamp txt.exclusive; the image loads in scanlines and on «الأقمار الصناعية» reveals P1, an extreme close-up that is obviously not from space. On «صوّرها القمر» a mini orbit diagram; on «من مسافة شبر» the altitude readout rolls from txt.altFrom to txt.altTo and the diagram shows the satellite parked next to a head icon. ONE slow continuous zoom toward the sideburn (ZN_META.p1.zelf) runs from here to the end of the scene. In the 0.7 s pause, radar pings and three tags pop in rhythm: txt.glasses with a green tick, txt.ear in yellow, then a red double circle locks onto the curl with an arrow txt.suspect (heavier thud) and the alert readout txt.alert tints the HUD purple. l9: on «سي بي آر» a generic ID card flips in (photo = asset p1_zelf; fields txt.idTitle, txt.idName, txt.idJob, txt.idNo; NO official emblem); on «وقروب بروحه» a generic chat-group panel pops (NO real app branding): txt.group with txt.members; on «مو فيه» a row txt.join is stamped txt.rejected exactly on the word. Exit: the red circle tightens on the sideburn like an iris.",
+  "S4": "THE FAILED COVER-UP (P3, towels on his head). Opens as a towel being pulled off the lens to reveal P3 in an evidence frame with the case tag txt.case and the headline card txt.headline; a red flash on «تطور خطير». On «يخش الزلف» a pulsing dashed outline at the side of his head with an arrow txt.still. On «فوطة» / «فوطتين» / «وغسيل الأسبوع كله» numbered evidence tags hit the pile from bottom to top exactly on each word (txt.t1, txt.t2, then one big bracket around the whole pile txt.laundry), with a slow push-in. l11: a gauge txt.rate spins up hopefully (37%, 82%, 99%, holds one hopeful beat) then SLAMS to 0% on «صفر» with 'fail', a red stamp txt.fail and the scene's one short light shake. On «والفوطة، حالتها مستقرة» the camera eases up to the towel pile; a hospital monitor line ('beep') and a plaster sticker appear with the tag txt.stable. Last 0.8 s: a small tag slides in: txt.next. Exit: the 0 of 0% grows to fill the screen like an iris.",
+  "S5": "THE MOMENT THE NEWS REACHED HIM (P4, warped grin). P4 inside a phone-video frame with a REC dot and a running timecode, title txt.title, slow push. On the last word of l12 («الخبر»): FREEZE: white flash, 'shutter', cartoon 'scream', three rapid punch-in cuts on the grin (cuts, not shake), then the image holds still in black and white inside a red frame txt.freeze; one short light shake. During the 1.6 s silence a caption types on: txt.news; an emotion meter appears with a needle swinging between txt.happy and txt.shocked. l13: on «محللينا» three identical analyst silhouettes with question marks pop up under the meter; on «فرحان» the needle slams to that side; on «منصدم» it slams to the other. Then the needle springs off the meter ('boing') and the readout says txt.result. Exit: a quick zoom-out as if the picture were a monitor in the studio.",
+  "S6": "SIGN-OFF (3D anchor + the Zelf). Starts 1.3 s before l14: studio medium shot; the anchor adjusts the giant tie (pose tie 0→1→0, 'slide' squeak), settles. l14 «هذا وكان معاكم زلف… قصدي العليش»: he freezes for the pause after «زلف», eyes slide sideways, one eyebrow twitches, then he carries on as if nothing happened. Right after l14 the breaking banner (newsui) reads «الزلف يطالب بقناة مستقلة». l15: the Zelf (ZN.makeZelf, wearing a tiny red tie) pops up onto the desk from behind it and says txt.zelfSays first, waving ('pop'); a stopwatch card txt.late starts ticking; the anchor's eyes slide to the Zelf, head still. l16 «…إلى اللقاء.» flat; the stopwatch stamps txt.plus2. Tail (2.6 s, music dead again): the same very slow head tilt with the tshhh 'riser', the eyebrow floats up, the Zelf tilts its whole body the same way in sync. newsui shows the end slate and cuts to black in the last 0.9 s with one 'bark'."
+ },
+ "alt": {
+  "l14": "هذا وكان معاكم بو زلف… قصدي بو شنب."
+ }
+}

@@ -1,0 +1,22 @@
+Sound effects: alvana-audio library (github.com/seyedpouramir/alvana-audio), all CC0-1.0 (no credit required):
+  sting: sfx/jingle/hit-08 [CC0-1.0] pack kenney-jingles
+  whoosh: sfx/whoosh/classic-sweep [CC0-1.0] pack alvana-classic
+  whip: sfx/whoosh/swish-9 [CC0-1.0] pack oga-swishes
+  impact: sfx/impact/rock-hit-01 [CC0-1.0] pack oga-breaking
+  boom: sfx/explosion/explosion [CC0-1.0] pack oga-100-sfx
+  bark: sfx/creature/barking-01 [CC0-1.0] pack oga-creature
+  fail: sfx/notification/error-buzz [CC0-1.0] pack alvana-synth
+  scream: sfx/creature/scream-01 [CC0-1.0] pack oga-creature
+  pop: sfx/pop/pop-1 [CC0-1.0] pack alvana-synth
+  tick: sfx/ui/tick-004 [CC0-1.0] pack kenney-interface
+  stamp: sfx/impact/classic-stamp [CC0-1.0] pack alvana-classic
+  riser: sfx/transition/swell-cymbal-long [CC0-1.0] pack alvana-synth
+  beep: sfx/ui/beep-15 [CC0-1.0] pack oga-beeps
+  ding: sfx/notification/notify-ding [CC0-1.0] pack alvana-synth
+  typing: sfx/keyboard/key-001 [CC0-1.0] pack oga-keyboard
+  slide: sfx/paper/slide [CC0-1.0] pack alvana-synth
+  shutter: sfx/camera/shutter-dslr [CC0-1.0] pack alvana-synth
+  scratch: sfx/ui/scratch-004 [CC0-1.0] pack kenney-interface
+  boing: sfx/misc/spring-07 [CC0-1.0] pack oga-100-sfx
+  sad: sfx/game/low-down [CC0-1.0] pack kenney-digital
+Music: "Beginning 7" by HoliznaCC0 (holizna-title_screens), CC0-1.0 (CC0, no credit required; credited as courtesy).

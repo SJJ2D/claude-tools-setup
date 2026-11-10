@@ -1,0 +1,122 @@
+{
+ "sting": {
+  "file": "/root/tools/sfx/sfx/jingle/hit-08.wav",
+  "gain": 0.8,
+  "lic": "CC0-1.0",
+  "credit": "sfx/jingle/hit-08 / kenney-jingles"
+ },
+ "whoosh": {
+  "file": "/root/tools/sfx/sfx/whoosh/classic-sweep.wav",
+  "gain": 0.6,
+  "lic": "CC0-1.0",
+  "credit": "sfx/whoosh/classic-sweep / alvana-classic"
+ },
+ "whip": {
+  "file": "/root/tools/sfx/sfx/whoosh/swish-9.wav",
+  "gain": 0.7,
+  "lic": "CC0-1.0",
+  "credit": "sfx/whoosh/swish-9 / oga-swishes"
+ },
+ "impact": {
+  "file": "/root/tools/sfx/sfx/impact/rock-hit-01.wav",
+  "gain": 0.8,
+  "lic": "CC0-1.0",
+  "credit": "sfx/impact/rock-hit-01 / oga-breaking"
+ },
+ "boom": {
+  "file": "/root/tools/sfx/sfx/explosion/explosion.wav",
+  "gain": 0.7,
+  "lic": "CC0-1.0",
+  "credit": "sfx/explosion/explosion / oga-100-sfx"
+ },
+ "bark": {
+  "file": "/root/tools/sfx/sfx/creature/barking-01.wav",
+  "gain": 0.7,
+  "lic": "CC0-1.0",
+  "credit": "sfx/creature/barking-01 / oga-creature"
+ },
+ "fail": {
+  "file": "/root/tools/sfx/sfx/notification/error-buzz.wav",
+  "gain": 0.6,
+  "lic": "CC0-1.0",
+  "credit": "Error (two low notes) / alvana-synth"
+ },
+ "scream": {
+  "file": "/root/tools/sfx/sfx/creature/scream-01.wav",
+  "gain": 0.6,
+  "lic": "CC0-1.0",
+  "credit": "sfx/creature/scream-01 / oga-creature"
+ },
+ "pop": {
+  "file": "/root/tools/sfx/sfx/pop/pop-1.wav",
+  "gain": 0.6,
+  "lic": "CC0-1.0",
+  "credit": "Pop (high) / alvana-synth"
+ },
+ "tick": {
+  "file": "/root/tools/sfx/sfx/ui/tick-004.wav",
+  "gain": 0.5,
+  "lic": "CC0-1.0",
+  "credit": "sfx/ui/tick-004 / kenney-interface"
+ },
+ "stamp": {
+  "file": "/root/tools/sfx/sfx/impact/classic-stamp.wav",
+  "gain": 0.8,
+  "lic": "CC0-1.0",
+  "credit": "sfx/impact/classic-stamp / alvana-classic"
+ },
+ "riser": {
+  "file": "/root/tools/sfx/sfx/transition/swell-cymbal-long.wav",
+  "gain": 0.55,
+  "lic": "CC0-1.0",
+  "credit": "Reverse cymbal swell, 2.5 s / alvana-synth"
+ },
+ "beep": {
+  "file": "/root/tools/sfx/sfx/ui/beep-15.wav",
+  "gain": 0.4,
+  "lic": "CC0-1.0",
+  "credit": "sfx/ui/beep-15 / oga-beeps"
+ },
+ "ding": {
+  "file": "/root/tools/sfx/sfx/notification/notify-ding.wav",
+  "gain": 0.5,
+  "lic": "CC0-1.0",
+  "credit": "Notification ding (two notes) / alvana-synth"
+ },
+ "typing": {
+  "file": "/root/tools/sfx/sfx/keyboard/key-001.wav",
+  "gain": 0.5,
+  "lic": "CC0-1.0",
+  "credit": "sfx/keyboard/key-001 / oga-keyboard"
+ },
+ "slide": {
+  "file": "/root/tools/sfx/sfx/paper/slide.wav",
+  "gain": 0.5,
+  "lic": "CC0-1.0",
+  "credit": "Paper slide / alvana-synth"
+ },
+ "shutter": {
+  "file": "/root/tools/sfx/sfx/camera/shutter-dslr.wav",
+  "gain": 0.7,
+  "lic": "CC0-1.0",
+  "credit": "Camera shutter (DSLR) / alvana-synth"
+ },
+ "scratch": {
+  "file": "/root/tools/sfx/sfx/ui/scratch-004.wav",
+  "gain": 0.7,
+  "lic": "CC0-1.0",
+  "credit": "sfx/ui/scratch-004 / kenney-interface"
+ },
+ "boing": {
+  "file": "/root/tools/sfx/sfx/misc/spring-07.wav",
+  "gain": 0.65,
+  "lic": "CC0-1.0",
+  "credit": "sfx/misc/spring-07 / oga-100-sfx"
+ },
+ "sad": {
+  "file": "/root/tools/sfx/sfx/game/low-down.wav",
+  "gain": 0.6,
+  "lic": "CC0-1.0",
+  "credit": "sfx/game/low-down / kenney-digital"
+ }
+}
