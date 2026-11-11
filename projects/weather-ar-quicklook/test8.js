@@ -1,0 +1,27 @@
+const { chromium } = require('playwright'); const path = require('path');
+(async () => { const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }); const LIB = path.join(__dirname, 'lib');
+  const map = { 'three.js/r128/three.min.js': 'three128.min.js', 'gsap.min.js': 'gsap.min.js', 'lenis.min.js': 'lenis.min.js' };
+  await ctx.route(/cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net/, r => { const u = r.request().url();
+    if (u.includes('engine-binary')) return r.fulfill({ path: path.join(__dirname, 'mockxr8.js'), contentType: 'application/javascript' });
+    if (u.includes('xrextras')) return r.fulfill({ body: '', contentType: 'application/javascript' });
+    const k = Object.keys(map).find(k => u.includes(k)); return k ? r.fulfill({ path: path.join(LIB, map[k]), contentType: 'application/javascript' }) : r.abort(); });
+  await ctx.addInitScript(() => { const o = DOMTokenList.prototype.supports; DOMTokenList.prototype.supports = function (t) { return t === 'ar' ? true : (o ? o.call(this, t) : false); }; });
+  const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(String(e)));
+  await p.goto('http://127.0.0.1:8813/deploy/weather/index.html'); await p.waitForTimeout(2500);
+  await p.evaluate(() => { const g = document.querySelector('#goBtn'); g && g.click(); }); await p.waitForTimeout(600);
+  await p.tap('#camBtn'); await p.waitForTimeout(1500);
+  console.log('on', await p.evaluate(() => window.__AR8.on), 'ret', await p.evaluate(() => window.__AR8.ret && window.__AR8.ret.visible));
+  await p.screenshot({ path: __dirname + '/chk/a8_1.png' });
+  await p.touchscreen.tap(195, 500); await p.waitForTimeout(1600);
+  console.log('placed', await p.evaluate(() => document.body.classList.contains('placed')));
+  await p.screenshot({ path: __dirname + '/chk/a8_2.png' });
+  // tap the station nearest the camera
+  const pt = await p.evaluate(() => { const A = window.__AR8, its = window.__ar8items; let best = null;
+    its.forEach((o, i) => { const v = new THREE.Vector3(); o.grp.getWorldPosition(v); v.y += .02; const d = v.distanceTo(A.cam.position); v.project(A.cam);
+      const x = (v.x + 1) / 2 * innerWidth, y = (-v.y + 1) / 2 * innerHeight; if (!best || d < best.d) best = { d, x, y, i, key: o.it.key }; }); return best; });
+  console.log('tap station', JSON.stringify(pt));
+  await p.touchscreen.tap(pt.x, pt.y - 6); await p.waitForTimeout(1200);
+  console.log('sheet open:', await p.evaluate(() => { const s = document.querySelector('#sheet'); return s && !s.hidden && getComputedStyle(s).display !== 'none' && (s.className + ' ' + (s.getAttribute('aria-hidden') || '')); }));
+  await p.screenshot({ path: __dirname + '/chk/a8_3.png' });
+  console.log('errors:', errs.length ? errs.join(' | ') : 'none'); await b.close(); })();
