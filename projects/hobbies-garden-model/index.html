@@ -4,121 +4,188 @@ import * as THREE from './three.module.js';
 const W=1600,H=1000;
 await new FontFace('AR','url(font.ttf)').load().then(f=>document.fonts.add(f));
 const R=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
-R.setSize(W,H);R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;
-R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;
+R.setSize(W,H);R.shadowMap.enabled=true;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;
 document.body.appendChild(R.domElement);
 const S=new THREE.Scene();S.background=new THREE.Color('#bfe3f7');
-const cam=new THREE.PerspectiveCamera(38,W/H,0.1,300);cam.position.set(0,26,40);cam.lookAt(0,1.5,-1);
+const VIEW=new URLSearchParams(location.search).get('view');
+const cam=new THREE.PerspectiveCamera(36,W/H,0.1,300);
+if(VIEW==='top'){cam.position.set(0,62,6);cam.lookAt(0,0,0.5)}else{cam.position.set(0,25,41);cam.lookAt(0,1.8,-1.5)}
 S.add(new THREE.HemisphereLight('#ffffff','#7a9a5a',1.4));
 const sun=new THREE.DirectionalLight('#fff4e0',2.4);sun.position.set(-14,30,22);sun.castShadow=true;
 sun.shadow.mapSize.set(4096,4096);Object.assign(sun.shadow.camera,{left:-30,right:30,top:30,bottom:-30});sun.shadow.bias=-0.0005;S.add(sun);
 
-const M=c=>new THREE.MeshStandardMaterial({color:c,roughness:.75});
-function box(w,h,d,c,x,y,z,p=S){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;p.add(m);return m}
-function cyl(rt,rb,h,c,x,y,z,p=S,seg=24){const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),M(c));m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;p.add(m);return m}
-function sph(r,c,x,y,z,p=S){const m=new THREE.Mesh(new THREE.SphereGeometry(r,24,16),M(c));m.position.set(x,y,z);m.castShadow=true;p.add(m);return m}
-function label(text,w,h,bg,fg,x,y,z,p=S,fs=0.62){const cv=document.createElement('canvas');cv.width=1024;cv.height=Math.round(1024*h/w);const g=cv.getContext('2d');
- g.fillStyle=bg;g.beginPath();g.roundRect(0,0,cv.width,cv.height,40);g.fill();g.lineWidth=18;g.strokeStyle='#ffffff';g.stroke();
- g.fillStyle=fg;g.direction='rtl';g.textAlign='center';g.textBaseline='middle';g.font=`800 ${Math.round(cv.height*fs)}px AR`;g.fillText(text,cv.width/2,cv.height*0.55);
- const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;
+const M=(c,o={})=>new THREE.MeshStandardMaterial({color:c,roughness:.75,...o});
+const add=(m,x,y,z,p)=>{m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;p.add(m);return m};
+const box=(w,h,d,c,x,y,z,p=S)=>add(new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c)),x,y,z,p);
+const cyl=(rt,rb,h,c,x,y,z,p=S,seg=24)=>add(new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),M(c)),x,y,z,p);
+const sph=(r,c,x,y,z,p=S)=>add(new THREE.Mesh(new THREE.SphereGeometry(r,24,16),M(c)),x,y,z,p);
+const cone=(r,h,c,x,y,z,p=S,seg=24)=>add(new THREE.Mesh(new THREE.ConeGeometry(r,h,seg),M(c)),x,y,z,p);
+const grp=(x,y,z,p=S,ry=0)=>{const g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=ry;p.add(g);return g};
+const line=(a,b,c='#333')=>S.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...a),new THREE.Vector3(...b)]),new THREE.LineBasicMaterial({color:c})));
+function tex(w,h,draw){const cv=document.createElement('canvas');cv.width=w;cv.height=h;draw(cv.getContext('2d'),w,h);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t}
+function sign(text,w,h,bg,fg,x,y,z,p,fs=.5){const t=tex(1024,Math.round(1024*h/w),(g,cw,ch)=>{g.fillStyle=bg;g.beginPath();g.roundRect(0,0,cw,ch,40);g.fill();g.lineWidth=16;g.strokeStyle='#fff';g.stroke();g.fillStyle=fg;g.direction='rtl';g.textAlign='center';g.textBaseline='middle';g.font=`800 ${Math.round(ch*fs)}px AR`;g.fillText(text,cw/2,ch*.55)});
  const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:t,toneMapped:false}));m.position.set(x,y,z);p.add(m);return m}
+const picture=(w,h,t,x,y,z,p,ry=0)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshStandardMaterial({map:t,roughness:.6}));m.position.set(x,y,z);m.rotation.y=ry;p.add(m);return m};
 
-// قاعدة المجسم (لوح)
-box(44,1,32,'#e8d3a8',0,-0.5,0);
-const grass=box(42,0.3,30,'#7cc56a',0,0.15,0);
-// ممرات
-box(3,0.32,17,'#f2e2bf',0,0.17,6.5); box(36,0.32,2.6,'#f2e2bf',0,0.17,-4.2);
-// سور صغير
-for(let x=-20.5;x<=20.5;x+=1.5){cyl(.12,.12,.9,'#ffffff',x,.75,14.6,S,8)} box(41.5,.15,.15,'#ffffff',0,1.0,14.6);
+// ===== شخص (بدون كلمات) =====
+// o: skin, shirt, pants, hair, armL/armR [rx,rz], legL/legR rx, sit, girl
+function person(x,z,ry,o={}){const g=grp(x,0,z,S,ry);const sk=o.skin||'#e0ac7e',sh=o.shirt||'#3a86ff',pa=o.pants||'#2b3a67',ha=o.hair||'#2b1b10';
+ const y0=o.sit?-.75:0;const b=grp(0,y0+(o.lift||0),0,g);
+ for(const [s,rx] of [[-1,o.legL||0],[1,o.legR||0]]){const l=grp(s*.17,.95,0,b);l.rotation.x=o.sit?-Math.PI/2:rx;box(.24,.9,.26,pa,0,-.45,0,l);box(.26,.14,.38,'#333',0,-.9,.06,l)}
+ cyl(.3,.34,.9,sh,0,1.38,0,b,16);if(o.girl)cone(.5,.7,sh,0,1.15,0,b,16);
+ sph(.36,sk,0,2.15,0,b);const hr=sph(.38,ha,0,2.25,-.06,b);hr.scale.set(1,.75,1);if(o.girl){sph(.16,ha,-.33,2.0,-.12,b);sph(.16,ha,.33,2.0,-.12,b)}
+ sph(.05,'#222',-.12,2.18,.32,b);sph(.05,'#222',.12,2.18,.32,b);
+ for(const [s,a] of [[-1,o.armL||[0,0]],[1,o.armR||[0,0]]]){const ar=grp(s*.4,1.72,0,b);ar.rotation.set(a[0],0,s*(a[1]||.12));box(.18,.75,.2,sh,0,-.35,0,ar);sph(.12,sk,0,-.78,0,ar)}
+ return g}
 
-// ===== المباني الأربعة =====
-function building(x,col,roof,name,deco){const g=new THREE.Group();g.position.set(x,0,-10);S.add(g);
- box(7,7,5.5,col,0,3.8,0,g);
- const r=new THREE.Mesh(new THREE.ConeGeometry(5.3,2.6,4),M(roof));r.rotation.y=Math.PI/4;r.position.y=8.6;r.castShadow=true;g.add(r);
- box(1.8,2.8,.2,'#6b4226',0,1.7,2.8,g);
- for(const wx of[-2.3,2.3])for(const wy of[3.2,5.0])box(1.3,1.1,.15,'#d9f1ff',wx,wy,2.8,g);
- box(1.4,.9,.15,'#d9f1ff',0,5.0,2.8,g);
- box(7.6,1.7,.3,'#ffffff',0,6.9,3.2,g);label(name,7.4,1.5,'#fffdf5','#2b2b2b',0,6.9,3.4,g,.42);
- deco(g);}
-building(-15,'#5aa0e6','#2f6fb3','نادي القراءة',g=>{ // كتاب مفتوح على السطح
- const b=new THREE.Group();b.position.set(0,11.2,0);g.add(b);
- const p1=box(2.2,.25,2.8,'#ffffff',-1.15,0,0,b);p1.rotation.z=.35;const p2=box(2.2,.25,2.8,'#ffffff',1.15,0,0,b);p2.rotation.z=-.35;
- const c1=box(2.3,.12,2.95,'#d9443a',-1.15,-.2,0,b);c1.rotation.z=.35;const c2=box(2.3,.12,2.95,'#d9443a',1.15,-.2,0,b);c2.rotation.z=-.35;
- cyl(.08,.08,1.6,'#555',0,10,0,g,8);});
-building(-5,'#f4f4f4','#2e9a4a','نادي كرة القدم',g=>{ // كرة كبيرة + مرمى صغير
- const ball=sph(1.3,'#ffffff',0,11.4,0,g);
- for(let i=0;i<6;i++){const s=sph(.38,'#222',0,0,0,g);const a=i*Math.PI/3;s.position.set(Math.cos(a)*1.05,11.4+Math.sin(a)*1.05*.6,Math.sin(a)*.5+.75)}
- cyl(.08,.08,1.6,'#555',0,10,0,g,8);
- });
-building(5,'#8a5cd6','#5a33a6','نادي الألعاب الإلكترونية',g=>{ // يد تحكم
- const c=new THREE.Group();c.position.set(0,11.3,.3);g.add(c);
- box(3.2,1.3,.7,'#2b2b38',0,0,0,c);sph(.75,'#2b2b38',-1.5,-.25,0,c);sph(.75,'#2b2b38',1.5,-.25,0,c);
- box(.8,.25,.2,'#f5f5f5',-1,.1,.4,c);box(.25,.8,.2,'#f5f5f5',-1,.1,.4,c);
- sph(.17,'#e84a4a',.9,.3,.38,c);sph(.17,'#3fb950',1.25,0,.38,c);sph(.17,'#f2c230',.55,0,.38,c);sph(.17,'#3a86ff',.9,-.3,.38,c);
- cyl(.08,.08,1.6,'#555',0,10,0,g,8);});
-building(15,'#ffb347','#e0742a','نادي الرسم',g=>{ // لوحة ألوان وفرشاة
- const pal=new THREE.Mesh(new THREE.CylinderGeometry(1.7,1.7,.25,32),M('#f3dfb8'));pal.rotation.x=Math.PI/2;pal.position.set(0,11.4,0);pal.castShadow=true;g.add(pal);
- ['#e84a4a','#3a86ff','#3fb950','#f2c230','#8a5cd6'].forEach((c,i)=>{const a=i*1.1+.4;sph(.28,c,Math.cos(a)*1.1,11.4+Math.sin(a)*1.1,.2,g)});
- const br=cyl(.09,.09,3,'#8b5a2b',1.2,11.6,.4,g,8);br.rotation.z=-.7;
- cyl(.08,.08,1.6,'#555',0,10,0,g,8);});
+// ===== القاعدة =====
+box(44,1,33,'#e8d3a8',0,-0.5,.5);box(42,0.3,31,'#7cc56a',0,0.15,.5);
+box(3,0.32,13,'#f2e2bf',0,0.17,3); box(36,0.32,2.6,'#f2e2bf',0,0.17,-4.2);
+for(let x=-20.5;x<=20.5;x+=1.5){if(Math.abs(x)<4)continue;cyl(.1,.1,.7,'#ffffff',x,.65,15.7,S,8)}
+box(16.6,.12,.12,'#fff',-12.3,.85,15.7);box(16.6,.12,.12,'#fff',12.3,.85,15.7);
 
-// ===== الحديقة والهوايات =====
+// ===== المباني بثيمات مختلفة =====
+const BZ=-10.5;
+// 1) نادي القراءة: كومة كتب عملاقة + كتاب مفتوح سقفاً
+{const g=grp(-15,0,BZ);const bks=[['#2f6fb3',7.2,2.3,5.6,-.0],['#d9443a',6.6,2.1,5.2,.15],['#f2b134',7,2.2,5.4,-.12]];let y=.3;
+ bks.forEach(([c,w,h,d,r])=>{const b=grp(0,y+h/2,0,g,r);box(w,h,d,c,0,0,0,b);box(w-.4,h-.35,d+.02,'#fbf6e6',.2,0,0,b);box(.3,h,d+.05,c,-w/2+.15,0,0,b);y+=h});
+ const top=grp(0,y+.6,0,g);[[-1,.32],[1,-.32]].forEach(([s,r])=>{const p=box(3.4,.2,4.6,'#fbf6e6',s*1.65,0,0,top);p.rotation.z=r;const c=box(3.5,.12,4.8,'#7a3fa0',s*1.65,-.17,0,top);c.rotation.z=r});
+ box(1.6,2.1,.2,'#6b4226',0,1.35,2.82,g);sph(.1,'#f2c230',.55,1.35,2.95,g);
+ const wt=tex(256,256,(c)=>{c.fillStyle='#d9f1ff';c.fillRect(0,0,256,256);c.strokeStyle='#fff';c.lineWidth=18;c.strokeRect(0,0,256,256);c.beginPath();c.moveTo(128,0);c.lineTo(128,256);c.stroke()});
+ [[-2.4,3.4],[2.4,3.4],[-2.4,5.6],[2.4,5.6]].forEach(([x,yy])=>picture(1.2,1,wt,x,yy,2.85,g));
+ sign('نادي القراءة',5,1.1,'#2f6fb3','#fff',0,7.2,2.9,g,.5);
+ // كتب صغيرة بجانب الباب
+ ['#3fb950','#e84a4a','#3a86ff'].forEach((c,i)=>box(.8,.25,.6,c,3,.45+i*.26,3.6,g));}
+
+// 2) نادي كرة القدم: ملعب مصغّر بمدرجات وأعمدة إنارة
+{const g=grp(-5,0,BZ);box(8,.3,6,'#3aa64c',0,.45,0,g);
+ const ft=tex(512,384,(c)=>{c.fillStyle='#3aa64c';c.fillRect(0,0,512,384);for(let i=0;i<8;i++){c.fillStyle=i%2?'#34994a':'#3fb052';c.fillRect(i*64,0,64,384)}c.strokeStyle='#fff';c.lineWidth=8;c.strokeRect(30,30,452,324);c.beginPath();c.moveTo(256,30);c.lineTo(256,354);c.stroke();c.beginPath();c.arc(256,192,50,0,7);c.stroke()});
+ const f=new THREE.Mesh(new THREE.PlaneGeometry(6,4.2),new THREE.MeshStandardMaterial({map:ft}));f.rotation.x=-Math.PI/2;f.position.set(0,.61,.2);f.receiveShadow=true;g.add(f);
+ // مدرجات متدرجة خلفية وجانبية
+ for(let i=0;i<3;i++){box(8,.7+i*.7,.7,['#e84a4a','#ffffff','#3a86ff'][i],0,.35+(.7+i*.7)/2,-2.4-i*.7,g);
+  box(.7,.7+i*.7,5,['#e84a4a','#ffffff','#3a86ff'][i],-4.2-i*.7,.35+(.7+i*.7)/2,0,g);box(.7,.7+i*.7,5,['#e84a4a','#ffffff','#3a86ff'][i],4.2+i*.7,.35+(.7+i*.7)/2,0,g)}
+ // جمهور صغير
+ const fans=['#ffd23f','#ff4f6d','#3fb950','#8a5cd6','#ff8c42'];for(let i=0;i<14;i++){sph(.22,fans[i%5],-3.5+i*.55,2.4+.1*(i%2),-3.8,g)}
+ // مرميان
+ for(const s of[-1,1]){const gg=grp(s*2.9,.6,.2,g);cyl(.06,.06,1.2,'#fff',0,.6,-.9,gg,8);cyl(.06,.06,1.2,'#fff',0,.6,.9,gg,8);const t=cyl(.06,.06,1.9,'#fff',0,1.2,0,gg,8);t.rotation.x=Math.PI/2}
+ // أعمدة إنارة
+ for(const [x,z] of[[-5.8,-3.5],[5.8,-3.5]]){cyl(.12,.15,8,'#9aa',x,4,z,g,8);box(1.6,.9,.3,'#f6f6d0',x,8.2,z+.1,g)}
+ // بوابة أمامية وكرة كبيرة
+ box(.5,3.5,.5,'#2e9a4a',-2.8,2,3.5,g);box(.5,3.5,.5,'#2e9a4a',2.8,2,3.5,g);box(6.2,1.3,.5,'#2e9a4a',0,4.3,3.5,g);
+ sign('نادي كرة القدم',5.6,1.05,'#2e9a4a','#fff',0,4.3,3.77,g,.5);
+ const bt=tex(512,256,(c)=>{c.fillStyle='#fff';c.fillRect(0,0,512,256);c.fillStyle='#222';for(let i=0;i<10;i++){const x=(i*101)%512,y=(i*67)%256;c.beginPath();for(let k=0;k<5;k++){const a=k*1.2566;c.lineTo(x+22*Math.cos(a),y+22*Math.sin(a))}c.fill()}});
+ const ball=new THREE.Mesh(new THREE.SphereGeometry(1.1,32,20),new THREE.MeshStandardMaterial({map:bt}));ball.position.set(0,6.1,3.5);ball.castShadow=true;g.add(ball);}
+
+// 3) نادي الألعاب الإلكترونية: جهاز «أركيد» عملاق بشاشة نيون
+{const g=grp(5,0,BZ);box(6.6,9,5,'#24203a',0,4.8,0,g);
+ const sl=box(6.6,2.6,1.6,'#2f2a4a',0,3.5,2.9,g);sl.rotation.x=-.5; // لوحة التحكم المائلة
+ const sc=tex(512,400,(c)=>{c.fillStyle='#0e1033';c.fillRect(0,0,512,400);const px=(x,y,col,map)=>{c.fillStyle=col;map.forEach((r,j)=>[...r].forEach((v,i)=>{if(v==='1')c.fillRect(x+i*14,y+j*14,14,14)}))};
+  px(60,200,'#3fb950',['0011100','0111110','1101011','1111111','0111110','0100010']);
+  px(330,120,'#ff4f6d',['0010100','0111110','1110111','1111111','1010101']);
+  c.fillStyle='#ffd23f';for(let i=0;i<9;i++)c.fillRect(40+i*52,340,18,18);c.fillStyle='#3a86ff';c.fillRect(0,372,512,28);
+  c.fillStyle='#ffffff';for(let i=0;i<30;i++)c.fillRect((i*137)%512,(i*53)%180,4,4)});
+ const scr=new THREE.Mesh(new THREE.PlaneGeometry(5.2,3.9),new THREE.MeshBasicMaterial({map:sc,toneMapped:false}));scr.position.set(0,6.3,2.52);g.add(scr);
+ const neon=(w,h,col,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,.15),new THREE.MeshStandardMaterial({color:col,emissive:col,emissiveIntensity:1.2}));m.position.set(x,y,z);g.add(m)};
+ neon(5.6,.15,'#00e5ff',0,8.35,2.55);neon(5.6,.15,'#00e5ff',0,4.25,2.55);neon(.15,4.2,'#ff2bd6',-2.8,6.3,2.55);neon(.15,4.2,'#ff2bd6',2.8,6.3,2.55);
+ // أزرار وعصا
+ [['#e84a4a',.8],['#3fb950',1.4],['#f2c230',2],['#3a86ff',2.6]].forEach(([c,x])=>sph(.22,c,x-.4,3.95,3.35,g));cyl(.07,.07,.6,'#222',-1.8,4.1,3.3,g,8);sph(.25,'#e84a4a',-1.8,4.45,3.3,g);
+ box(1.6,2.2,.2,'#111',0,1.15,2.52,g);
+ // مكعبات بكسل حول المبنى ويد تحكم فوقه
+ [['#ffd23f',-3.9,.5,2],['#ff4f6d',3.9,.5,2.5],['#3fb950',3.9,1.4,2.5],['#3a86ff',-3.9,.5,3]].forEach(([c,x,y,z])=>box(.9,.9,.9,c,x,y,z,g));
+ const cn=grp(0,10.1,0,g);box(3,1.1,.8,'#3a3550',0,0,0,cn);sph(.65,'#3a3550',-1.4,-.2,0,cn);sph(.65,'#3a3550',1.4,-.2,0,cn);sph(.16,'#e84a4a',.9,.25,.42,cn);sph(.16,'#3fb950',1.2,0,.42,cn);box(.7,.22,.2,'#eee',-.9,.05,.42,cn);box(.22,.7,.2,'#eee',-.9,.05,.42,cn);
+ sign('نادي الألعاب الإلكترونية',6.2,1.1,'#8a5cd6','#fff',0,9.05,2.56,g,.42);}
+
+// 4) نادي الرسم: برج أسطواني ملوّن بقلم رصاص عملاق وعلبة ألوان
+{const g=grp(15,0,BZ);
+ const st=tex(1024,512,(c)=>{const cs=['#ff4f6d','#ffd23f','#3fb950','#3a86ff','#8a5cd6','#ff8c42'];for(let i=0;i<12;i++){c.fillStyle=cs[i%6];c.fillRect(i*86,0,86,512)}c.fillStyle='rgba(255,255,255,.9)';for(let i=0;i<14;i++){c.beginPath();c.arc((i*173)%1024,(i*97)%512,18+i%3*10,0,7);c.fill()}});
+ const tw=new THREE.Mesh(new THREE.CylinderGeometry(3,3,6.5,40),new THREE.MeshStandardMaterial({map:st}));tw.position.set(-.6,3.55,0);tw.castShadow=tw.receiveShadow=true;g.add(tw);
+ // سقف: علبة ألوان سائلة تقطر
+ cyl(3.2,3.2,.6,'#ffffff',-.6,7.1,0,g,40);['#ff4f6d','#3a86ff','#ffd23f','#3fb950'].forEach((c,i)=>{const a=i*1.57+.6;const d=cyl(.25,.25,1.2+i%2*.6,c,-.6+Math.cos(a)*3.15,6.4-i%2*.3,Math.sin(a)*3.15,g,12);sph(.25,c,d.position.x,d.position.y-.6-i%2*.3,d.position.z,g)});
+ const pal=cyl(1.8,1.8,.25,'#f3dfb8',-.6,8.2,0,g,32);pal.rotation.x=-.5;['#e84a4a','#3a86ff','#3fb950','#f2c230','#8a5cd6'].forEach((c,i)=>{const a=i*1.1+.4;sph(.26,c,-.6+Math.cos(a)*1.1,8.35+Math.sin(a)*.5,Math.sin(a)*.9+.2,g)});
+ // قلم رصاص عملاق
+ cyl(.75,.75,7.5,'#ffcf3f',3.2,4.05,.5,g,6);cone(.75,1.5,'#f3d2a2',3.2,8.55,.5,g,6);cone(.25,.5,'#333',3.2,9.05,.5,g,6);cyl(.76,.76,.6,'#ff8fa3',3.2,.6,.5,g,6);
+ box(1.6,2.3,.3,'#6b4226',-.6,1.45,2.95,g);
+ const ft=tex(256,256,(c)=>{c.fillStyle='#fff';c.fillRect(0,0,256,256);c.fillStyle='#ffd23f';c.beginPath();c.arc(190,60,34,0,7);c.fill();c.fillStyle='#3fb950';c.fillRect(0,180,256,76);c.fillStyle='#e84a4a';c.fillRect(70,120,70,62);c.strokeStyle='#8b5a2b';c.lineWidth=18;c.strokeRect(0,0,256,256)});
+ picture(1.3,1.3,ft,-2.6,3.8,2.25,g,-.6);picture(1.3,1.3,ft,1.4,3.8,2.25,g,.6);
+ sign('نادي الرسم',4.6,1.05,'#ff8c42','#fff',-.6,5.6,3.05,g,.5);}
+
+// ===== الحديقة =====
 function tree(x,z,s=1){cyl(.25*s,.35*s,2*s,'#8b5a2b',x,1*s+.3,z);sph(1.4*s,'#3f9d48',x,2.8*s+.3,z);sph(1*s,'#56b65c',x+.6*s,3.4*s+.3,z+.3*s)}
-[[-20,-4],[20,-4],[-19,4],[19,3],[-8,-1.5],[8,-1.5],[-19.5,12],[19.5,12]].forEach(([x,z])=>tree(x,z,.9));
-function flowers(x,z){box(3,.4,1.6,'#8b5a2b',x,.5,z);const cs=['#ff5c8a','#ffd23f','#ff8c42','#c77dff'];for(let i=0;i<10;i++)sph(.2,cs[i%4],x-1.2+(i%5)*.6,.95,z-.35+Math.floor(i/5)*.7)}
-// 1) الزراعة
-flowers(-15,2); flowers(-11,2);
-const can=cyl(.35,.4,.7,'#3a86ff',-13,.65,3.6);const sp=cyl(.06,.1,.9,'#3a86ff',-12.5,.9,3.6,S,8);sp.rotation.z=-1;
-label('الزراعة',3,.8,'#3fb950','#fff',-13,1.9,4.4,S,.55);
-// 2) صيد السمك: بركة
-const pond=new THREE.Mesh(new THREE.CylinderGeometry(3.2,3.2,.1,40),new THREE.MeshStandardMaterial({color:'#4fb3e8',roughness:.15,metalness:.1}));pond.position.set(-13,.36,9);pond.scale.z=.7;pond.receiveShadow=true;S.add(pond);
-for(let i=0;i<9;i++){const a=i/9*Math.PI*2;sph(.45,'#a7a7a7',-13+Math.cos(a)*3.3,.4,9+Math.sin(a)*2.35)}
-[[-13.5,8.5],[-12,9.6]].forEach(([x,z])=>{const f=sph(.3,'#ff8c42',x,.45,z);f.scale.set(1.5,.5,.8)});
-const rod=cyl(.05,.07,4,'#5b3a1e',-15.5,2,11,S,8);rod.rotation.z=-.9;
-label('صيد السمك',3.4,.8,'#3a86ff','#fff',-13,1.4,12.2,S,.5);
-// 3) الطائرة الورقية
-const kite=new THREE.Mesh(new THREE.CircleGeometry(1.3,4),new THREE.MeshStandardMaterial({color:'#ff4f6d',side:2}));kite.position.set(-8.5,8,2);kite.scale.y=1.4;kite.rotation.z=.2;S.add(kite);
-const kl=new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-8.5,8,2),new THREE.Vector3(-5.5,1,6.5)]),new THREE.LineBasicMaterial({color:'#333'}));S.add(kl);
-for(let i=0;i<4;i++){const b=box(.3,.3,.05,['#ffd23f','#3a86ff'][i%2],-8.3+.2*i,6.4-.6*i,2)}
-label('الطائرة الورقية',4,.8,'#ff4f6d','#fff',-5.5,1.5,7.2,S,.48);
-// 4) ركوب الدراجة
-const bike=new THREE.Group();bike.position.set(11,0,2.5);S.add(bike);
-for(const bx of[-1,1]){const w=new THREE.Mesh(new THREE.TorusGeometry(.6,.08,10,30),M('#222'));w.position.set(bx,.9,0);w.castShadow=true;bike.add(w)}
-const fr=box(2,.12,.12,'#e84a4a',0,1.3,0,bike);box(.12,.9,.12,'#e84a4a',-.5,1.6,0,bike);box(.12,.9,.12,'#e84a4a',.9,1.6,0,bike);box(.6,.15,.3,'#222',-.5,2.05,0,bike);box(.12,.12,.9,'#222',.9,2.05,0,bike);
-label('ركوب الدراجة',3.6,.8,'#e84a4a','#fff',11,2.9,3.6,S,.5);
-// 5) الرسم في الحديقة: حامل لوحة
-const ea=new THREE.Group();ea.position.set(15,0,8.5);ea.rotation.y=-.4;S.add(ea);
-const l1=box(.12,3,.12,'#8b5a2b',-.6,1.6,0,ea);l1.rotation.z=.15;const l2=box(.12,3,.12,'#8b5a2b',.6,1.6,0,ea);l2.rotation.z=-.15;
-const cvs=document.createElement('canvas');cvs.width=256;cvs.height=200;const cg=cvs.getContext('2d');cg.fillStyle='#fff';cg.fillRect(0,0,256,200);cg.fillStyle='#ffd23f';cg.beginPath();cg.arc(190,50,28,0,7);cg.fill();cg.fillStyle='#3fb950';cg.fillRect(0,140,256,60);cg.fillStyle='#e84a4a';cg.fillRect(60,90,60,55);
-const tx=new THREE.CanvasTexture(cvs);tx.colorSpace=THREE.SRGBColorSpace;const pic=new THREE.Mesh(new THREE.BoxGeometry(1.9,1.5,.1),[M('#fff'),M('#fff'),M('#fff'),M('#fff'),new THREE.MeshStandardMaterial({map:tx}),M('#fff')]);pic.position.set(0,2.4,.15);pic.castShadow=true;ea.add(pic);
-label('الرسم',2.2,.8,'#ff8c42','#fff',15,.9,10.2,S,.55);
-// 6) القراءة في الحديقة: مقعد وكتب
-box(3,.2,1,'#a0522d',8,1,9);box(3,.8,.15,'#a0522d',8,1.5,8.5);for(const bx of[-1.3,1.3])box(.15,.9,.9,'#555',8+bx,.6,9);
-box(.8,.25,.6,'#3a86ff',7.4,1.25,9);box(.7,.2,.55,'#ffd23f',7.4,1.45,9);
-label('القراءة',2.4,.8,'#5aa0e6','#fff',8,.9,10.4,S,.55);
-// 7) كرة القدم: ملعب صغير ومرمى
-box(6,.33,3.4,'#5fb04f',10,.2,-1.2);const gl=new THREE.Group();gl.position.set(12.6,0,-1.2);S.add(gl);
-cyl(.08,.08,1.6,'#fff',0,1.1,-1.1,gl,8);cyl(.08,.08,1.6,'#fff',0,1.1,1.1,gl,8);const tb=cyl(.08,.08,2.3,'#fff',0,1.9,0,gl,8);tb.rotation.x=Math.PI/2;
-sph(.35,'#fff',9,.75,-1);
-// بالونات زينة
-[[-6.5,4],[6.5,4]].forEach(([x,z],k)=>{['#ff4f6d','#ffd23f','#3a86ff'].forEach((c,i)=>{sph(.5,c,x+(i-1)*.6,4+i*.3,z);const s=new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x+(i-1)*.6,3.5+i*.3,z),new THREE.Vector3(x,.4,z)]),new THREE.LineBasicMaterial({color:'#555'}));S.add(s)});cyl(.15,.2,.4,'#777',x,.5,z)});
+[[-20,-4],[20,-4],[-20,5.5],[20,4.5],[-20,13],[20,13]].forEach(([x,z])=>tree(x,z,.85));
+const bush=(x,z)=>{sph(.6,'#4caf50',x,.6,z);sph(.45,'#66bb6a',x+.5,.55,z+.2)};[[-1.8,-1],[1.8,-1],[-1.8,8],[1.8,8]].forEach(([x,z])=>bush(x,z));
 
-// ===== العجلة الدوارة (المقدمة في المنتصف) =====
-const wheel=new THREE.Group();wheel.position.set(0,0,10.5);S.add(wheel);
-box(4.4,.4,2.2,'#c0392b',0,.5,0,wheel);
-const lg1=box(.35,4.6,.35,'#7a7a7a',-1.2,2.7,-.2,wheel);lg1.rotation.z=-.22;const lg2=box(.35,4.6,.35,'#7a7a7a',1.2,2.7,-.2,wheel);lg2.rotation.z=.22;
-const wc=document.createElement('canvas');wc.width=wc.height=1024;const wg=wc.getContext('2d');
-const cols=['#ff4f6d','#ffd23f','#3fb950','#3a86ff','#8a5cd6','#ff8c42'],nums=['١','٢','٣','٤','٥','٦'];
-for(let i=0;i<6;i++){const a0=-Math.PI/2+i*Math.PI/3-Math.PI/6;wg.fillStyle=cols[i];wg.beginPath();wg.moveTo(512,512);wg.arc(512,512,512,a0,a0+Math.PI/3);wg.closePath();wg.fill();wg.strokeStyle='#fff';wg.lineWidth=14;wg.stroke();
- const am=a0+Math.PI/6;wg.save();wg.translate(512+Math.cos(am)*330,512+Math.sin(am)*330);wg.fillStyle='#fff';wg.strokeStyle='rgba(0,0,0,.35)';wg.lineWidth=10;wg.font='800 230px AR';wg.textAlign='center';wg.textBaseline='middle';wg.strokeText(nums[i],0,10);wg.fillText(nums[i],0,10);wg.restore()}
-const wt=new THREE.CanvasTexture(wc);wt.colorSpace=THREE.SRGBColorSpace;wt.anisotropy=8;
-const disc=new THREE.Mesh(new THREE.CircleGeometry(2.6,64),new THREE.MeshStandardMaterial({map:wt,roughness:.5}));disc.position.set(0,4.9,.25);disc.castShadow=true;wheel.add(disc);
-const back=cyl(2.6,2.6,.3,'#ffffff',0,4.9,0,wheel,64);back.rotation.x=Math.PI/2;
-const rim=new THREE.Mesh(new THREE.TorusGeometry(2.65,.16,12,64),M('#f2c230'));rim.position.set(0,4.9,.25);wheel.add(rim);
-for(let i=0;i<12;i++){const a=i*Math.PI/6;sph(.13,'#fff8d0',Math.cos(a)*2.65,4.9+Math.sin(a)*2.65,.42,wheel)}
-sph(.35,'#f2c230',0,4.9,.4,wheel);
-const ptr=new THREE.Mesh(new THREE.ConeGeometry(.35,.9,3),M('#222'));ptr.rotation.z=Math.PI;ptr.position.set(0,7.75,.35);ptr.castShadow=true;wheel.add(ptr);
-label('العجلة الدوارة',4.4,.9,'#c0392b','#fff',0,.75,1.12,wheel,.5);
+// 1) الزراعة: أحواض زهور، دوّار شمس، طفلة تسقي وطفل يزرع
+{const fl=(x,z)=>{box(3,.4,1.4,'#8b5a2b',x,.5,z);box(2.8,.1,1.2,'#5a3a1a',x,.72,z);const cs=['#ff5c8a','#ffd23f','#ff8c42','#c77dff'];for(let i=0;i<10;i++){const fx=x-1.15+(i%5)*.58,fz=z-.3+Math.floor(i/5)*.6;cyl(.03,.03,.4,'#2e7d32',fx,.95,fz,S,6);sph(.17,cs[i%4],fx,1.2,fz)}};
+ fl(-16,0.5);fl(-12,0.5);
+ for(let i=0;i<3;i++){cyl(.06,.06,2.2,'#2e7d32',-18.2+i*.7,1.3,2.3,S,6);const h=cyl(.4,.4,.12,'#ffcc00',-18.2+i*.7,2.45,2.45,S,16);h.rotation.x=1.3;cyl(.2,.2,.14,'#6b3e1e',-18.2+i*.7,2.45,2.52,S,12).rotation.x=1.3}
+ person(-13.6,2.6,.6,{girl:1,shirt:'#ff7eb6',hair:'#3b2314',skin:'#c68642',armR:[-1.2,.1]});
+ cyl(.3,.35,.55,'#3a86ff',-13.0,1.35,3.25);const sp=cyl(.05,.09,.7,'#3a86ff',-12.65,1.55,2.95,S,8);sp.rotation.x=-1;
+ for(let i=0;i<5;i++)sph(.05,'#7fd3ff',-12.55,1.2-i*.15,2.7-i*.05);
+ person(-10.3,2.5,-.5,{sit:1,shirt:'#ffd23f',pants:'#5d4037',skin:'#f1c27d',armL:[-1.3,.1],armR:[-.9,0]});
+ const shv=cyl(.04,.04,1,'#8b5a2b',-10.9,.6,1.8,S,6);shv.rotation.x=.9;box(.25,.05,.3,'#9e9e9e',-11,.25,1.45);}
+
+// 2) صيد السمك: بركة بزنابق، بطة، طفل جالس بصنارة، دلو سمك
+{const pond=new THREE.Mesh(new THREE.CylinderGeometry(3.4,3.4,.1,48),M('#4fb3e8',{roughness:.15,metalness:.1}));pond.position.set(-13,.36,8.8);pond.scale.z=.7;pond.receiveShadow=true;S.add(pond);
+ for(let i=0;i<12;i++){const a=i/12*Math.PI*2;sph(.42,['#a7a7a7','#bdbdbd'][i%2],-13+Math.cos(a)*3.5,.4,8.8+Math.sin(a)*2.5)}
+ [[-14.5,8.2],[-11.8,9.8],[-12.6,7.7]].forEach(([x,z])=>{const l=cyl(.4,.4,.04,'#43a047',x,.43,z,S,16);sph(.12,'#ff80ab',x,.5,z)});
+ const f=sph(.3,'#ff8c42',-13.3,.45,9.4);f.scale.set(1.5,.5,.8);
+ const dk=grp(-11.3,.4,8.4,S,-.6);sph(.35,'#ffeb3b',0,.15,0,dk).scale.set(1.3,.8,1);sph(.22,'#ffeb3b',.35,.45,0,dk);cone(.08,.2,'#ff9800',.6,.43,0,dk,8).rotation.z=-1.57;
+ person(-16.2,11.1,2.4,{sit:1,shirt:'#3fb950',skin:'#8d5524',hair:'#111',armL:[-1.1,.1],armR:[-1.1,-.1]});
+ const rod=cyl(.04,.06,4.2,'#5b3a1e',-15.2,2.1,10.0,S,8);rod.rotation.set(.0,0,-1.0);rod.rotation.x=.55;
+ line([-13.5,3.1,9.0],[-13.4,.4,8.9],'#eee');
+ cyl(.35,.3,.55,'#90a4ae',-17.2,.65,12.2);const ff=sph(.18,'#ff7043',-17.2,.95,12.2);ff.scale.set(1.6,.6,.8);}
+
+// 3) الطائرة الورقية: طفل يركض ويده للأعلى
+{const k=new THREE.Mesh(new THREE.CircleGeometry(1.2,4),M('#ff4f6d',{side:2}));k.position.set(-3.6,4.6,3.0);k.scale.y=1.4;k.rotation.z=.25;S.add(k);
+ const k2=new THREE.Mesh(new THREE.CircleGeometry(.6,4),M('#ffd23f',{side:2}));k2.position.set(-3.6,4.6,3.02);k2.scale.y=1.4;k2.rotation.z=.25;S.add(k2);
+ for(let i=0;i<5;i++)box(.3,.3,.05,['#3a86ff','#ffd23f'][i%2],-3.2+.15*i,2.9-.45*i,3.0);
+ person(-6.3,6.2,-.9,{shirt:'#ff8c42',skin:'#e0ac7e',armR:[-2.6,.2],legL:.5,legR:-.5});
+ line([-3.6,4.6,3.0],[-6.0,3.0,6.4]);}
+
+// 4) القفز بالحبل: طفلة تقفز
+{person(-4,10.5,.3,{girl:1,shirt:'#8a5cd6',skin:'#f1c27d',hair:'#6d3b1b',lift:.45,armL:[0,.7],armR:[0,.7]});
+ const rope=new THREE.Mesh(new THREE.TorusGeometry(1.15,.04,8,40,Math.PI),M('#e84a4a'));rope.position.set(-4,1.6,10.5);rope.rotation.set(0,.3,Math.PI);S.add(rope);}
+
+// 5) ركوب الدراجة: مسار دائري وطفل على دراجة
+{const tr=new THREE.Mesh(new THREE.RingGeometry(2.4,3.3,48),M('#b0bec5'));tr.rotation.x=-Math.PI/2;tr.position.set(6.5,.33,5.5);tr.receiveShadow=true;S.add(tr);
+ const bk=grp(6.5,0,8.4,S,-.1);for(const bx of[-.95,.95]){const w=new THREE.Mesh(new THREE.TorusGeometry(.55,.07,10,30),M('#222'));w.position.set(bx,.9,0);w.castShadow=true;bk.add(w)}
+ box(1.9,.1,.1,'#e84a4a',0,1.3,0,bk);box(.1,.8,.1,'#e84a4a',-.45,1.55,0,bk);box(.1,.85,.1,'#e84a4a',.85,1.6,0,bk);box(.1,.1,.8,'#222',.85,2.05,0,bk);
+ const rider=person(6.0,8.4,Math.PI/2-.1,{shirt:'#3a86ff',skin:'#c68642',lift:.55,legL:-.9,legR:-.3,armL:[-1.3,0],armR:[-1.3,0]});
+ cone(.25,.4,'#ff9800',4.8,.55,4.2,S,12);cone(.25,.4,'#ff9800',8.2,.55,4.2,S,12);}
+
+// 6) كرة القدم: ملعب صغير وطفلان
+{box(6,.33,3.6,'#5fb04f',13.5,.2,-0.6);for(const s of[-1,1]){const gl=grp(13.5+s*2.8,0,-.6);cyl(.06,.06,1.3,'#fff',0,1,-1,gl,8);cyl(.06,.06,1.3,'#fff',0,1,1,gl,8);const t=cyl(.06,.06,2.1,'#fff',0,1.65,0,gl,8);t.rotation.x=Math.PI/2}
+ box(.08,.02,3.4,'#fff',13.5,.38,-.6);
+ person(12.3,-.4,Math.PI/2,{shirt:'#e84a4a',skin:'#8d5524',legR:-.9,legL:.3,armL:[.5,.3],armR:[-.5,.3]});
+ person(15.2,-.8,-Math.PI/2,{shirt:'#ffffff',pants:'#1e88e5',skin:'#f1c27d',hair:'#b5651d',armL:[0,.9],armR:[0,.9]});
+ sph(.3,'#fff',13.4,.68,-.4);}
+
+// 7) الرسم: طفل أمام حامل لوحة
+{const ea=grp(15.5,0,7.6,S,-.5);const l1=box(.1,3,.1,'#8b5a2b',-.6,1.6,0,ea);l1.rotation.z=.15;const l2=box(.1,3,.1,'#8b5a2b',.6,1.6,0,ea);l2.rotation.z=-.15;
+ const pt=tex(256,200,(c)=>{c.fillStyle='#fff';c.fillRect(0,0,256,200);c.fillStyle='#87ceeb';c.fillRect(0,0,256,120);c.fillStyle='#ffd23f';c.beginPath();c.arc(190,50,26,0,7);c.fill();c.fillStyle='#3fb950';c.fillRect(0,120,256,80);c.fillStyle='#e84a4a';c.fillRect(60,80,60,55);c.fillStyle='#8b4513';c.beginPath();c.moveTo(50,82);c.lineTo(90,50);c.lineTo(130,82);c.fill()});
+ const pic=new THREE.Mesh(new THREE.BoxGeometry(1.9,1.5,.08),M('#fff'));pic.position.set(0,2.4,.12);ea.add(pic);picture(1.85,1.45,pt,0,2.4,.17,ea);
+ person(14.3,9.6,2.6,{shirt:'#ffd23f',skin:'#e0ac7e',hair:'#222',armR:[-1.4,-.2],armL:[-.6,.2]});
+ cyl(.5,.5,.06,'#f3dfb8',13.5,1.1,9.2,S,20);box(.6,.6,.6,'#8b5a2b',13.5,.6,9.2);}
+
+// 8) القراءة: مقعد وطفلة تقرأ وكومة كتب
+{box(3,.2,1,'#a0522d',9.5,1,11);box(3,.8,.15,'#a0522d',9.5,1.5,10.5);for(const bx of[-1.3,1.3])box(.15,.9,.9,'#555',9.5+bx,.6,11);
+ person(9.0,11.0,0,{sit:1,girl:1,shirt:'#3fb950',skin:'#8d5524',hair:'#111',lift:.95,armL:[-1.1,.3],armR:[-1.1,-.3]});
+ const bkk=grp(9.0,2.05,11.6,S);box(.9,.6,.08,'#e84a4a',0,0,0,bkk).rotation.x=-.5;
+ ['#3a86ff','#ffd23f','#ff8c42'].forEach((c,i)=>box(.7,.2,.5,c,10.5,1.2+i*.21,11));
+ const um=grp(11.6,0,10.6);cyl(.06,.06,3,'#888',0,1.5,0,um,8);cone(1.5,.8,'#ff4f6d',0,3.2,0,um,8);}
+
+// ===== العجلة الدوارة: في المقدمة تماماً ومنخفضة =====
+{const w=grp(0,0,15.4);box(3.6,.35,1.2,'#c0392b',0,.48,0,w);
+ const lg1=box(.25,2.0,.25,'#7a7a7a',-.75,1.55,-.15,w);lg1.rotation.z=-.3;const lg2=box(.25,2.0,.25,'#7a7a7a',.75,1.55,-.15,w);lg2.rotation.z=.3;
+ const cols=['#ff4f6d','#ffd23f','#3fb950','#3a86ff','#8a5cd6','#ff8c42'],nums=['١','٢','٣','٤','٥','٦'];
+ const wt=tex(1024,1024,(g)=>{for(let i=0;i<6;i++){const a0=-Math.PI/2+i*Math.PI/3-Math.PI/6;g.fillStyle=cols[i];g.beginPath();g.moveTo(512,512);g.arc(512,512,512,a0,a0+Math.PI/3);g.closePath();g.fill();g.strokeStyle='#fff';g.lineWidth=14;g.stroke();
+  const am=a0+Math.PI/6;g.fillStyle='#fff';g.strokeStyle='rgba(0,0,0,.35)';g.lineWidth=10;g.font='800 240px AR';g.textAlign='center';g.textBaseline='middle';const x=512+Math.cos(am)*320,y=512+Math.sin(am)*320+12;g.strokeText(nums[i],x,y);g.fillText(nums[i],x,y)}});
+ const hub=grp(0,2.75,0,w);hub.rotation.x=-.35;
+ const back=cyl(1.75,1.75,.22,'#ffffff',0,0,-.12,hub,64);back.rotation.x=Math.PI/2;
+ const disc=new THREE.Mesh(new THREE.CircleGeometry(1.75,64),M('#fff',{map:wt,roughness:.5}));disc.position.z=.0;disc.castShadow=true;hub.add(disc);
+ const rim=new THREE.Mesh(new THREE.TorusGeometry(1.78,.11,12,64),M('#f2c230'));hub.add(rim);
+ for(let i=0;i<12;i++){const a=i*Math.PI/6;sph(.09,'#fff8d0',Math.cos(a)*1.78,Math.sin(a)*1.78,.12,hub)}
+ sph(.22,'#f2c230',0,0,.12,hub);const p=cone(.24,.6,'#222',0,1.95,.15,hub,3);p.rotation.z=Math.PI;}
 
 R.render(S,cam);window.__done=true;
 </script></body></html>
