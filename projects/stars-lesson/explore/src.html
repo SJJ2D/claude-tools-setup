@@ -1,0 +1,1266 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>مرصد النجوم</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#060a1c">
+<meta name="description" content="نشاط استكشافي للصف الثالث: ابحث عن نجم في Stellarium، وقارنه بالشمس، وسجّل اكتشافك في دفتر الراصد.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=Readex+Pro:wght@300;400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#060a1c; --bg2:#0b1433;
+  --panel:rgba(14,22,56,.80); --panel2:rgba(22,32,76,.86); --panel-solid:#101a42;
+  --line:rgba(170,190,255,.20); --line2:rgba(170,190,255,.34);
+  --ink:#f6f3ff; --muted:#c6cbec; --soft:#9aa3d1;
+  --amber:#ffc24d; --amber2:#ffa62e; --amber-ink:#2b1800;
+  --coral:#ff8a65; --teal:#6ee7d8; --sun:#ffd34d; --ok:#86e39a; --rose:#ff9db0;
+  --r:22px; --gut:max(16px, env(safe-area-inset-left, 0px)); --gutR:max(16px, env(safe-area-inset-right, 0px));
+  --e-in:cubic-bezier(.16,1,.3,1); --e-out:cubic-bezier(.7,0,.84,0); --e-move:cubic-bezier(.65,0,.35,1); --e-pop:cubic-bezier(.34,1.56,.64,1);
+  --fh:'Baloo Bhaijaan 2','Readex Pro',Tahoma,'Segoe UI',sans-serif;
+  --fb:'Readex Pro',Tahoma,'Segoe UI','Noto Sans Arabic',sans-serif;
+}
+*{box-sizing:border-box}
+html{background:#060a1c;color:#f6f3ff;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:#060a1c;color:var(--ink);font-family:var(--fb);font-size:18px;line-height:1.75;min-height:100vh;-webkit-tap-highlight-color:transparent}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+img,svg,canvas{display:block;max-width:100%}
+button,input,textarea{font:inherit;color:inherit}
+a{color:var(--amber)}
+.page{position:relative;z-index:1;overflow-x:clip}
+
+/* ---------- sky background ---------- */
+.sky-grad{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+   radial-gradient(60% 45% at 85% 8%, rgba(120,90,255,.20), transparent 70%),
+   radial-gradient(55% 40% at 10% 30%, rgba(40,140,255,.16), transparent 70%),
+   radial-gradient(70% 50% at 50% 105%, rgba(255,150,80,.13), transparent 70%),
+   linear-gradient(180deg,#050819 0%,#081030 45%,#0a0f2a 100%);}
+#sky{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
+
+/* ---------- top bar ---------- */
+.bar{position:sticky;top:0;z-index:30;padding-top:env(safe-area-inset-top,0px);
+  background:rgba(6,10,28,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:10px;min-height:68px;
+  padding-left:var(--gut);padding-right:var(--gutR)}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-weight:800;font-size:22px;color:var(--amber);white-space:nowrap}
+.brand svg{width:34px;height:34px}
+.steps{display:flex;gap:6px;flex:1;justify-content:center;min-width:0}
+.step-pill{min-height:48px;min-width:48px;border:1px solid var(--line2);background:rgba(20,30,70,.7);border-radius:999px;
+  display:flex;align-items:center;gap:6px;padding:4px 12px 4px 10px;cursor:pointer;font-weight:600;font-size:16px;color:var(--muted);
+  transition:background .3s var(--e-in),color .3s var(--e-in),border-color .3s}
+.step-pill .n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.1);font-family:var(--fh);font-size:17px;flex:none}
+.step-pill.on{background:var(--amber);color:var(--amber-ink);border-color:var(--amber)}
+.step-pill.on .n{background:rgba(43,24,0,.15)}
+.step-pill.done .n{background:var(--ok);color:#06240f}
+.step-pill.on.done .n{background:#1d6b33;color:#fff}
+.icon-btn{width:48px;height:48px;border-radius:50%;border:1px solid var(--line2);background:rgba(20,30,70,.7);display:grid;place-items:center;cursor:pointer;flex:none}
+.icon-btn svg{width:24px;height:24px}
+.icon-btn[aria-pressed="false"]{opacity:.7}
+@media (max-width:640px){
+  .brand{display:none}
+  .bar-in{gap:8px}
+  .steps{gap:5px}
+  .step-pill{flex:1 1 0;min-width:0;justify-content:center;padding:4px 6px;gap:5px}
+  .step-pill .n{width:26px;height:26px;font-size:16px}
+  .step-pill .t{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding-left:var(--gut);padding-right:var(--gutR)}
+section.part{scroll-margin-top:84px;padding:34px 0 26px}
+.part-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.part-num{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-family:var(--fh);font-weight:800;font-size:30px;
+  background:linear-gradient(160deg,var(--amber),var(--coral));color:var(--amber-ink);flex:none;box-shadow:0 8px 24px rgba(255,160,60,.25)}
+h1,h2,h3{font-family:var(--fh);line-height:1.25;margin:0}
+h2{font-size:clamp(28px,4.6vw,40px);font-weight:800;color:#fff}
+.lead{color:var(--muted);max-width:65ch;margin:0 0 18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 10px 40px rgba(0,0,0,.25)}
+
+/* ---------- hero ---------- */
+.hero{padding:26px 0 8px}
+.hero-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:20px;align-items:center}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:15px;color:var(--teal);background:rgba(110,231,216,.10);border:1px solid rgba(110,231,216,.3);border-radius:999px;padding:4px 14px}
+.hero h1{font-size:clamp(46px,8vw,84px);font-weight:800;color:var(--sun);margin:10px 0 4px;text-shadow:0 0 28px rgba(255,190,70,.35)}
+.hero p{max-width:60ch;color:var(--muted);margin:0 0 14px;font-size:19px}
+.hero-art{position:relative}
+.hero-art svg{width:100%;height:auto;max-height:340px}
+.music-btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:6px 16px;border-radius:999px;border:1px solid var(--line2);background:rgba(20,30,70,.7);cursor:pointer;font-size:16px;color:var(--muted)}
+.music-btn svg{width:22px;height:22px}
+.missions{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.mission{display:flex;gap:12px;align-items:flex-start;text-align:right;padding:16px;cursor:pointer;border-radius:var(--r);border:1px solid var(--line);
+  background:var(--panel);transition:transform .45s var(--e-in),border-color .3s,background .3s;min-height:48px}
+.mission:hover,.mission:focus-visible{transform:translateY(-3px);border-color:var(--amber)}
+.mission .mi{width:58px;height:58px;flex:none;border-radius:16px;display:grid;place-items:center;background:rgba(255,194,77,.12)}
+.mission .mi svg{width:40px;height:40px}
+.mission b{display:block;font-family:var(--fh);font-size:21px;color:#fff;line-height:1.3}
+.mission small{display:block;color:var(--muted);font-size:15px;line-height:1.55;margin-top:2px}
+.mission .num{font-family:var(--fh);color:var(--amber);font-size:15px}
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-art{order:-1;max-width:420px;margin:0 auto;width:100%}
+  .hero-art svg{max-height:190px}
+  .missions{grid-template-columns:1fr;gap:10px}
+  .mission{padding:12px 14px}
+}
+
+/* ---------- part 1 ---------- */
+.howto{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.how{padding:14px 16px 16px;position:relative;overflow:hidden}
+.how .ill{background:linear-gradient(180deg,#0e1a48,#0a1336);border-radius:16px;border:1px solid var(--line);margin-bottom:10px;aspect-ratio:12/7;display:grid;place-items:center}
+.how .ill svg{width:100%;height:100%}
+.how .sn{position:absolute;top:22px;right:24px;width:38px;height:38px;border-radius:12px;background:var(--amber);color:var(--amber-ink);display:grid;place-items:center;font-family:var(--fh);font-weight:800;font-size:22px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.how h3{font-size:21px;color:#fff;margin-bottom:2px}
+.how p{margin:0;color:var(--muted);font-size:16.5px;line-height:1.65}
+.go-link{display:inline-flex;align-items:center;gap:8px;margin-top:10px;min-height:48px;padding:8px 18px;border-radius:999px;background:var(--amber);color:var(--amber-ink);font-weight:700;text-decoration:none;font-size:17px}
+.go-link svg{width:20px;height:20px}
+.tips{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-top:14px}
+.tip{display:flex;gap:12px;align-items:flex-start;padding:14px 16px}
+.tip svg{width:44px;height:44px;flex:none}
+.tip b{font-family:var(--fh);font-size:20px;color:#fff;display:block;line-height:1.35}
+.tip p{margin:0;color:var(--muted);font-size:16.5px}
+.tip.parent{background:linear-gradient(135deg,rgba(255,138,101,.22),rgba(255,194,77,.12));border-color:rgba(255,170,90,.45)}
+.next-row{display:flex;justify-content:flex-start;margin-top:16px;gap:10px;flex-wrap:wrap}
+.btn{min-height:52px;padding:10px 22px;border-radius:999px;border:0;cursor:pointer;font-weight:700;font-size:18px;display:inline-flex;align-items:center;gap:10px;
+  transition:transform .35s var(--e-in),box-shadow .3s,background .3s}
+.btn svg{width:22px;height:22px}
+.btn-main{background:linear-gradient(160deg,var(--amber),var(--amber2));color:var(--amber-ink);box-shadow:0 8px 24px rgba(255,160,40,.28)}
+.btn-main:hover{transform:translateY(-2px)}
+.btn-ghost{background:rgba(255,255,255,.07);color:var(--ink);border:1px solid var(--line2)}
+@media (max-width:860px){ .howto{grid-template-columns:1fr 1fr} .tips{grid-template-columns:1fr} }
+@media (max-width:560px){ .howto{grid-template-columns:1fr} .how .ill{aspect-ratio:12/5} }
+
+/* ---------- part 2 ---------- */
+.search{padding:16px;display:grid;gap:12px}
+.search label{font-family:var(--fh);font-size:21px;color:#fff}
+.srow{display:flex;gap:10px}
+.srow input{flex:1;min-width:0;min-height:58px;border-radius:18px;border:2px solid var(--line2);background:#0a1236;padding:8px 16px;font-size:20px;color:#fff;outline:none;transition:border-color .25s}
+.srow input::placeholder{color:#8f97c4}
+.srow input:focus{border-color:var(--amber)}
+.srow .btn{min-height:58px;flex:none}
+.chips-t{font-size:15.5px;color:var(--muted);margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:48px;padding:6px 14px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.05);cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:16.5px;
+  transition:background .25s,border-color .25s,transform .35s var(--e-in)}
+.chip:hover{border-color:var(--amber);transform:translateY(-1px)}
+.chip.on{background:rgba(255,194,77,.18);border-color:var(--amber)}
+.chip .dot{width:16px;height:16px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c);flex:none}
+.chip small{color:var(--soft);font-size:13px}
+.msg{display:none;padding:14px 16px;border-radius:18px;background:rgba(110,231,216,.10);border:1px solid rgba(110,231,216,.35);color:#e9fffb}
+.msg.show{display:block;animation:fadeUp .5s var(--e-in)}
+.msg b{font-family:var(--fh);font-size:19px}
+.msg .chips{margin-top:8px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.result{margin-top:16px;padding:16px}
+.r-head{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin-bottom:12px}
+.r-head h3{font-size:clamp(24px,4vw,32px);color:#fff}
+.r-head .en{color:var(--soft);font-size:17px;font-family:var(--fb)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:14.5px;border-radius:999px;padding:3px 12px;border:1px solid var(--line2);color:var(--muted)}
+.tag.ex{background:var(--teal);color:#052a26;border-color:var(--teal);font-weight:700}
+.tag svg{width:16px;height:16px}
+.stage{position:relative;height:440px;border-radius:20px;overflow:hidden;border:1px solid var(--line);
+  background:radial-gradient(80% 90% at 50% 50%,#0c1745,#050a22 75%);}
+.stage::before{content:"";position:absolute;inset:0;opacity:.55;pointer-events:none;
+  background-image:radial-gradient(1px 1px at 12% 18%,#fff 99%,transparent),radial-gradient(1px 1px at 72% 12%,#cfe0ff 99%,transparent),radial-gradient(1.4px 1.4px at 38% 80%,#fff 99%,transparent),
+  radial-gradient(1px 1px at 88% 66%,#fff 99%,transparent),radial-gradient(1px 1px at 22% 58%,#ffe6c2 99%,transparent),radial-gradient(1.2px 1.2px at 58% 38%,#fff 99%,transparent),radial-gradient(1px 1px at 92% 90%,#fff 99%,transparent),radial-gradient(1px 1px at 6% 88%,#cfe0ff 99%,transparent)}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.lbl{position:absolute;left:0;top:0;transform:translate(-50%,0);white-space:nowrap;pointer-events:none;font-family:var(--fh);font-weight:700;font-size:17px;
+  padding:3px 12px;border-radius:999px;background:rgba(6,10,28,.82);border:1px solid var(--line2);color:#fff;transition:opacity .35s;will-change:transform}
+.lbl.sun{color:var(--sun);border-color:rgba(255,211,77,.6)}
+.lbl.sun::before{content:"";position:absolute;top:-7px;left:50%;margin-left:-7px;border:7px solid transparent;border-top:0;border-bottom-color:rgba(255,211,77,.8)}
+.lbl small{display:block;font-family:var(--fb);font-weight:500;font-size:12.5px;line-height:1.3;color:var(--muted);text-align:center}
+.lbl.two{border-radius:14px;padding:3px 10px 4px;line-height:1.35;text-align:center}
+.ring{position:absolute;left:0;top:0;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:2px dashed rgba(255,211,77,.85);pointer-events:none;transition:opacity .35s}
+.stage-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;flex-wrap:wrap}
+.say{display:flex;align-items:center;gap:8px;font-size:16.5px;line-height:1.5;color:#fff;transition:opacity .4s;flex:1 1 220px}
+.say::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal);flex:none}
+.replay .btn{min-height:48px;padding:6px 16px;font-size:16px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.cmp{padding:14px 16px;border-radius:18px;background:var(--panel2);border:1px solid var(--line);transition:opacity .6s var(--e-in),transform .6s var(--e-in)}
+.cmp.hide{opacity:0;transform:translateY(18px)}
+.cmp .ct{display:flex;align-items:center;gap:8px;font-family:var(--fh);font-size:19px;color:var(--amber)}
+.cmp .ct svg{width:30px;height:30px}
+.cmp .big{font-family:var(--fh);font-weight:800;font-size:clamp(25px,3vw,30px);color:#fff;line-height:1.3;margin:4px 0 2px}
+.cmp .sub{font-size:16.5px;color:var(--muted);line-height:1.6}
+.cmp .sub strong{color:#fff}
+.sw{display:flex;gap:12px;align-items:center;margin:6px 0}
+.sw i{width:40px;height:40px;border-radius:50%;flex:none;box-shadow:0 0 18px var(--c);background:radial-gradient(circle at 35% 35%,#fff 0%,var(--c) 45%,var(--c) 100%)}
+.sw span{font-size:15px;color:var(--muted)}
+.therm{display:grid;gap:6px;margin:8px 0 4px}
+.therm .tr{display:grid;grid-template-columns:76px 1fr;align-items:center;gap:8px;font-size:15px;color:var(--muted)}
+.therm .tb{height:14px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+.therm .tb i{display:block;height:100%;border-radius:999px;width:0;transition:width 1s var(--e-in)}
+.key{margin-top:12px;display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:18px;background:linear-gradient(135deg,rgba(255,138,101,.22),rgba(255,194,77,.14));border:1px solid rgba(255,170,90,.5);transition:opacity .6s var(--e-in),transform .6s var(--e-in)}
+.key.hide{opacity:0;transform:translateY(18px)}
+.key svg{width:46px;height:46px;flex:none}
+.key b{font-family:var(--fh);font-size:22px;color:#fff;display:block;line-height:1.35}
+.key p{margin:2px 0 0;color:#ffe9d6;font-size:17px;max-width:65ch}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.fact{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:16px;color:var(--muted)}
+.fact svg{width:30px;height:30px;flex:none}
+.note{font-size:14px;color:var(--soft);margin:10px 0 0}
+@media (max-width:860px){ .cards{grid-template-columns:1fr} .facts{grid-template-columns:1fr} .stage{height:330px} }
+@media (max-width:420px){ .srow{flex-direction:column} .srow .btn{justify-content:center} }
+@media (max-width:560px){ .chip small{display:none} .chip{padding:6px 13px;font-size:16px;gap:7px} }
+
+/* ---------- part 3 ---------- */
+.sheet{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:start}
+.fcard{padding:16px;display:grid;gap:14px}
+.field label,.q .ql{display:block;font-family:var(--fh);font-size:20px;color:#fff;margin-bottom:6px;line-height:1.35}
+.field input,.field textarea{width:100%;min-height:54px;border-radius:16px;border:2px solid var(--line2);background:#0a1236;padding:8px 14px;font-size:19px;color:#fff;outline:none;transition:border-color .25s}
+.field textarea{min-height:92px;resize:vertical;line-height:1.6}
+.field input:focus,.field textarea:focus{border-color:var(--amber)}
+.field input::placeholder,.field textarea::placeholder{color:#8f97c4}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.auto{font-size:13.5px;color:var(--teal);margin-top:4px;display:none}
+.auto.show{display:block}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{min-height:52px;padding:8px 16px;border-radius:16px;border:2px solid var(--line2);background:rgba(255,255,255,.05);cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:17.5px;font-weight:600;
+  transition:background .25s,border-color .25s,transform .4s var(--e-pop)}
+.opt[aria-pressed="true"]{background:rgba(255,194,77,.2);border-color:var(--amber);color:#fff;transform:scale(1.03)}
+.opt .tick{width:22px;height:22px;border-radius:50%;border:2px solid var(--line2);display:grid;place-items:center;flex:none}
+.opt[aria-pressed="true"] .tick{background:var(--amber);border-color:var(--amber)}
+.opt[aria-pressed="true"] .tick::after{content:"";width:9px;height:5px;border:3px solid var(--amber-ink);border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.opt .cd{width:18px;height:18px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c)}
+.q.miss .ql,.field.miss label{color:var(--coral)}
+.q.miss .opts,.field.miss input,.field.miss textarea{animation:glowMiss 1.6s var(--e-in) 1}
+@keyframes glowMiss{0%{box-shadow:0 0 0 0 rgba(255,138,101,.0)}30%{box-shadow:0 0 0 6px rgba(255,138,101,.35)}100%{box-shadow:0 0 0 0 rgba(255,138,101,0)}}
+.draw{padding:16px}
+.draw h3{font-size:21px;color:#fff;margin-bottom:8px}
+.pad{position:relative;border-radius:16px;overflow:hidden;border:2px solid var(--line2);background:#071034;aspect-ratio:4/3;touch-action:none}
+.pad canvas{width:100%;height:100%;cursor:crosshair}
+.pad .hint{position:absolute;inset:0;display:grid;place-items:center;color:#7f88bb;font-size:18px;pointer-events:none;transition:opacity .4s;text-align:center;padding:10px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.col{width:48px;height:48px;border-radius:50%;border:3px solid transparent;background:var(--c);cursor:pointer;box-shadow:0 0 10px var(--c) inset;transition:transform .35s var(--e-pop),border-color .2s}
+.col[aria-pressed="true"]{border-color:#fff;transform:scale(1.1)}
+.tool{min-height:48px;min-width:48px;padding:6px 12px;border-radius:14px;border:2px solid var(--line2);background:rgba(255,255,255,.05);cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:15.5px}
+.tool svg{width:22px;height:22px}
+.tool[aria-pressed="true"]{border-color:var(--amber);background:rgba(255,194,77,.16)}
+.tools .sep{width:1px;height:34px;background:var(--line2);margin:0 2px}
+.send-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:16px}
+.checklist{display:flex;flex-wrap:wrap;gap:6px;font-size:14.5px;color:var(--muted)}
+.checklist span{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;border:1px solid var(--line)}
+.checklist span.ok{color:#d9ffe1;border-color:rgba(134,227,154,.5);background:rgba(134,227,154,.1)}
+.checklist span i{width:10px;height:10px;border-radius:50%;background:var(--line2)}
+.checklist span.ok i{background:var(--ok)}
+.miss-msg{display:none;width:100%;padding:12px 14px;border-radius:16px;background:rgba(255,138,101,.12);border:1px solid rgba(255,138,101,.45);color:#ffe3d8;font-size:16.5px}
+.miss-msg.show{display:block;animation:fadeUp .45s var(--e-in)}
+@media (max-width:860px){ .sheet{grid-template-columns:1fr} }
+@media (max-width:420px){ .two{grid-template-columns:1fr} }
+
+/* ---------- summary / badge ---------- */
+.done-zone{display:none;margin-top:18px}
+.done-zone.show{display:block}
+.how-send{padding:14px 16px;display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.how-send svg{width:44px;height:44px;flex:none}
+.how-send b{font-family:var(--fh);font-size:21px;color:#fff;display:block;line-height:1.35}
+.how-send p{margin:0;color:var(--muted);font-size:16.5px;max-width:65ch}
+.report{max-width:760px;margin:0 auto;border-radius:26px;padding:20px;background:linear-gradient(170deg,#18245c,#0d1540);border:2px solid rgba(255,194,77,.55);box-shadow:0 20px 60px rgba(0,0,0,.45),0 0 0 6px rgba(255,194,77,.08);position:relative;overflow:hidden}
+.report::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;background-image:radial-gradient(1px 1px at 10% 20%,#fff 99%,transparent),radial-gradient(1px 1px at 80% 10%,#fff 99%,transparent),radial-gradient(1.3px 1.3px at 60% 85%,#fff 99%,transparent),radial-gradient(1px 1px at 30% 70%,#fff 99%,transparent),radial-gradient(1px 1px at 92% 50%,#fff 99%,transparent)}
+.rp-top{display:flex;align-items:center;gap:14px;position:relative}
+.badge{width:104px;height:116px;flex:none;transform-origin:50% 40%}
+.badge.pop{animation:badgePop .9s var(--e-pop) both}
+@keyframes badgePop{0%{transform:scale(.3) rotate(-14deg);opacity:0}60%{opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+.rp-top h3{font-size:clamp(24px,4vw,32px);color:var(--sun)}
+.rp-top .bt{display:inline-block;margin-top:2px;font-family:var(--fh);font-weight:700;font-size:16px;color:var(--amber-ink);background:var(--amber);border-radius:999px;padding:1px 12px}
+.rp-meta{color:var(--muted);font-size:16px;margin-top:2px}
+.rp-body{display:grid;grid-template-columns:1fr 210px;gap:16px;margin-top:14px;position:relative}
+.rp-rows{display:grid;gap:8px;align-content:start}
+.rp-row{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.06);font-size:17px}
+.rp-row span{color:var(--muted)}
+.rp-row b{color:#fff;text-align:left}
+.rp-disc{padding:10px 12px;border-radius:12px;background:rgba(255,194,77,.12);border:1px solid rgba(255,194,77,.35);font-size:17px;color:#fff}
+.rp-disc span{display:block;color:var(--amber);font-family:var(--fh);font-size:16px}
+.rp-draw{border-radius:14px;overflow:hidden;border:1px solid var(--line2);background:#071034;aspect-ratio:4/3;align-self:start}
+.rp-draw img{width:100%;height:100%;object-fit:cover}
+.rp-draw .none{display:grid;place-items:center;height:100%;color:var(--soft);font-size:14px;text-align:center;padding:8px}
+.rp-foot{margin-top:12px;font-size:13.5px;color:var(--soft);position:relative}
+@media (max-width:560px){ .rp-body{grid-template-columns:1fr} .rp-draw{max-width:260px;width:100%;margin:0 auto} .badge{width:84px;height:94px} }
+.after-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px}
+.copy-box{display:none;width:100%;max-width:760px;margin:10px auto 0;min-height:180px;border-radius:14px;border:2px solid var(--amber);background:#0a1236;color:#fff;padding:10px;font-size:15.5px;direction:rtl}
+.copy-box.show{display:block}
+.copy-note{text-align:center;color:var(--teal);min-height:1.6em;margin:8px 0 0;font-size:16px}
+.spark{position:absolute;width:10px;height:10px;pointer-events:none;background:var(--sun);clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);opacity:0}
+.spark.go{animation:spark 1.1s var(--e-in) forwards}
+@keyframes spark{0%{opacity:1;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.3)}}
+
+footer{padding:26px 0 calc(30px + env(safe-area-inset-bottom,0px));color:var(--soft);font-size:14.5px;border-top:1px solid var(--line);margin-top:20px}
+footer p{margin:4px 0;max-width:80ch}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<div class="sky-grad" aria-hidden="true"></div>
+<canvas id="sky" aria-hidden="true"></canvas>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 30a14 14 0 0 1 28 0z" fill="#ffc24d"/><rect x="19" y="14" width="4" height="12" fill="#0b1433" transform="rotate(-25 21 20)"/><rect x="4" y="30" width="32" height="6" rx="2" fill="#ff8a65"/><circle cx="31" cy="8" r="3" fill="#fff"/></svg><span>مرصد النجوم</span></div>
+    <nav class="steps" aria-label="خطوات النشاط">
+      <button class="step-pill on" data-go="p1" type="button"><span class="n">١</span><span class="t">ابدأ</span></button>
+      <button class="step-pill" data-go="p2" type="button"><span class="n">٢</span><span class="t">قارن</span></button>
+      <button class="step-pill" data-go="p3" type="button"><span class="n">٣</span><span class="t">سجّل</span></button>
+    </nav>
+    <button class="icon-btn" id="sndBtn" type="button" aria-pressed="true" aria-label="الأصوات تعمل">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#ffc24d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="#ffc24d"/><path class="w1" d="M16.5 8.5a5 5 0 0 1 0 7"/><path class="w2" d="M19 6a8.5 8.5 0 0 1 0 12"/><path class="x" d="M16 9l6 6M22 9l-6 6" style="display:none"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="page">
+<main>
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <span class="kicker"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.6 6.9L22 9.3l-5.8 4.6 2 7.1L12 17l-6.2 4 2-7.1L2 9.3l7.4-.4z" fill="#6ee7d8"/></svg>النشاط الاستكشافي الإثرائي · الصف الثالث</span>
+          <h1>مرصد النجوم</h1>
+          <p>أيها الراصد الصغير: ابحث عن نجم حقيقي في تطبيق Stellarium، ثم قارنه بالشمس، وسجّل ما اكتشفته في دفتر الراصد وأرسله لمعلمك.</p>
+          <button class="music-btn" id="musBtn" type="button" aria-pressed="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12" fill="none" stroke="#6ee7d8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.6" fill="#6ee7d8"/><circle cx="17.5" cy="16" r="2.6" fill="#6ee7d8"/></svg>
+            <span id="musTxt">موسيقى هادئة: تعمل</span>
+          </button>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 440 300">
+            <defs>
+              <radialGradient id="hg" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff6d6"/><stop offset=".35" stop-color="#ffd34d" stop-opacity=".9"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient>
+              <linearGradient id="dome" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e7ecff"/><stop offset="1" stop-color="#9aa8e0"/></linearGradient>
+              <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b2766"/><stop offset="1" stop-color="#0b1236"/></linearGradient>
+            </defs>
+            <circle cx="96" cy="66" r="46" fill="url(#hg)"/>
+            <circle cx="96" cy="66" r="12" fill="#fff4cf"/>
+            <g fill="#fff"><circle cx="210" cy="30" r="2"/><circle cx="330" cy="54" r="1.6"/><circle cx="390" cy="22" r="2.2"/><circle cx="270" cy="90" r="1.4"/><circle cx="30" cy="140" r="1.5"/><circle cx="160" cy="130" r="1.3"/><circle cx="410" cy="120" r="1.6"/></g>
+            <circle cx="60" cy="40" r="4" fill="#ff7a4d"/><circle cx="360" cy="90" r="3.2" fill="#9cc2ff"/>
+            <path d="M0 250 Q110 200 220 236 T440 222 V300 H0z" fill="url(#hill)"/>
+            <rect x="244" y="190" width="120" height="66" rx="6" fill="#26306e"/>
+            <rect x="290" y="222" width="28" height="34" rx="14" fill="#ffc24d"/>
+            <path d="M234 196 a70 70 0 0 1 140 0z" fill="url(#dome)"/>
+            <path d="M304 128 l14 0 l0 68 l-14 0z" fill="#0b1433" opacity=".55"/>
+            <g transform="rotate(-38 311 170)"><rect x="300" y="88" width="22" height="86" rx="7" fill="#ff8a65"/><rect x="296" y="84" width="30" height="14" rx="5" fill="#ffc24d"/></g>
+            <path d="M0 270 Q120 246 230 268 T440 262 V300 H0z" fill="#070d2b"/>
+          </svg>
+        </div>
+      </div>
+      <div class="missions">
+        <button class="mission" data-go="p1" type="button">
+          <span class="mi"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="8" y="6" width="32" height="36" rx="5" fill="#26306e" stroke="#ffc24d" stroke-width="2.5"/><path d="M14 30a10 10 0 0 1 20 0z" fill="#ffc24d"/><circle cx="31" cy="15" r="2.5" fill="#fff"/><circle cx="17" cy="14" r="1.6" fill="#9cc2ff"/></svg></span>
+          <span><span class="num">المهمة ١</span><b>كيف أستخدم Stellarium؟</b><small>خطوات قصيرة لترى نجوم السماء الحقيقية.</small></span>
+        </button>
+        <button class="mission" data-go="p2" type="button">
+          <span class="mi"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="31" cy="24" r="13" fill="#ff6a3d"/><circle cx="10" cy="24" r="5" fill="#ffd34d"/></svg></span>
+          <span><span class="num">المهمة ٢</span><b>قارن نجمك بالشمس</b><small>اكتب اسم النجم، وشاهد حجمه ولونه وحرارته.</small></span>
+        </button>
+        <button class="mission" data-go="p3" type="button">
+          <span class="mi"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="10" y="6" width="28" height="36" rx="4" fill="#e7ecff"/><path d="M15 15h18M15 22h18M15 29h11" stroke="#26306e" stroke-width="2.5" stroke-linecap="round"/><path d="M33 33l3 3 6-7" stroke="#2e9e55" stroke-width="3" fill="none" stroke-linecap="round"/></svg></span>
+          <span><span class="num">المهمة ٣</span><b>دفتر الراصد</b><small>سجّل اكتشافك، وارسم نجمك، وأرسله لمعلمك.</small></span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PART 1 ================= -->
+  <section class="part" id="p1">
+    <div class="wrap">
+      <div class="part-head"><span class="part-num">١</span><h2>كيف أستخدم Stellarium؟</h2></div>
+      <p class="lead">Stellarium تطبيق يُريك السماء كما تبدو من مكانك الآن. اتّبع هذه الخطوات بهدوء:</p>
+      <div class="howto">
+        <article class="how card"><span class="sn">١</span>
+          <div class="ill"><svg viewBox="0 0 120 70" aria-hidden="true"><rect x="34" y="6" width="52" height="58" rx="6" fill="#26306e" stroke="#c6cbec" stroke-width="1.6"/><rect x="38" y="12" width="44" height="44" rx="3" fill="#0a1236"/><path d="M42 50a18 18 0 0 1 36 0z" fill="#1d2a6e"/><circle cx="50" cy="24" r="1.6" fill="#fff"/><circle cx="66" cy="20" r="2.2" fill="#ffd34d"/><circle cx="72" cy="34" r="1.4" fill="#9cc2ff"/><circle cx="58" cy="32" r="1.8" fill="#ff7a4d"/><circle cx="60" cy="60" r="1.8" fill="#c6cbec"/></svg></div>
+          <h3>افتح Stellarium</h3>
+          <p>افتح موقع <span dir="ltr">stellarium-web.org</span> في المتصفح، أو افتح تطبيق Stellarium إن كان على جهازك.</p>
+          <a class="go-link" id="stelLink" href="https://stellarium-web.org" target="_blank" rel="noopener">افتح Stellarium Web <svg viewBox="0 0 24 24" fill="none" stroke="#2b1800" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+        </article>
+        <article class="how card"><span class="sn">٢</span>
+          <div class="ill"><svg viewBox="0 0 120 70" aria-hidden="true"><path d="M20 52 Q40 40 58 48 T104 46 L104 60 L20 60z" fill="#1d6b8f" opacity=".6"/><path d="M52 44c4-3 10-2 12 2s-2 8-6 8-9-6-6-10z" fill="#e8c47a"/><path d="M60 8a12 12 0 0 1 12 12c0 9-12 22-12 22S48 29 48 20A12 12 0 0 1 60 8z" fill="#ff8a65"/><circle cx="60" cy="20" r="4.5" fill="#fff"/></svg></div>
+          <h3>حدّد مكانك</h3>
+          <p>اسمح للموقع بمعرفة مكانك، أو اختر مكانك بنفسك: البحرين، المنامة.</p>
+        </article>
+        <article class="how card"><span class="sn">٣</span>
+          <div class="ill"><svg viewBox="0 0 120 70" aria-hidden="true"><circle cx="24" cy="18" r="1.8" fill="#fff"/><circle cx="94" cy="14" r="2.2" fill="#ffd34d"/><circle cx="80" cy="30" r="1.5" fill="#9cc2ff"/><circle cx="36" cy="34" r="1.4" fill="#fff"/><path d="M30 26h60" stroke="#6ee7d8" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/><path d="M34 21l-6 5 6 5M86 21l6 5-6 5" stroke="#6ee7d8" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M58 64V42a4 4 0 0 1 8 0v10l9 2a5 5 0 0 1 4 6l-1 4z" fill="#ffd8b0" stroke="#c99a6b" stroke-width="1.4"/></svg></div>
+          <h3>انظر حولك</h3>
+          <p>اسحب الشاشة بإصبعك أو بالفأرة لتنظر إلى أنحاء السماء.</p>
+        </article>
+        <article class="how card"><span class="sn">٤</span>
+          <div class="ill"><svg viewBox="0 0 120 70" aria-hidden="true"><circle cx="44" cy="36" r="20" fill="#26306e" stroke="#c6cbec" stroke-width="2"/><path d="M44 24v12l8 6" stroke="#ffc24d" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M88 18a14 14 0 1 0 12 22 11 11 0 1 1-12-22z" fill="#ffe8a3"/><circle cx="80" cy="54" r="1.6" fill="#fff"/><circle cx="104" cy="58" r="1.4" fill="#fff"/></svg></div>
+          <h3>اجعل الوقت ليلاً</h3>
+          <p>استعمل أداة الوقت والتاريخ لتجعل السماء ليلاً، فتظهر النجوم.</p>
+        </article>
+        <article class="how card"><span class="sn">٥</span>
+          <div class="ill"><svg viewBox="0 0 120 70" aria-hidden="true"><circle cx="52" cy="24" r="12" fill="#9cc2ff" opacity=".25"/><path d="M52 14l2.6 7 7.4.4-5.8 4.6 2 7.1-6.2-4-6.2 4 2-7.1-5.8-4.6 7.4-.4z" fill="#fff"/><rect x="70" y="12" width="40" height="16" rx="5" fill="#ffc24d"/><path d="M76 20h28" stroke="#2b1800" stroke-width="3" stroke-linecap="round"/><path d="M50 66V46a4 4 0 0 1 8 0v8l9 2a5 5 0 0 1 4 6v4z" fill="#ffd8b0" stroke="#c99a6b" stroke-width="1.4"/></svg></div>
+          <h3>اضغط على نجم لامع</h3>
+          <p>اضغط على نجم لامع يعجبك، فيظهر اسمه على الشاشة.</p>
+        </article>
+        <article class="how card"><span class="sn">٦</span>
+          <div class="ill"><svg viewBox="0 0 120 70" aria-hidden="true"><rect x="30" y="10" width="50" height="52" rx="5" fill="#e7ecff"/><path d="M38 22h34M38 32h34M38 42h22" stroke="#9aa8e0" stroke-width="2.4" stroke-linecap="round"/><g transform="rotate(35 86 36)"><rect x="80" y="6" width="10" height="44" rx="3" fill="#ffc24d"/><path d="M80 50h10l-5 10z" fill="#ffd8b0"/><rect x="80" y="6" width="10" height="7" rx="2" fill="#ff8a65"/></g></svg></div>
+          <h3>اكتب اسم النجم</h3>
+          <p>اكتب اسم النجم في ورقة، ثم انتقل إلى المهمة ٢ لتقارنه بالشمس.</p>
+        </article>
+      </div>
+      <div class="tips">
+        <div class="tip parent card">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="17" cy="14" r="7" fill="#ffc24d"/><path d="M5 40c0-8 5-14 12-14s12 6 12 14z" fill="#ffc24d"/><circle cx="35" cy="21" r="5" fill="#ff8a65"/><path d="M27 40c0-6 3.5-10 8-10s8 4 8 10z" fill="#ff8a65"/></svg>
+          <div><b>اطلب من ولي أمرك مساعدتك</b><p>رصد النجوم في السماء الحقيقية ليلاً يكون دائماً مع ولي أمرك. استعن به أيضاً إذا صعب عليك استعمال التطبيق.</p></div>
+        </div>
+        <div class="tip card">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="19" fill="#6ee7d8" opacity=".18"/><text x="24" y="30" text-anchor="middle" font-size="18" font-family="Arial" font-weight="700" fill="#6ee7d8">Aa</text></svg>
+          <div><b>الاسم بالإنجليزية؟ لا بأس!</b><p>قد يظهر الاسم بالإنجليزية مثل <span dir="ltr">Sirius</span>. اكتبه كما تراه، والمرصد سيفهمه.</p></div>
+        </div>
+      </div>
+      <div class="next-row"><button class="btn btn-main" type="button" id="done1">جرّبت، إلى المهمة ٢ <svg viewBox="0 0 24 24" fill="none" stroke="#2b1800" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button></div>
+    </div>
+  </section>
+
+  <!-- ================= PART 2 ================= -->
+  <section class="part" id="p2">
+    <div class="wrap">
+      <div class="part-head"><span class="part-num">٢</span><h2>قارن نجمك بالشمس</h2></div>
+      <p class="lead">اكتب اسم النجم الذي رأيته في Stellarium بالعربية أو بالإنجليزية، ثم اضغط «قارن».</p>
+      <form class="search card" id="sform" autocomplete="off">
+        <label for="q">ما اسم نجمك؟</label>
+        <div class="srow">
+          <input id="q" name="q" type="text" dir="rtl" placeholder="مثل: الشعرى اليمانية أو Sirius" enterkeyhint="search" spellcheck="false" autocapitalize="off">
+          <button class="btn btn-main" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="#2b1800" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>قارن</button>
+        </div>
+        <div id="msg" class="msg" role="status" aria-live="polite"></div>
+        <p class="chips-t">أو اختر نجماً لامعاً يُرى من البحرين في بعض فصول السنة:</p>
+        <div class="chips" id="chips"></div>
+      </form>
+
+      <div class="result card" id="result" aria-live="polite">
+        <div class="r-head">
+          <h3 id="rName">منكب الجوزاء</h3><bdi class="en" id="rEn" dir="ltr">Betelgeuse</bdi>
+          <span class="tag ex" id="rEx">مثال</span>
+          <span class="tag" id="rSeason"><svg viewBox="0 0 24 24" fill="none" stroke="#c6cbec" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span></span></span>
+        </div>
+        <div class="stage" id="stage">
+          <canvas id="stageCv"></canvas>
+          <div class="ring" id="ring"></div>
+          <div class="lbl sun" id="lSun">الشمس</div>
+          <div class="lbl" id="lStar">النجم</div>
+        </div>
+        <div class="stage-foot">
+          <span class="say" id="say">هذه شمسنا… لنبتعد قليلاً لنرى النجم كاملاً</span>
+          <span class="replay"><button class="btn btn-ghost" type="button" id="replay"><svg viewBox="0 0 24 24" fill="none" stroke="#f6f3ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5"/></svg>أعد الحركة</button></span>
+        </div>
+        <div class="cards" id="cards">
+          <div class="cmp" id="cSize">
+            <div class="ct"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="20" cy="16" r="10" fill="#ff8a65"/><circle cx="5" cy="16" r="3" fill="#ffd34d"/></svg>الحجم</div>
+            <div class="big"></div><div class="sub"></div>
+          </div>
+          <div class="cmp" id="cColor">
+            <div class="ct"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="12" r="7" fill="#ff6a3d"/><circle cx="21" cy="12" r="7" fill="#ffd34d" opacity=".9"/><circle cx="16" cy="21" r="7" fill="#7fa8ff" opacity=".9"/></svg>اللون</div>
+            <div class="sw"><i id="swStar"></i><span id="swStarT"></span><i id="swSun" style="--c:#ffd34d"></i><span>الشمس صفراء</span></div>
+            <div class="big"></div><div class="sub"></div>
+          </div>
+          <div class="cmp" id="cTemp">
+            <div class="ct"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="13" y="3" width="6" height="18" rx="3" fill="none" stroke="#ffc24d" stroke-width="2"/><circle cx="16" cy="24" r="5.5" fill="#ff6a3d"/><rect x="15" y="10" width="2" height="12" fill="#ff6a3d"/></svg>الحرارة</div>
+            <div class="big"></div>
+            <div class="therm"><div class="tr"><span id="thStarN">النجم</span><div class="tb"><i id="thStar"></i></div></div><div class="tr"><span>الشمس</span><div class="tb"><i id="thSun" style="background:#ffd34d"></i></div></div></div>
+            <div class="sub"></div>
+          </div>
+        </div>
+        <div class="key" id="key">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="20" r="13" fill="#ffc24d"/><rect x="18" y="33" width="12" height="7" rx="2" fill="#ff8a65"/><rect x="20" y="41" width="8" height="3" rx="1.5" fill="#ff8a65"/><path d="M24 12v9M24 25v1" stroke="#2b1800" stroke-width="3.2" stroke-linecap="round"/></svg>
+          <div><b id="keyT"></b><p id="keyP"></p></div>
+        </div>
+        <div class="facts">
+          <div class="fact"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="6" cy="16" r="4" fill="#ffd34d"/><path d="M12 16h10" stroke="#c6cbec" stroke-width="2" stroke-dasharray="2 3"/><circle cx="27" cy="16" r="2" fill="#fff"/></svg><span id="farFact"></span></div>
+          <div class="fact"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="9" fill="#ffd34d"/><g stroke="#ffd34d" stroke-width="2" stroke-linecap="round"><path d="M16 2v3M16 27v3M2 16h3M27 16h3"/></g></svg><span>الشمس نجم متوسط الحجم، أصفر اللون، وسطحها حارّ جداً: نحو ٥٥٠٠ درجة سيليزية.</span></div>
+        </div>
+        <p class="note">أرقام تقريبية من مصادر فلكية، ومُقرَّبة لتسهل قراءتها. وبعض النجوم يتغيّر حجمها قليلاً مع الزمن.</p>
+        <div class="next-row"><button class="btn btn-main" type="button" id="toSheet">سجّل اكتشافك في دفتر الراصد <svg viewBox="0 0 24 24" fill="none" stroke="#2b1800" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PART 3 ================= -->
+  <section class="part" id="p3">
+    <div class="wrap">
+      <div class="part-head"><span class="part-num">٣</span><h2>دفتر الراصد</h2></div>
+      <p class="lead">سجّل بنفسك ما اكتشفته عن نجمك. اختر الإجابات التي تراها صحيحة، ثم اضغط «جاهز للإرسال».</p>
+      <div class="sheet" id="sheet">
+        <div class="fcard card">
+          <div class="field" id="fName"><label for="sName">اسمي</label><input id="sName" type="text" placeholder="اكتب اسمك هنا" autocomplete="off"></div>
+          <div class="two">
+            <div class="field" id="fDate"><label for="sDate">التاريخ</label><input id="sDate" type="date"></div>
+            <div class="field" id="fStar"><label for="sStar">اسم النجم</label><input id="sStar" type="text" dir="rtl" placeholder="نجمي هو…" autocomplete="off"><div class="auto" id="autoNote">كُتب تلقائياً من المقارنة، ويمكنك تعديله.</div></div>
+          </div>
+          <div class="q" id="qSize"><span class="ql">١. نجمي من حيث الحجم:</span>
+            <div class="opts" data-k="size">
+              <button type="button" class="opt" data-v="أكبر من الشمس" aria-pressed="false"><span class="tick"></span>أكبر من الشمس</button>
+              <button type="button" class="opt" data-v="أصغر من الشمس" aria-pressed="false"><span class="tick"></span>أصغر من الشمس</button>
+            </div></div>
+          <div class="q" id="qColor"><span class="ql">٢. لون نجمي:</span>
+            <div class="opts" data-k="color">
+              <button type="button" class="opt" data-v="أحمر" aria-pressed="false"><span class="cd" style="--c:#ff5a3c"></span>أحمر</button>
+              <button type="button" class="opt" data-v="برتقالي" aria-pressed="false"><span class="cd" style="--c:#ff9a3c"></span>برتقالي</button>
+              <button type="button" class="opt" data-v="أصفر" aria-pressed="false"><span class="cd" style="--c:#ffd34d"></span>أصفر</button>
+              <button type="button" class="opt" data-v="أبيض" aria-pressed="false"><span class="cd" style="--c:#ffffff"></span>أبيض</button>
+              <button type="button" class="opt" data-v="أزرق" aria-pressed="false"><span class="cd" style="--c:#6fa8ff"></span>أزرق</button>
+            </div></div>
+          <div class="q" id="qTemp"><span class="ql">٣. نجمي من حيث الحرارة:</span>
+            <div class="opts" data-k="temp">
+              <button type="button" class="opt" data-v="أسخن من الشمس" aria-pressed="false"><span class="tick"></span>أسخن من الشمس</button>
+              <button type="button" class="opt" data-v="أقل حرارة من الشمس" aria-pressed="false"><span class="tick"></span>أقل حرارة من الشمس</button>
+            </div></div>
+          <div class="field" id="fDisc"><label for="sDisc">ماذا اكتشفت؟ (جملة واحدة)</label><textarea id="sDisc" rows="2" placeholder="اكتشفتُ أنّ…"></textarea></div>
+        </div>
+        <div class="draw card">
+          <h3>ارسم نجمك ولوّنه</h3>
+          <div class="pad" id="pad"><canvas id="padCv"></canvas><div class="hint" id="padHint">ارسم هنا بإصبعك أو بالفأرة</div></div>
+          <div class="tools" id="tools">
+            <button type="button" class="col" style="--c:#ffd34d" data-c="#ffd34d" aria-label="أصفر" aria-pressed="true"></button>
+            <button type="button" class="col" style="--c:#ff5a3c" data-c="#ff5a3c" aria-label="أحمر" aria-pressed="false"></button>
+            <button type="button" class="col" style="--c:#ff9a3c" data-c="#ff9a3c" aria-label="برتقالي" aria-pressed="false"></button>
+            <button type="button" class="col" style="--c:#ffffff" data-c="#ffffff" aria-label="أبيض" aria-pressed="false"></button>
+            <button type="button" class="col" style="--c:#6fa8ff" data-c="#6fa8ff" aria-label="أزرق" aria-pressed="false"></button>
+            <span class="sep"></span>
+            <button type="button" class="tool" data-t="pen" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="#f6f3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/></svg>فرشاة</button>
+            <button type="button" class="tool" data-t="star" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.6 6.9L22 9.3l-5.8 4.6 2 7.1L12 17l-6.2 4 2-7.1L2 9.3l7.4-.4z" fill="#ffd34d"/></svg>ختم نجمة</button>
+            <button type="button" class="tool" data-t="erase" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="#f6f3ff" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l9-9 6 6-5 5H7z M10 19h11"/></svg>ممحاة</button>
+            <button type="button" class="tool" id="clearPad"><svg viewBox="0 0 24 24" fill="none" stroke="#ff8a65" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg><span>امسح الرسم</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="send-row">
+        <button class="btn btn-main" type="button" id="ready"><svg viewBox="0 0 24 24" fill="none" stroke="#2b1800" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>جاهز للإرسال</button>
+        <div class="checklist" id="checklist"></div>
+        <div class="miss-msg" id="missMsg" role="status" aria-live="polite"></div>
+      </div>
+
+      <div class="done-zone" id="doneZone">
+        <div class="how-send card">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="12" y="4" width="24" height="40" rx="5" fill="#26306e" stroke="#6ee7d8" stroke-width="2.4"/><rect x="16" y="10" width="16" height="22" rx="2" fill="#ffc24d"/><circle cx="24" cy="38" r="2" fill="#6ee7d8"/><path d="M36 14l6-6M38 20h7M36 26l6 6" stroke="#ffc24d" stroke-width="2.4" stroke-linecap="round"/></svg>
+          <div><b>أحسنت أيها الراصد! بقيت خطوة الإرسال</b><p>خذ لقطة شاشة لهذه البطاقة، وأرسلها لمعلمك دليلاً على مشاركتك. اطلب من ولي أمرك أن يساعدك في أخذ اللقطة وإرسالها. ويمكنك أيضاً أن تضغط «انسخ النص» ثم تلصقه في رسالة للمعلم.</p></div>
+        </div>
+        <div class="report" id="report">
+          <div class="rp-top">
+            <svg class="badge" id="badge" viewBox="0 0 104 116" aria-hidden="true">
+              <path d="M30 70 L18 112 L36 102 L46 114 L52 74z" fill="#ff8a65"/><path d="M74 70 L86 112 L68 102 L58 114 L52 74z" fill="#ff6a3d"/>
+              <circle cx="52" cy="48" r="42" fill="#ffc24d"/><circle cx="52" cy="48" r="34" fill="#ffdd7a" stroke="#e8a321" stroke-width="3"/>
+              <path d="M52 22l7.6 15.4 17 2.5-12.3 12 2.9 16.9L52 60.8 36.8 68.8l2.9-16.9-12.3-12 17-2.5z" fill="#fff6d6" stroke="#e8a321" stroke-width="2.4" stroke-linejoin="round"/>
+            </svg>
+            <div><h3>دفتر الراصد</h3><span class="bt">وسام: راصد النجوم</span><div class="rp-meta" id="rpMeta"></div></div>
+          </div>
+          <div class="rp-body">
+            <div class="rp-rows">
+              <div class="rp-row"><span>النجم</span><b id="rpStar"></b></div>
+              <div class="rp-row"><span>الحجم</span><b id="rpSize"></b></div>
+              <div class="rp-row"><span>اللون</span><b id="rpColor"></b></div>
+              <div class="rp-row"><span>الحرارة</span><b id="rpTemp"></b></div>
+              <div class="rp-disc"><span>ماذا اكتشفت؟</span><div id="rpDisc"></div></div>
+            </div>
+            <div class="rp-draw" id="rpDraw"></div>
+          </div>
+          <div class="rp-foot">مرصد النجوم · النشاط الاستكشافي الإثرائي · العلوم، الصف الثالث</div>
+        </div>
+        <div class="after-row">
+          <button class="btn btn-main" type="button" id="copyBtn"><svg viewBox="0 0 24 24" fill="none" stroke="#2b1800" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>انسخ النص</button>
+          <button class="btn btn-ghost" type="button" id="editBtn"><svg viewBox="0 0 24 24" fill="none" stroke="#f6f3ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l4-1 11-11-3-3L5 16z"/></svg>عدّل الدفتر</button>
+        </div>
+        <p class="copy-note" id="copyNote" role="status" aria-live="polite"></p>
+        <textarea class="copy-box" id="copyBox" readonly aria-label="نص الدفتر للنسخ"></textarea>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>أصوات وموسيقى مجانية الحقوق (CC0): Kenney، HoliznaCC0، Alvana.</p>
+    <p>أرقام النجوم تقريبية من مصادر فلكية. Stellarium برنامج فلكي مجاني مفتوح المصدر.</p>
+  </div>
+</footer>
+</div>
+
+<script>
+/*__SFX__*/
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+var RM = false;
+try { RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){}
+var $ = function(s,r){ return (r||document).querySelector(s); };
+var $$ = function(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+var HAS3 = typeof window.THREE !== 'undefined';
+var SX = window.SFX || {play:function(){},music:function(){},unlock:function(){},enabled:function(){return true;}};
+
+/* ---------- helpers ---------- */
+var AD = '٠١٢٣٤٥٦٧٨٩';
+function ar(n){ var s = String(n); if (n >= 10000) s = s.replace(/\B(?=(\d{3})+(?!\d))/g, '٬'); return s.replace(/\d/g, function(d){ return AD[d]; }); }
+function bez(x1,y1,x2,y2){
+  function s(t,a,b){ var u=1-t; return 3*u*u*t*a + 3*u*t*t*b + t*t*t; }
+  return function(x){ if(x<=0) return 0; if(x>=1) return 1; var lo=0, hi=1, m=x;
+    for (var i=0;i<26;i++){ m=(lo+hi)/2; if (s(m,x1,x2) < x) lo=m; else hi=m; }
+    return s(m,y1,y2); };
+}
+var E_MOVE = bez(.65,0,.35,1), E_IN = bez(.16,1,.3,1);
+function lerp(a,b,t){ return a+(b-a)*t; }
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+var KEY = 'stars-observatory-v1';
+var store = {
+  get: function(k){ try { var v = localStorage.getItem(KEY + k); return v ? JSON.parse(v) : null; } catch(e){ return null; } },
+  set: function(k,v){ try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch(e){} }
+};
+
+/* ---------- sound ---------- */
+var prefs = store.get('-prefs') || {snd:true, mus:true};
+var unlocked = false;
+function play(n, v){ try { SX.play(n, v); } catch(e){} }
+function applySound(){
+  var b = $('#sndBtn');
+  b.setAttribute('aria-pressed', prefs.snd ? 'true' : 'false');
+  b.setAttribute('aria-label', prefs.snd ? 'الأصوات تعمل، اضغط لإيقافها' : 'الأصوات متوقفة، اضغط لتشغيلها');
+  $('.w1', b).style.display = $('.w2', b).style.display = prefs.snd ? '' : 'none';
+  $('.x', b).style.display = prefs.snd ? 'none' : '';
+  $('#musBtn').setAttribute('aria-pressed', prefs.mus ? 'true' : 'false');
+  $('#musTxt').textContent = prefs.mus ? 'موسيقى هادئة: تعمل' : 'موسيقى هادئة: متوقفة';
+  try { SX.enabled(prefs.snd); if (unlocked) SX.music(prefs.mus && prefs.snd); } catch(e){}
+}
+function unlock(){
+  if (unlocked) return; unlocked = true;
+  try { SX.unlock(); SX.enabled(prefs.snd); if (prefs.mus && prefs.snd) SX.music(true); } catch(e){}
+}
+document.addEventListener('pointerdown', unlock, {once:false, passive:true});
+document.addEventListener('keydown', unlock);
+$('#sndBtn').addEventListener('click', function(){ unlock(); prefs.snd = !prefs.snd; applySound(); store.set('-prefs', prefs); if (prefs.snd) play('ok', .5); });
+$('#musBtn').addEventListener('click', function(){ unlock(); prefs.mus = !prefs.mus; if (prefs.mus && !prefs.snd){ prefs.snd = true; } applySound(); store.set('-prefs', prefs); });
+applySound();
+
+/* ---------- star data ---------- */
+var SUN = {R:1, T:5800};
+var STARS = [
+ {id:'betelgeuse', ar:'منكب الجوزاء', en:'Betelgeuse', R:760, T:3600, col:'أحمر', key:'red', hex:'#ff6236', spot:1,
+  season:'ليالي الشتاء', analog:'كرةً بارتفاع عمارة من نحو ١٠ طوابق',
+  alias:['منكب الجوزاء','إبط الجوزاء','ابط الجوزا','يد الجوزاء','منكب الجبار','بيتلجوز','بيتلجيوز','بيتلجوس','بتلجوز','بيتل جوز','بيتلجوز','بيتلجيز','betelgeuse','betelgeuze','beetlejuice','betelgeus','alpha orionis','alpha ori','α ori','hip 27989']},
+ {id:'rigel', ar:'رجل الجبار', en:'Rigel', R:79, T:12100, col:'أزرق مبيض', key:'blue', hex:'#a6c4ff', spot:0,
+  season:'ليالي الشتاء', analog:'كرةً أعلى من سقف الغرفة',
+  alias:['رجل الجبار','رجل الجوزاء','الرجل','رجل','ريجل','ريغل','رايجل','rigel','rigil orionis','beta orionis','beta ori','β ori','hip 24436']},
+ {id:'sirius', ar:'الشعرى اليمانية', en:'Sirius', R:1.7, T:9900, col:'أبيض مزرق', key:'white', hex:'#dce9ff', spot:0,
+  season:'ليالي الشتاء، وهو ألمع نجم في سماء الليل', analog:'بحجم كرة التنس',
+  alias:['الشعرى اليمانية','الشعرى','الشعرى العبور','الشعري اليمانيه','شعرى','سيريوس','سيرياس','سيروس','سيريس','sirius','sirus','syrius','dog star','alpha canis majoris','alpha cma','α cma','hip 32349']},
+ {id:'vega', ar:'النسر الواقع', en:'Vega', R:2.4, T:9600, col:'أبيض مزرق', key:'white', hex:'#d8e6ff', spot:0,
+  season:'ليالي الصيف', analog:'بحجم برتقالة كبيرة',
+  alias:['النسر الواقع','النسر','الواقع','فيغا','فيجا','فيگا','ويغا','vega','wega','alpha lyrae','alpha lyr','α lyr','hip 91262']},
+ {id:'spica', ar:'السماك الأعزل', en:'Spica', R:7.5, T:22000, col:'أزرق', key:'blue', hex:'#7ea6ff', spot:0,
+  season:'ليالي الربيع', analog:'أكبر قليلاً من كرة السلة',
+  alias:['السماك الأعزل','الأعزل','السماك','السنبلة','سبايكا','سبيكا','spica','alpha virginis','alpha vir','α vir','hip 65474']},
+ {id:'antares', ar:'قلب العقرب', en:'Antares', R:680, T:3500, col:'أحمر', key:'red', hex:'#ff5530', spot:1,
+  season:'ليالي الصيف', analog:'كرةً بارتفاع عمارة عالية',
+  alias:['قلب العقرب','القلب','أنتاريس','انتاريس','انتارس','أنتارس','antares','antaris','alpha scorpii','alpha sco','α sco','hip 80763']},
+ {id:'aldebaran', ar:'الدبران', en:'Aldebaran', R:44, T:3900, col:'برتقالي', key:'orange', hex:'#ff9a48', spot:.6,
+  season:'ليالي الشتاء', analog:'كرةً بطول رجل بالغ',
+  alias:['الدبران','دبران','ألدبران','الدبرا','عين الثور','aldebaran','aldebran','alpha tauri','alpha tau','α tau','hip 21421']},
+ {id:'arcturus', ar:'السماك الرامح', en:'Arcturus', R:25, T:4300, col:'برتقالي', key:'orange', hex:'#ffaa5c', spot:.5,
+  season:'ليالي الربيع والصيف', analog:'كرةً أعلى من طاولة الصف',
+  alias:['السماك الرامح','الرامح','أركتوروس','اركتوروس','ارکتوروس','آركتوروس','arcturus','arcturos','alpha bootis','alpha boo','α boo','hip 69673']},
+ {id:'capella', ar:'العيوق', en:'Capella', R:12, T:4900, col:'أصفر', key:'yellow', hex:'#ffe07e', spot:.3,
+  season:'ليالي الشتاء، جهة الشمال', analog:'بحجم كرة شاطئ كبيرة',
+  alias:['العيوق','عيوق','العيّوق','كابيلا','كابلا','كابيللا','capella','capela','alpha aurigae','alpha aur','α aur','hip 24608']},
+ {id:'canopus', ar:'سهيل', en:'Canopus', R:71, T:7400, col:'أبيض', key:'white', hex:'#fbf7ee', spot:0,
+  season:'ليالي الشتاء، منخفضاً جهة الجنوب', analog:'كرةً بارتفاع سقف الغرفة تقريباً',
+  alias:['سهيل','سهيل اليماني','نجم سهيل','كانوبس','كانوبوس','كانوپس','canopus','canopous','suhail','suhayl','suheil','alpha carinae','alpha car','α car','hip 30438']},
+ {id:'polaris', ar:'النجم القطبي', en:'Polaris', R:37, T:6000, col:'أصفر مبيض', key:'yellow', hex:'#fff0bc', spot:0,
+  season:'طوال السنة، جهة الشمال', analog:'كرةً بطول دراجة هوائية',
+  alias:['النجم القطبي','القطبي','نجم القطب','القطب','الجدي','جدي','نجم الجدي','نجم الشمال','بولاريس','بولارس','polaris','polar star','pole star','north star','northstar','alpha ursae minoris','alpha umi','α umi','hip 11767']}
+];
+var RC = {rigel:'#7aa2ff', sirius:'#b9d0ff', vega:'#b3cbff', spica:'#5c8aff', canopus:'#f2ead8', polaris:'#ffe7a0', capella:'#ffd45e', betelgeuse:'#ff5a2a', antares:'#ff4a24', aldebaran:'#ff8a34', arcturus:'#ff9a48'};
+var BY = {}; STARS.forEach(function(s){ BY[s.id] = s; s.rc = RC[s.id]; });
+
+/* ---------- name matching ---------- */
+var STOP = {'نجم':1,'النجم':1,'نجمه':1,'star':1,'the':1,'كوكب':1};
+function norm(s){
+  s = String(s||'').toLowerCase();
+  try { s = s.normalize('NFKC'); } catch(e){}
+  s = s.replace(/[٠-٩]/g, function(d){ return String(d.charCodeAt(0)-0x0660); })
+       .replace(/[۰-۹]/g, function(d){ return String(d.charCodeAt(0)-0x06F0); })
+       .replace(/[ً-ٰٟـۖ-ۭ]/g, '')
+       .replace(/[أإآٱ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي')
+       .replace(/ک/g,'ك').replace(/ی/g,'ي').replace(/[گ]/g,'ج').replace(/[پ]/g,'ب')
+       .replace(/[^0-9a-z؀-ۿα-ω\s]/g,' ');
+  var w = s.split(/\s+/).filter(function(x){ return x && !STOP[x] && !STOP[x.replace(/^ال/,'')]; });
+  w = w.map(function(x){ return (x.length > 3 && x.indexOf('ال') === 0) ? x.slice(2) : x; });
+  return w.join('');
+}
+var IDX = [];
+STARS.forEach(function(s){
+  [s.ar, s.en].concat(s.alias).forEach(function(a){ var n = norm(a); if (n) IDX.push({n:n, s:s}); });
+});
+function lev(a,b){
+  if (a===b) return 0; var m=a.length, n=b.length; if(!m) return n; if(!n) return m;
+  var p = new Array(n+1), c = new Array(n+1), i, j;
+  for (j=0;j<=n;j++) p[j]=j;
+  for (i=1;i<=m;i++){ c[0]=i; for (j=1;j<=n;j++){ c[j] = Math.min(p[j]+1, c[j-1]+1, p[j-1] + (a[i-1]===b[j-1]?0:1)); } var t=p; p=c; c=t; }
+  return p[n];
+}
+function findStar(raw){
+  var q = norm(raw);
+  if (!q) return {type:'empty'};
+  if (['شمس','sun','sol','شمسنا'].indexOf(q) >= 0) return {type:'sun'};
+  var i, e;
+  for (i=0;i<IDX.length;i++) if (IDX[i].n === q) return {type:'ok', s:IDX[i].s};
+  // substring (e.g. "منكب الجوزاء الأحمر" or "betelgeuse star")
+  var best = null;
+  if (q.length >= 4){
+    for (i=0;i<IDX.length;i++){ e = IDX[i];
+      if (e.n.length >= 4 && (q.indexOf(e.n) >= 0 || e.n.indexOf(q) === 0)){
+        if (!best || e.n.length > best.n.length) best = e; } }
+    if (best) return {type:'ok', s:best.s, fuzzy:true};
+  }
+  var bd = 99, bs = null;
+  for (i=0;i<IDX.length;i++){ e = IDX[i]; if (Math.abs(e.n.length - q.length) > 4) continue;
+    var d = lev(q, e.n); if (d < bd){ bd = d; bs = e.s; } }
+  var tol = q.length <= 3 ? 0 : q.length <= 5 ? 1 : q.length <= 8 ? 2 : 3;
+  if (bs && bd <= tol) return {type:'ok', s:bs, fuzzy:true};
+  if (bs && bd <= tol + 2 && q.length >= 3) return {type:'maybe', s:bs};
+  return {type:'none'};
+}
+
+/* ---------- wording ---------- */
+function roundRatio(r){ if (r < 20) return Math.round(r); if (r < 100) return Math.round(r/5)*5; return Math.round(r/10)*10; }
+function times(n){ if (n === 1) return 'مرة واحدة'; if (n === 2) return 'مرتين'; if (n <= 10) return ar(n) + ' مرات'; return ar(n) + ' مرة'; }
+function toC(T){ return Math.round((T - 273)/100)*100; }
+function sizeText(s){
+  var r = s.R / SUN.R;
+  if (r >= 1.25) return {big:'أكبر من الشمس', sub:'بنحو ' + times(roundRatio(r)) + ' في العرض.'};
+  if (r <= 0.8) return {big:'أصغر من الشمس', sub:'بنحو ' + times(roundRatio(1/r)) + ' في العرض.'};
+  return {big:'قريب من حجم الشمس', sub:''};
+}
+function tempText(s){
+  var r = s.T / SUN.T;
+  if (r > 1.07) return 'أسخن من الشمس';
+  if (r >= 1) return 'أسخن من الشمس بقليل';
+  if (r < 0.93) return 'أقل حرارة من الشمس';
+  return 'أقل حرارة من الشمس بقليل';
+}
+var COLOR_RULE = {
+  red:'النجوم الحمراء أقل النجوم حرارة.',
+  orange:'النجوم البرتقالية أقل حرارة من الشمس الصفراء.',
+  yellow:'النجوم الصفراء، مثل الشمس، متوسطة الحرارة.',
+  white:'النجوم البيضاء أسخن من الشمس الصفراء.',
+  blue:'النجوم الزرقاء أسخن النجوم وألمعها.'
+};
+function keyIdea(s){
+  var bigger = s.R > 1.25, cooler = s.T < SUN.T * 0.97, close = Math.abs(s.T - SUN.T) < SUN.T * 0.07;
+  if (bigger && cooler) return {t:'لا يدل حجم النجم على حرارته!', p: s.ar + ' أكبر من الشمس بكثير، لكنه أقل حرارة منها. فالنجم الأكبر ليس دائماً الأسخن.'};
+  if (bigger && close) return {t:'لا يدل حجم النجم على حرارته!', p: s.ar + ' أكبر من الشمس بنحو ' + times(roundRatio(s.R)) + '، لكن حرارته قريبة من حرارة الشمس.'};
+  return {t:'اللون يخبرنا بالحرارة', p: 'لون ' + s.ar + ' ' + s.col + '، لذلك هو أسخن من الشمس الصفراء. النجوم الزرقاء أسخن النجوم، والحمراء أقلها حرارة.'};
+}
+
+/* ---------- background starfield ---------- */
+var skyCv = $('#sky'), sky = null;
+function initSky(){
+  if (!HAS3) return;
+  try {
+    var r = new THREE.WebGLRenderer({canvas:skyCv, alpha:true, antialias:false, powerPreference:'low-power'});
+    var pr = Math.min(window.devicePixelRatio || 1, 1.5);
+    r.setPixelRatio(pr); r.setClearColor(0x000000, 0);
+    var scene = new THREE.Scene();
+    var cam = new THREE.PerspectiveCamera(60, 1, 1, 2000);
+    var N = window.innerWidth < 700 ? 900 : 1600, rnd = mulberry32(7);
+    var pos = new Float32Array(N*3), col = new Float32Array(N*3), size = new Float32Array(N), ph = new Float32Array(N);
+    var pal = [[1,1,1],[1,1,1],[.82,.88,1],[.7,.8,1],[1,.92,.75],[1,.78,.6],[1,.62,.5]];
+    for (var i=0;i<N;i++){
+      var u = rnd()*2-1, th = rnd()*Math.PI*2, rr = 500 + rnd()*500, sq = Math.sqrt(1-u*u);
+      pos[i*3] = rr*sq*Math.cos(th); pos[i*3+1] = rr*u; pos[i*3+2] = rr*sq*Math.sin(th);
+      var c = pal[Math.floor(rnd()*pal.length)]; col[i*3]=c[0]; col[i*3+1]=c[1]; col[i*3+2]=c[2];
+      var b = rnd(); size[i] = b > .97 ? 5 + rnd()*3 : b > .85 ? 3 + rnd()*1.5 : 1.4 + rnd()*1.4; ph[i] = rnd();
+    }
+    var g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+    g.setAttribute('aColor', new THREE.BufferAttribute(col,3));
+    g.setAttribute('aSize', new THREE.BufferAttribute(size,1));
+    g.setAttribute('aPhase', new THREE.BufferAttribute(ph,1));
+    var m = new THREE.ShaderMaterial({
+      uniforms:{uTime:{value:0}, uPR:{value:pr}},
+      vertexShader:'attribute float aSize;attribute float aPhase;attribute vec3 aColor;uniform float uTime;uniform float uPR;varying vec3 vC;varying float vA;'+
+        'void main(){vec4 mv=modelViewMatrix*vec4(position,1.0);gl_Position=projectionMatrix*mv;'+
+        'vA=0.62+0.38*sin(uTime*(0.5+aPhase*0.9)+aPhase*6.2831);vC=aColor;gl_PointSize=aSize*uPR*(620.0/-mv.z);}',
+      fragmentShader:'varying vec3 vC;varying float vA;void main(){vec2 d=gl_PointCoord-0.5;float r=length(d);float a=smoothstep(0.5,0.0,r);a=a*a;'+
+        'float x=max(0.0,1.0-abs(d.x)*14.0)*max(0.0,1.0-abs(d.y)*2.2)+max(0.0,1.0-abs(d.y)*14.0)*max(0.0,1.0-abs(d.x)*2.2);'+
+        'gl_FragColor=vec4(vC,(a+x*0.25)*vA);}',
+      transparent:true, depthWrite:false, blending:THREE.AdditiveBlending
+    });
+    var pts = new THREE.Points(g, m); scene.add(pts);
+    sky = {r:r, scene:scene, cam:cam, pts:pts, m:m};
+    function size2(){ var w = window.innerWidth, h = window.innerHeight; r.setSize(w, h, false); cam.aspect = w/h; cam.updateProjectionMatrix(); }
+    size2(); window.addEventListener('resize', size2);
+    var t0 = performance.now();
+    function frame(now){
+      var t = (now - t0)/1000;
+      var sc = window.scrollY || 0;
+      m.uniforms.uTime.value = RM ? 0 : t;
+      pts.rotation.y = (RM ? 0 : t*0.006) + sc*0.00018;
+      pts.rotation.x = 0.25 + sc*0.00006;
+      r.render(scene, cam);
+      if (!RM) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    if (RM) window.addEventListener('scroll', function(){ requestAnimationFrame(frame); }, {passive:true});
+  } catch(e){ sky = null; }
+}
+initSky();
+
+/* ---------- comparison stage ---------- */
+var stageEl = $('#stage'), stageCv = $('#stageCv'), lSun = $('#lSun'), lStar = $('#lStar'), ring = $('#ring'), say = $('#say');
+var ST = {w:0, h:0, data:null, p:0, anim:null, pending:false, visible:false, raf:0, view:null, use3:false, onEnd:null, t:0};
+var glowTex = null;
+function makeGlowTex(){
+  var c = document.createElement('canvas'); c.width = c.height = 128; var x = c.getContext('2d');
+  var g = x.createRadialGradient(64,64,0,64,64,64);
+  g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(.25,'rgba(255,255,255,.55)'); g.addColorStop(.55,'rgba(255,255,255,.14)'); g.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle = g; x.fillRect(0,0,128,128);
+  var t = new THREE.CanvasTexture(c); return t;
+}
+var SPH_V = 'varying vec3 vN;varying vec3 vP;void main(){vN=normalize(normalMatrix*normal);vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}';
+var SPH_F = 'uniform vec3 uCol;uniform float uTime;uniform float uSpot;varying vec3 vN;varying vec3 vP;'+
+ 'float h(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453);}'+
+ 'float n3(vec3 p){vec3 i=floor(p);vec3 f=fract(p);f=f*f*(3.0-2.0*f);'+
+ 'return mix(mix(mix(h(i),h(i+vec3(1,0,0)),f.x),mix(h(i+vec3(0,1,0)),h(i+vec3(1,1,0)),f.x),f.y),mix(mix(h(i+vec3(0,0,1)),h(i+vec3(1,0,1)),f.x),mix(h(i+vec3(0,1,1)),h(i+vec3(1,1,1)),f.x),f.y),f.z);}'+
+ 'void main(){float mu=clamp(vN.z,0.0,1.0);float limb=pow(mu,0.55);'+
+ 'float n=0.6*n3(vP*6.0+vec3(uTime*0.07))+0.4*n3(vP*13.0-vec3(uTime*0.05));'+
+ 'float sp=smoothstep(0.52,0.78,n3(vP*2.3+vec3(3.1)));'+
+ 'vec3 c=uCol*(0.26+0.90*limb)*(0.84+0.26*n);c*=1.0-uSpot*sp*0.16;'+
+ 'c+=uCol*pow(1.0-mu,4.0)*0.18;gl_FragColor=vec4(min(c,vec3(1.0)),1.0);}';
+var G = null;
+function initStage(){
+  if (HAS3){
+    try {
+      var r = new THREE.WebGLRenderer({canvas:stageCv, alpha:true, antialias:true});
+      r.setPixelRatio(Math.min(window.devicePixelRatio||1, 2)); r.setClearColor(0x000000, 0);
+      var scene = new THREE.Scene();
+      var cam = new THREE.OrthographicCamera(-1,1,1,-1,1,20000); cam.position.set(0,0,8000);
+      glowTex = makeGlowTex();
+      var geo = new THREE.SphereGeometry(1, 72, 48);
+      function body(){
+        var mat = new THREE.ShaderMaterial({uniforms:{uCol:{value:new THREE.Color('#ffffff')}, uTime:{value:0}, uSpot:{value:0}}, vertexShader:SPH_V, fragmentShader:SPH_F});
+        var mesh = new THREE.Mesh(geo, mat); mesh.renderOrder = 2;
+        var gm = new THREE.SpriteMaterial({map:glowTex, color:0xffffff, transparent:true, blending:THREE.AdditiveBlending, depthTest:false, depthWrite:false, opacity:.6});
+        var glow = new THREE.Sprite(gm); glow.renderOrder = 1;
+        scene.add(glow); scene.add(mesh);
+        return {mesh:mesh, glow:glow, mat:mat, gm:gm};
+      }
+      G = {r:r, scene:scene, cam:cam, sun:body(), star:body()};
+      G.sun.mat.uniforms.uCol.value.set('#ffc531');
+      G.sun.gm.color.set('#ffc640');
+      ST.use3 = true;
+    } catch(e){ ST.use3 = false; G = null; }
+  }
+  if (!ST.use3){ ST.ctx = stageCv.getContext('2d'); }
+  resizeStage();
+  if ('ResizeObserver' in window) new ResizeObserver(resizeStage).observe(stageEl); else window.addEventListener('resize', resizeStage);
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){ es.forEach(function(e){
+      ST.visible = e.isIntersecting;
+      if (e.isIntersecting && e.intersectionRatio >= .5 && ST.pending){ ST.pending = false; startAnim(); }
+      if (ST.visible) loop();
+    }); }, {threshold:[0,.5,1]}).observe(stageEl);
+  } else { ST.visible = true; }
+}
+function resizeStage(){
+  var w = stageEl.clientWidth, h = stageEl.clientHeight; if (!w || !h) return;
+  ST.w = w; ST.h = h;
+  if (ST.use3) G.r.setSize(w, h, false);
+  else { var pr = Math.min(window.devicePixelRatio||1,2); stageCv.width = w*pr; stageCv.height = h*pr; ST.ctx.setTransform(pr,0,0,pr,0,0); }
+  if (ST.data) layout(ST.data);
+  draw();
+}
+function layout(s){
+  var Rs = SUN.R, Rx = s.R, Rmax = Math.max(Rs, Rx), asp = ST.w / ST.h;
+  var k = asp < 1.5 ? 0.42 : 0.24;            /* gap = constant share of the view, so the giant's edge is visible from the first frame */
+  var a = 0.56/asp;
+  var heW = a*(2*Rx + 2*Rs)/(1 - a*k), heH = Rmax*1.5;
+  var he = Math.max(heW, heH);
+  var hs = Math.min(2.6, he*0.72);
+  ST.view = {k:k, he:he, hs:hs, cxS:Rs + k*hs/2, cxE:Rs - Rx};
+}
+function viewAt(p){
+  var v = ST.view, e = E_MOVE(clamp(p,0,1));
+  var H = Math.exp(lerp(Math.log(v.hs), Math.log(v.he), e));
+  var s = Math.abs(v.he - v.hs) < 1e-6 ? e : (H - v.hs)/(v.he - v.hs);
+  var g = v.k*H;
+  return {H:H, cx:lerp(v.cxS, v.cxE, clamp(s,0,1)), sunX:SUN.R + g/2, starX:-(ST.data.R + g/2)};
+}
+function draw(){
+  if (!ST.data || !ST.view || !ST.w) return;
+  var s = ST.data, v = ST.view, vw = viewAt(ST.p), H = vw.H, asp = ST.w/ST.h, W = H*asp;
+  var ppu = ST.h/(2*H);
+  var sunPx = Math.max(SUN.R*ppu, 3.2), sunScale = sunPx/ppu;
+  var starPx = s.R*ppu;
+  var t = ST.t;
+  if (ST.use3){
+    var c = G.cam; c.left = -W; c.right = W; c.top = H; c.bottom = -H; c.position.x = vw.cx; c.updateProjectionMatrix();
+    G.sun.mesh.position.set(vw.sunX, 0, 0); G.sun.mesh.scale.setScalar(sunScale);
+    var sg = Math.max(sunScale*3.0, 18/ppu); G.sun.glow.position.set(vw.sunX,0,0); G.sun.glow.scale.set(sg*2, sg*2, 1); G.sun.gm.opacity = .75;
+    G.star.mesh.position.set(vw.starX, 0, 0); G.star.mesh.scale.setScalar(s.R);
+    var stg = s.R*2.7; G.star.glow.position.set(vw.starX,0,0); G.star.glow.scale.set(stg, stg, 1);
+    G.sun.mat.uniforms.uTime.value = t; G.star.mat.uniforms.uTime.value = t + 11.0;
+    var rot = RM ? 0 : t*0.08; G.sun.mesh.rotation.y = rot; G.star.mesh.rotation.y = rot*0.6;
+    G.r.render(G.scene, G.cam);
+  } else {
+    var x = ST.ctx; x.clearRect(0,0,ST.w,ST.h);
+    function disc(wx, rpx, colr, glow){
+      var sx = (wx - vw.cx)*ppu + ST.w/2, sy = ST.h/2;
+      var gg = x.createRadialGradient(sx, sy, rpx*.2, sx, sy, Math.max(rpx*glow, rpx+12));
+      gg.addColorStop(0, colr); gg.addColorStop(1, 'rgba(0,0,0,0)');
+      x.globalAlpha = .45; x.fillStyle = gg; x.beginPath(); x.arc(sx, sy, Math.max(rpx*glow, rpx+12), 0, 7); x.fill(); x.globalAlpha = 1;
+      var g2 = x.createRadialGradient(sx - rpx*.3, sy - rpx*.3, rpx*.1, sx, sy, rpx);
+      g2.addColorStop(0, '#fff'); g2.addColorStop(.35, colr); g2.addColorStop(1, colr);
+      x.fillStyle = g2; x.beginPath(); x.arc(sx, sy, rpx, 0, 7); x.fill();
+    }
+    disc(vw.starX, starPx, s.hex, 1.35); disc(vw.sunX, sunPx, '#ffcf3f', 3);
+  }
+  // labels
+  var sunSX = (vw.sunX - vw.cx)*ppu + ST.w/2, sunSY = ST.h/2;
+  var tiny = SUN.R*ppu < 9;
+  var ly = clamp(sunSY + sunPx + (tiny ? 26 : 12), 8, ST.h - 44);
+  if (lSun._tiny !== tiny){ lSun._tiny = tiny; lSun.innerHTML = 'الشمس'; lSun._w = lSun.offsetWidth; }
+  var lw = (lSun._w || 80)/2 + 6;
+  lSun.style.transform = 'translate(' + clamp(sunSX, lw, ST.w - lw) + 'px,' + ly + 'px) translate(-50%,0)';
+  ring.style.transform = 'translate(' + sunSX + 'px,' + sunSY + 'px)';
+  ring.style.opacity = tiny ? 1 : 0;
+  var stSX = (vw.starX - vw.cx)*ppu + ST.w/2;
+  var onScreen = (stSX + starPx) > 10;
+  var sy2 = clamp(ST.h/2 - starPx - 40, 8, ST.h - 44);
+  if (lStar._t !== lStar.textContent){ lStar._t = lStar.textContent; lStar._w = lStar.offsetWidth; }
+  var sw2 = (lStar._w || 120)/2 + 6;
+  var sx2 = clamp(stSX, sw2, ST.w - sw2);
+  if (Math.abs(sx2 - sunSX) < 150 && Math.abs(sy2 - ly) < 40) sy2 = Math.max(8, ly - 46);
+  lStar.style.transform = 'translate(' + sx2 + 'px,' + sy2 + 'px) translate(-50%,0)';
+  lStar.style.opacity = onScreen && ST.p > 0.25 ? 1 : 0;
+}
+var lastT = performance.now();
+function loop(){
+  if (ST.raf) return;
+  function f(now){
+    ST.raf = 0;
+    var dt = Math.min(.05, (now - lastT)/1000); lastT = now;
+    if (!RM) ST.t += dt;
+    if (ST.anim){
+      var a = ST.anim, el = now - a.t0;
+      if (el < a.hold) ST.p = 0;
+      else { if (!a.started){ a.started = true; play('rise', .45); say.style.opacity = 0; }
+        ST.p = clamp((el - a.hold)/a.dur, 0, 1); }
+      if (ST.p >= 1){ ST.anim = null; endAnim(); }
+    }
+    draw();
+    if ((ST.visible && !RM) || ST.anim) ST.raf = requestAnimationFrame(f);
+  }
+  lastT = performance.now();
+  ST.raf = requestAnimationFrame(f);
+}
+function startAnim(){
+  if (RM){ ST.p = 1; ST.anim = null; draw(); endAnim(); return; }
+  var ratio = Math.max(ST.data.R, 1/ST.data.R);
+  ST.p = 0;
+  say.textContent = 'هذه شمسنا… لنبتعد قليلاً لنرى ' + ST.data.ar + ' كاملاً';
+  say.style.opacity = 1;
+  ST.anim = {t0:performance.now(), hold:900, dur:1200 + 640*Math.log10(ratio + 1), started:false};
+  loop();
+}
+function endAnim(){
+  ST.p = 1;
+  var big = ST.data.R > 30;
+  say.textContent = big ? 'الحجم الحقيقي: الشمس نقطة صغيرة بجانبه!' : 'الحجم الحقيقي للنجم مقارنةً بالشمس';
+  say.style.opacity = 1;
+  if (ST.onEnd){ var f = ST.onEnd; ST.onEnd = null; f(); }
+  draw();
+}
+
+/* ---------- results ---------- */
+var current = null;
+function fillResult(s, example){
+  current = s;
+  $('#rName').textContent = s.ar;
+  $('#rEn').textContent = s.en;
+  $('#rEx').style.display = example ? '' : 'none';
+  $('#rSeason span').textContent = 'متى أراه من البحرين؟ ' + s.season;
+  lStar.textContent = s.ar;
+  var z = sizeText(s);
+  $('#cSize .big').textContent = z.big;
+  $('#cSize .sub').innerHTML = (z.sub ? z.sub + ' ' : '') + 'لو صغّرنا الشمس حتى تصير بحجم كرة تنس الطاولة، لصار ' + s.ar + ' <strong>' + s.analog + '</strong>.';
+  $('#swStar').style.setProperty('--c', s.hex);
+  $('#swStarT').textContent = s.ar + ': ' + s.col;
+  $('#cColor .big').textContent = 'لونه ' + s.col;
+  $('#cColor .sub').textContent = COLOR_RULE[s.key];
+  $('#cTemp .big').textContent = tempText(s);
+  $('#thStarN').textContent = s.ar.length > 9 ? 'النجم' : s.ar;
+  var maxT = 23000;
+  $('#thStar').style.background = s.hex;
+  $('#thStar').style.width = '0%'; $('#thSun').style.width = '0%';
+  setTimeout(function(){ $('#thStar').style.width = clamp(s.T/maxT*100, 6, 100) + '%'; $('#thSun').style.width = (SUN.T/maxT*100) + '%'; }, 60);
+  $('#cTemp .sub').innerHTML = 'سطحه نحو <strong>' + ar(toC(s.T)) + '</strong> درجة سيليزية، وسطح الشمس نحو <strong>' + ar(toC(SUN.T)) + '</strong> درجة.';
+  var k = keyIdea(s); $('#keyT').textContent = k.t; $('#keyP').textContent = k.p;
+  $('#farFact').textContent = 'يبدو ' + s.ar + ' في السماء نقطة صغيرة لأنه بعيد جداً عنا، أبعد بكثير من الشمس.';
+  $$('#chips .chip').forEach(function(c){ c.classList.toggle('on', c.dataset.id === s.id); });
+}
+function showStar(s, opts){
+  opts = opts || {};
+  fillResult(s, !!opts.example);
+  ST.data = s; layout(s); ST.p = 0;
+  if (ST.use3){ G.star.mat.uniforms.uCol.value.set(s.rc || s.hex); G.star.mat.uniforms.uSpot.value = s.spot || 0; G.star.gm.color.set(s.rc || s.hex); G.star.gm.opacity = .5; }
+  var parts = [$('#cSize'), $('#cColor'), $('#cTemp'), $('#key')];
+  if (opts.example){
+    ST.pending = true; draw();
+    if (ST.visible && stageEl.getBoundingClientRect().top < window.innerHeight*0.6){ ST.pending = false; startAnim(); }
+    return;
+  }
+  ST.pending = false;
+  if (!RM) parts.forEach(function(p){ p.classList.add('hide'); });
+  ST.onEnd = function(){
+    play('sparkle', .6);
+    var delays = [0, 170, 300, 420];
+    parts.forEach(function(p, i){ setTimeout(function(){ p.classList.remove('hide'); }, RM ? 0 : delays[i]); });
+  };
+  startAnim();
+}
+
+/* chips */
+var chipsEl = $('#chips');
+function chipHTML(s){ return '<button type="button" class="chip" data-id="' + s.id + '"><span class="dot" style="--c:' + s.hex + '"></span>' + s.ar + ' <small dir="ltr">' + s.en + '</small></button>'; }
+chipsEl.innerHTML = STARS.map(chipHTML).join('');
+document.addEventListener('click', function(e){
+  var c = e.target.closest && e.target.closest('.chip[data-id]'); if (!c) return;
+  var s = BY[c.dataset.id]; $('#q').value = s.ar; hideMsg(); compareUser(s);
+});
+var msg = $('#msg');
+function hideMsg(){ msg.classList.remove('show'); msg.innerHTML = ''; }
+function showMsg(html){ msg.innerHTML = html; msg.classList.remove('show'); void msg.offsetWidth; msg.classList.add('show'); }
+function esc(t){ return String(t).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+var FEW = ['betelgeuse','sirius','rigel','vega','polaris'];
+function compareUser(s){
+  play('scan', .5);
+  setStepDone(2);
+  autoStar(s);
+  var r = $('#result').getBoundingClientRect();
+  var top = stageEl.getBoundingClientRect().top;
+  if (top < 70 || top > window.innerHeight*0.45){
+    window.scrollTo({top: window.scrollY + $('#result').getBoundingClientRect().top - 80, behavior: RM ? 'auto' : 'smooth'});
+  }
+  setTimeout(function(){ showStar(s, {}); }, RM ? 0 : 380);
+}
+$('#sform').addEventListener('submit', function(e){
+  e.preventDefault(); unlock();
+  var raw = $('#q').value, r = findStar(raw);
+  $('#q').blur();
+  if (r.type === 'ok'){
+    if (r.fuzzy) showMsg('<b>وجدته!</b> أظنك تقصد <b>' + r.s.ar + '</b> <span dir="ltr">(' + r.s.en + ')</span>.');
+    else hideMsg();
+    compareUser(r.s); return;
+  }
+  play('wrong', .3);
+  if (r.type === 'empty'){ showMsg('<b>اكتب اسم نجمك أولاً،</b> أو اختر نجماً من النجوم اللامعة في الأسفل.'); return; }
+  if (r.type === 'sun'){ showMsg('<b>هذه هي الشمس نفسها!</b> الشمس نجم أيضاً، وهي أقرب النجوم إلينا. اختر نجماً آخر لتقارنه بها:<div class="chips">' + FEW.map(function(id){ return chipHTML(BY[id]); }).join('') + '</div>'); return; }
+  if (r.type === 'maybe'){ showMsg('<b>هل تقصد هذا النجم؟</b> اضغط عليه لنقارنه بالشمس:<div class="chips">' + chipHTML(r.s) + '</div>'); return; }
+  showMsg('<b>لم أجد «' + esc(raw.trim().slice(0,40)) + '» في قائمة المرصد بعد.</b> لا بأس! تأكد من طريقة كتابة الاسم، أو اسأل ولي أمرك، أو اختر واحداً من هذه النجوم اللامعة:<div class="chips">' + FEW.map(function(id){ return chipHTML(BY[id]); }).join('') + '</div>');
+});
+$('#replay').addEventListener('click', function(){ unlock(); play('whoosh', .4); startAnim(); });
+
+/* ---------- steps / navigation ---------- */
+var stepDone = store.get('-steps') || {};
+function setStepDone(n){ stepDone[n] = true; store.set('-steps', stepDone); paintSteps(); }
+function paintSteps(){ $$('.step-pill').forEach(function(b, i){ b.classList.toggle('done', !!stepDone[i+1]); }); }
+function go(id){ var el = document.getElementById(id); if (!el) return; play('whoosh', .35); el.scrollIntoView({behavior: RM ? 'auto' : 'smooth', block:'start'}); }
+$$('[data-go]').forEach(function(b){ b.addEventListener('click', function(){ unlock(); go(b.dataset.go); }); });
+$('#done1').addEventListener('click', function(){ unlock(); setStepDone(1); go('p2'); });
+$('#stelLink').addEventListener('click', function(){ setStepDone(1); });
+$('#toSheet').addEventListener('click', function(){ unlock(); go('p3'); });
+if ('IntersectionObserver' in window){
+  var vis = {};
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ vis[e.target.id] = e.intersectionRatio; });
+    var best = 'p1', bv = -1;
+    ['p1','p2','p3'].forEach(function(id){ var el = document.getElementById(id), r = el.getBoundingClientRect();
+      var v = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 80); if (v > bv){ bv = v; best = id; } });
+    $$('.step-pill').forEach(function(b){ b.classList.toggle('on', b.dataset.go === best); });
+  }, {threshold:[0,.1,.25,.5,.75,1]});
+  ['p1','p2','p3'].forEach(function(id){ io.observe(document.getElementById(id)); });
+}
+paintSteps();
+
+/* ---------- observation sheet ---------- */
+var S = store.get('-sheet') || {};
+function today(){ var d = new Date(), m = d.getMonth()+1, dd = d.getDate(); return d.getFullYear() + '-' + (m<10?'0':'') + m + '-' + (dd<10?'0':'') + dd; }
+if (!S.date) S.date = today();
+var fName = $('#sName'), fDate = $('#sDate'), fStar = $('#sStar'), fDisc = $('#sDisc');
+fName.value = S.name || ''; fDate.value = S.date || ''; fStar.value = S.star || ''; fDisc.value = S.disc || '';
+$('#autoNote').classList.toggle('show', !!S.starAuto && !!S.star);
+function save(){ store.set('-sheet', S); }
+[[fName,'name'],[fDate,'date'],[fStar,'star'],[fDisc,'disc']].forEach(function(p){
+  p[0].addEventListener('input', function(){ S[p[1]] = p[0].value; if (p[1] === 'star'){ S.starAuto = false; $('#autoNote').classList.remove('show'); } save(); paintCheck(); clearMiss(); });
+});
+function autoStar(s){
+  if (!fStar.value.trim() || S.starAuto){ fStar.value = s.ar; S.star = s.ar; S.starAuto = true; $('#autoNote').classList.add('show'); save(); paintCheck(); }
+}
+$$('.opts').forEach(function(g){
+  var k = g.dataset.k;
+  $$('.opt', g).forEach(function(b){
+    if (S[k] === b.dataset.v) b.setAttribute('aria-pressed','true');
+    b.addEventListener('click', function(){ unlock();
+      $$('.opt', g).forEach(function(o){ o.setAttribute('aria-pressed','false'); });
+      b.setAttribute('aria-pressed','true'); S[k] = b.dataset.v; save(); play('ok', .4); paintCheck(); clearMiss(); });
+  });
+});
+var CHECK = [['name','اسمي'],['star','اسم النجم'],['size','الحجم'],['color','اللون'],['temp','الحرارة'],['disc','ماذا اكتشفت؟'],['drawn','الرسم (اختياري)']];
+function filled(k){ if (k === 'drawn') return !!S.drawn; var v = S[k]; return !!(v && String(v).trim().length >= (k === 'disc' ? 3 : 1)); }
+function paintCheck(){
+  $('#checklist').innerHTML = CHECK.map(function(c){ return '<span class="' + (filled(c[0]) ? 'ok' : '') + '"><i></i>' + c[1] + '</span>'; }).join('');
+}
+function clearMiss(){ $$('.miss').forEach(function(m){ if (m.id) { var k = MISSMAP[m.id]; if (k && filled(k)) m.classList.remove('miss'); } }); if (!missing().length) $('#missMsg').classList.remove('show'); }
+var MISSMAP = {fName:'name', fStar:'star', qSize:'size', qColor:'color', qTemp:'temp', fDisc:'disc'};
+function missing(){ return Object.keys(MISSMAP).filter(function(id){ return !filled(MISSMAP[id]); }); }
+paintCheck();
+
+/* drawing pad */
+var pad = $('#pad'), pc = $('#padCv'), px = pc.getContext('2d'), hint = $('#padHint');
+var brush = {c:'#ffd34d', t:'pen'};
+var BG = '#071034';
+function padSize(){
+  var w = pad.clientWidth, h = pad.clientHeight; if (!w || !h) return;
+  var pr = Math.min(window.devicePixelRatio||1, 2);
+  var old = null;
+  if (pc.width > 0 && pc.height > 0 && pc._ready){ old = document.createElement('canvas'); old.width = pc.width; old.height = pc.height; old.getContext('2d').drawImage(pc,0,0); }
+  pc.width = Math.round(w*pr); pc.height = Math.round(h*pr);
+  px.setTransform(1,0,0,1,0,0); px.fillStyle = BG; px.fillRect(0,0,pc.width,pc.height);
+  if (old) px.drawImage(old, 0, 0, pc.width, pc.height);
+  px.setTransform(pr,0,0,pr,0,0); pc._pr = pr; pc._w = w; pc._h = h;
+  if (!pc._ready){ pc._ready = true; restoreDrawing(); }
+}
+function restoreDrawing(){
+  var d = null; try { d = localStorage.getItem(KEY + '-draw'); } catch(e){}
+  if (!d) return;
+  var img = new Image(); img.onload = function(){ px.save(); px.setTransform(1,0,0,1,0,0); px.drawImage(img, 0, 0, pc.width, pc.height); px.restore(); hint.style.opacity = 0; if ($('#doneZone').classList.contains('show')) buildReport(); }; img.src = d;
+}
+function saveDrawing(){ try { localStorage.setItem(KEY + '-draw', pc.toDataURL('image/png')); } catch(e){} }
+function pt(e){ var r = pc.getBoundingClientRect(); return {x:e.clientX - r.left, y:e.clientY - r.top}; }
+function starAt(x, y, r, color){
+  px.save(); px.translate(x, y); px.beginPath();
+  for (var i=0;i<10;i++){ var a = -Math.PI/2 + i*Math.PI/5, rr = i%2 ? r*0.45 : r; px.lineTo(Math.cos(a)*rr, Math.sin(a)*rr); }
+  px.closePath(); px.shadowColor = color; px.shadowBlur = r*0.8; px.fillStyle = color; px.fill(); px.restore();
+}
+var drawing = false, last = null;
+pc.addEventListener('pointerdown', function(e){
+  e.preventDefault(); unlock(); try { pc.setPointerCapture(e.pointerId); } catch(_){}
+  var p = pt(e); hint.style.opacity = 0;
+  if (brush.t === 'star'){ starAt(p.x, p.y, Math.max(14, pc._w*0.05), brush.c); play('collect', .3); markDrawn(); saveDrawing(); return; }
+  drawing = true; last = p;
+  px.beginPath(); px.fillStyle = brush.t === 'erase' ? BG : brush.c; px.arc(p.x, p.y, (brush.t === 'erase' ? 14 : 4), 0, 7); px.fill();
+});
+pc.addEventListener('pointermove', function(e){
+  if (!drawing) return; e.preventDefault();
+  var evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e]; if (!evs.length) evs = [e];
+  evs.forEach(function(ev){ var p = pt(ev);
+    px.lineCap = 'round'; px.lineJoin = 'round'; px.lineWidth = brush.t === 'erase' ? 28 : 8;
+    px.strokeStyle = brush.t === 'erase' ? BG : brush.c;
+    px.beginPath(); px.moveTo(last.x, last.y); px.lineTo(p.x, p.y); px.stroke(); last = p; });
+});
+function endDraw(){ if (!drawing) return; drawing = false; markDrawn(); saveDrawing(); }
+pc.addEventListener('pointerup', endDraw); pc.addEventListener('pointercancel', endDraw); pc.addEventListener('pointerleave', endDraw);
+function markDrawn(){ if (!S.drawn){ S.drawn = true; save(); paintCheck(); } }
+$$('#tools .col').forEach(function(b){ b.addEventListener('click', function(){
+  $$('#tools .col').forEach(function(o){ o.setAttribute('aria-pressed','false'); }); b.setAttribute('aria-pressed','true'); brush.c = b.dataset.c;
+  if (brush.t === 'erase'){ brush.t = 'pen'; paintTools(); } }); });
+function paintTools(){ $$('#tools .tool[data-t]').forEach(function(o){ o.setAttribute('aria-pressed', o.dataset.t === brush.t ? 'true' : 'false'); }); }
+$$('#tools .tool[data-t]').forEach(function(b){ b.addEventListener('click', function(){ brush.t = b.dataset.t; paintTools(); }); });
+var clearArm = 0;
+$('#clearPad').addEventListener('click', function(){
+  var sp = $('#clearPad span');
+  if (!clearArm){ sp.textContent = 'متأكد؟ اضغط مرة أخرى'; clearArm = setTimeout(function(){ clearArm = 0; sp.textContent = 'امسح الرسم'; }, 3000); return; }
+  clearTimeout(clearArm); clearArm = 0; sp.textContent = 'امسح الرسم';
+  px.save(); px.setTransform(1,0,0,1,0,0); px.fillStyle = BG; px.fillRect(0,0,pc.width,pc.height); px.restore();
+  S.drawn = false; save(); paintCheck(); hint.style.opacity = 1; try { localStorage.removeItem(KEY + '-draw'); } catch(e){}
+});
+padSize();
+if ('ResizeObserver' in window) new ResizeObserver(function(){ if (pad.clientWidth !== pc._w || pad.clientHeight !== pc._h) padSize(); }).observe(pad);
+else window.addEventListener('resize', padSize);
+
+/* ready → summary */
+function fmtDate(v){ if (!v) return ''; var p = v.split('-'); if (p.length !== 3) return v; return ar(+p[2]) + '/' + ar(+p[1]) + '/' + ar(+p[0]); }
+function reportText(){
+  return ['دفتر الراصد — مرصد النجوم','الاسم: ' + (S.name||'').trim(),'التاريخ: ' + fmtDate(S.date),'النجم: ' + (S.star||'').trim(),
+    'الحجم: ' + (S.size||''),'اللون: ' + (S.color||''),'الحرارة: ' + (S.temp||''),'ماذا اكتشفت؟ ' + (S.disc||'').trim(),'وسام: راصد النجوم'].join('\n');
+}
+function buildReport(){
+  $('#rpMeta').textContent = 'الراصد: ' + (S.name||'').trim() + ' · ' + fmtDate(S.date);
+  $('#rpStar').textContent = (S.star||'').trim();
+  $('#rpSize').textContent = S.size || ''; $('#rpColor').textContent = S.color || ''; $('#rpTemp').textContent = S.temp || '';
+  $('#rpDisc').textContent = (S.disc||'').trim();
+  var d = $('#rpDraw'); d.innerHTML = '';
+  if (S.drawn){ var img = new Image(); img.alt = 'رسمة النجم'; try { img.src = pc.toDataURL('image/png'); } catch(e){} d.appendChild(img); }
+  else d.innerHTML = '<div class="none">لم ترسم نجمك بعد. يمكنك الرسم ثم الضغط على «جاهز للإرسال» مرة أخرى.</div>';
+}
+function sparks(){
+  if (RM) return;
+  var host = $('#report'), b = $('#badge'), hr = host.getBoundingClientRect(), br = b.getBoundingClientRect();
+  var cx = br.left - hr.left + br.width/2, cy = br.top - hr.top + br.height*0.42;
+  for (var i=0;i<14;i++){
+    var s = document.createElement('i'); s.className = 'spark';
+    var a = (i/14)*Math.PI*2 + 0.3, d = 60 + (i%3)*28;
+    s.style.left = cx + 'px'; s.style.top = cy + 'px';
+    s.style.setProperty('--dx', Math.cos(a)*d + 'px'); s.style.setProperty('--dy', Math.sin(a)*d + 'px');
+    s.style.animationDelay = (i%4)*40 + 'ms';
+    if (i%3 === 1) s.style.background = '#ff8a65'; if (i%3 === 2) s.style.background = '#6ee7d8';
+    host.appendChild(s); void s.offsetWidth; s.classList.add('go');
+    setTimeout((function(n){ return function(){ n.remove(); }; })(s), 1500);
+  }
+}
+$('#ready').addEventListener('click', function(){
+  unlock();
+  var m = missing();
+  $$('.miss').forEach(function(x){ x.classList.remove('miss'); });
+  if (m.length){
+    m.forEach(function(id){ var el = document.getElementById(id); void el.offsetWidth; el.classList.add('miss'); });
+    var names = m.map(function(id){ return CHECK.filter(function(c){ return c[0] === MISSMAP[id]; })[0][1]; });
+    var mm = $('#missMsg'); mm.innerHTML = '<b>أوشكت على الانتهاء!</b> بقي عليك: ' + names.join('، ') + '.'; mm.classList.remove('show'); void mm.offsetWidth; mm.classList.add('show');
+    play('wrong', .25);
+    var first = document.getElementById(m[0]); first.scrollIntoView({behavior: RM ? 'auto' : 'smooth', block:'center'});
+    return;
+  }
+  $('#missMsg').classList.remove('show');
+  buildReport();
+  var dz = $('#doneZone'); dz.classList.add('show');
+  S.done = true; save(); setStepDone(3);
+  var b = $('#badge'); b.classList.remove('pop'); void b.getBoundingClientRect(); b.classList.add('pop');
+  play('win', .6);
+  setTimeout(sparks, RM ? 0 : 420);
+  setTimeout(function(){ dz.scrollIntoView({behavior: RM ? 'auto' : 'smooth', block:'start'}); }, 60);
+});
+$('#editBtn').addEventListener('click', function(){ $('#sheet').scrollIntoView({behavior: RM ? 'auto' : 'smooth', block:'start'}); });
+$('#copyBtn').addEventListener('click', function(){
+  var text = reportText(), note = $('#copyNote'), box = $('#copyBox');
+  function fallback(){
+    box.value = text; box.classList.add('show'); box.focus(); box.select();
+    try { box.setSelectionRange(0, text.length); } catch(e){}
+    var ok = false; try { ok = document.execCommand && document.execCommand('copy'); } catch(e){}
+    note.textContent = ok ? 'نُسخ النص! الصقه في رسالة للمعلم.' : 'النص محدّد في المربع: اضغط عليه مطوّلاً واختر «نسخ».';
+  }
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ note.textContent = 'نُسخ النص! الصقه في رسالة للمعلم.'; play('ok', .5); box.classList.remove('show'); }, fallback);
+    } else fallback();
+  } catch(e){ fallback(); }
+});
+if (S.done && missing().length === 0){ buildReport(); $('#doneZone').classList.add('show'); }
+
+/* ---------- start ---------- */
+initStage();
+showStar(BY.betelgeuse, {example:true});
+if (stepDone[2] && S.star){ /* keep example until child compares again */ }
+})();
+</script>
+</body>
+</html>
