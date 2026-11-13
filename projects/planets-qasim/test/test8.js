@@ -1,0 +1,35 @@
+// node test/test8.js : iPhone path with a mock 8th Wall engine: place the solar system, tap a world, its sheet opens
+const { chromium } = require('playwright'); const path = require('path');
+const P3 = '/home/user/work/p3', LIB = '/home/user/work/arql/lib';
+(async () => { const b = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  await ctx.route(/cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net/, r => { const u = r.request().url();
+    if (u.includes('engine-binary')) return r.fulfill({ path: path.join(__dirname, 'mockxr8.js'), contentType: 'application/javascript' });
+    if (u.includes('xrextras')) return r.fulfill({ body: '', contentType: 'application/javascript' });
+    if (u.includes('three.js/r128')) return r.fulfill({ path: P3 + '/three128.min.js', contentType: 'application/javascript' });
+    if (u.includes('gsap')) return r.fulfill({ path: LIB + '/gsap.min.js', contentType: 'application/javascript' });
+    if (u.includes('lenis')) return r.fulfill({ path: LIB + '/lenis.min.js', contentType: 'application/javascript' });
+    return r.abort(); });
+  await ctx.addInitScript(() => { const o = DOMTokenList.prototype.supports; DOMTokenList.prototype.supports = function (t) { return t === 'ar' ? true : (o ? o.call(this, t) : false); }; });
+  const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(String(e)));
+  await p.goto('http://127.0.0.1:8814/hub/index.html'); await p.waitForTimeout(2500);
+  await p.evaluate(() => document.querySelector('#goBtn').click()); await p.waitForTimeout(800);
+  console.log('AR button label:', await p.evaluate(() => document.querySelector('#camBtn span:last-child').textContent));
+  await p.tap('#camBtn'); await p.waitForTimeout(1500);
+  console.log('on', await p.evaluate(() => window.__AR8.on), 'reticle', await p.evaluate(() => window.__AR8.ret && window.__AR8.ret.visible),
+    'badge', await p.evaluate(() => { const a = document.querySelector('#ar8badge'); return !a.hidden && a.textContent + ' ' + a.href; }));
+  await p.screenshot({ path: P3 + '/hub/shots/ar8_1_reticle.png' });
+  await p.touchscreen.tap(195, 500); await p.waitForTimeout(1600);
+  console.log('placed', await p.evaluate(() => document.body.classList.contains('placed')));
+  await p.screenshot({ path: P3 + '/hub/shots/ar8_2_placed.png' });
+  const pt = await p.evaluate(() => { const A = window.__AR8, its = window.__ar8items; let best = null;
+    its.forEach((o, i) => { const v = new THREE.Vector3(); o.model.getWorldPosition(v); v.y += .01; const d = v.distanceTo(A.cam.position); v.project(A.cam);
+      const x = (v.x + 1) / 2 * innerWidth, y = (-v.y + 1) / 2 * innerHeight; if (!best || d < best.d) best = { d, x, y, i, key: o.it.key }; }); return best; });
+  console.log('tap world', JSON.stringify(pt));
+  await p.touchscreen.tap(pt.x, pt.y); await p.waitForTimeout(1300);
+  console.log('sheet open:', await p.evaluate(() => !!document.querySelector('#sheet.open') && document.querySelector('#sheetTitle').getAttribute('aria-label')));
+  await p.screenshot({ path: P3 + '/hub/shots/ar8_3_sheet.png' });
+  await p.evaluate(() => document.querySelector('#sheetClose').click()); await p.waitForTimeout(500);
+  await p.evaluate(() => document.querySelector('#xrExit').click()); await p.waitForTimeout(600);
+  console.log('exit ->', await p.evaluate(() => ({ on: window.__AR8.on, xr: document.body.classList.contains('xr') })));
+  console.log('errors:', errs.length ? errs.join(' | ') : 'none'); await b.close(); })();

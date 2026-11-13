@@ -1,0 +1,19 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{margin:0;background:#e9e4da}</style>
+<script type="importmap">{"imports":{"three":"/ql/three/three.module.js","three/addons/":"/ql/three/jsm/"}}</script></head><body>
+<script type="module">
+import * as THREE from 'three';
+import { USDZLoader } from '/ql/three/jsm/loaders/USDZLoader.js';
+const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); r.setSize(1280, 800); document.body.appendChild(r.domElement);
+r.outputColorSpace = THREE.SRGBColorSpace;
+const sc = new THREE.Scene(); sc.background = new THREE.Color(0x8a7a6a);
+sc.add(new THREE.HemisphereLight(0xffffff, 0x887766, 2.2)); const d = new THREE.DirectionalLight(0xffffff, 2); d.position.set(1, 2, 1.5); sc.add(d);
+const cam = new THREE.PerspectiveCamera(35, 1280 / 800, 0.01, 50);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), new THREE.MeshStandardMaterial({ color: 0x8a6f5a })); floor.rotation.x = -Math.PI / 2; sc.add(floor);
+window.go = async (view) => {
+  const g = await new USDZLoader().loadAsync('/hub/planets_hub.usdz'); sc.add(g);
+  const box = new THREE.Box3().setFromObject(g); window.size = box.getSize(new THREE.Vector3()).toArray(); window.minY = box.min.y;
+  const v = view || [0.75, 0.55, 0.75]; cam.position.set(...v); cam.lookAt(0, 0.05, 0); r.render(sc, cam); return window.size;
+};
+window.view = (v) => { cam.position.set(...v); cam.lookAt(0, 0.05, 0); r.render(sc, cam); };
+window.ready = true;
+</script></body></html>
