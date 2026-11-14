@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>كتاب الفريج السري — ملف الطباعة</title>
+<style>@page{size:A4 portrait;margin:0}*{box-sizing:border-box}html,body{margin:0;font-family:Almarai;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:210mm;height:297mm;position:relative;overflow:hidden;page-break-after:always;background:#fff}.page:last-child{page-break-after:auto}.page>svg{position:absolute;inset:0;width:210mm;height:297mm}</style>
+<script src="helpers.js"></script><script src="art.js"></script><script src="parts.js"></script></head><body><div id="root"></div>
+<script>
+// A4 portrait: viewBox 840 x 1188  (4 units = 1 mm)
+const PW=840,PH=1188;
+const D=defs;
+const page=(inner,bg='#FFF8EC',vb=`0 0 ${PW} ${PH}`)=>`<div class="page"><svg viewBox="${vb}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${D}<rect x="-100" y="-100" width="2000" height="2000" fill="${bg}"/>${inner}</svg></div>`;
+const tag=(x,y,t)=>`<text x="${x}" y="${y}" text-anchor="middle" font-family="Almarai" font-weight="700" font-size="15" fill="#9a8f7c">${t}</text>`;
+const tryAgain=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="#FFFDF6" stroke="#C9B8A0" stroke-width="3"/>${T(x+w/2,y+h/2-4,'حاول مرة',24,'#9a6a4a')}${T(x+w/2,y+h/2+28,'ثانية 💪',24,'#9a6a4a')}`;
+const right=(x,y,w,h,L,col)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="#FFFDF6" stroke="${col}" stroke-width="4"/>${letterBadge(x+w/2,y+h/2,L,52)}`;
+const FW=210,FH=170;
+const slotX=[590,315,40];
+// stations data (order on the page, right to left)
+const S1=[['القرقاعون','#E8467C',1],['المسحّر','#3F6FD8',0],['العرضة','#8E44AD',0]];
+const S2=[['إطعامه','#F08A1C',0],['الترحيب به','#2DA05A',1],['تقديم القهوة','#16A085',0]];
+const S4=[['العرضة','#8E44AD',0],['المفرّخ','#E8467C',0],['تقديم القهوة','#16A085',1]];
+function under(row,y,L){return row.map((o,i)=>(o[2]?right(slotX[i],y,FW,FH,L,o[1]):tryAgain(slotX[i],y,FW,FH))+tag(slotX[i]+FW/2,y+FH+20,'تُلصق فوقه بطاقة «'+o[0]+'»')).join('');}
+const cardP=(y,h,title,col)=>card(30,y,780,h,title,col);
+let R='';
+
+// 1 — guide
+R+=page(`${T(420,90,'كتاب الفريج السري',52,'#8A2B1A')}${T(420,135,'ملف الطباعة للمكتبة — الدرس الأول: عاداتي وتقاليدي (الصف الثالث، ص 64–70)',19,'#5a3518')}
+<g transform="translate(120,175)"><rect width="600" height="250" rx="16" fill="#fff" stroke="#D8C8A8" stroke-width="3"/>
+${[['اللوح الأيسر','ص 5'],['اللوح الأوسط','ص 4'],['اللوح الأيمن','ص 3']].map((p,i)=>`<rect x="${30+i*190}" y="30" width="160" height="190" rx="10" fill="#FFF3D6" stroke="#8A2B1A" stroke-width="3"/>${T(110+i*190,115,p[0],22,'#8A2B1A')}${T(110+i*190,150,p[1],20,'#5a3518')}`).join('')}
+${T(300,245,'الداخل: ملف مقوّى يُطوى ثلاث طيّات (كل لوح بمقاس A4 طولي)',17,'#5a3518')}</g>
+${[['2','الغلاف الأمامي للملف'],['3–5','الألواح الداخلية الثلاثة: تُلصق كاملة على الملف من الداخل'],['6','البطاقات المتحركة: تُقصّ وتُغلّف، ويُلصق شريطها العلوي فقط فوق اسمها'],['7','العجلة: طبقتان، تُقصّ نافذة العليا، وتُثبّتان بمسمار ورق في اللوح الأوسط'],['8','الغلاف الخلفي: يُصنع منه جيب (ظرف) يُلصق من الجوانب والأسفل، ويُختم بملصق القفل'],['9','داخل الجيب: أوسمة «حارس التراث» وبطاقات «عهدي»']].map((r,i)=>`<rect x="40" y="${470+i*86}" width="760" height="72" rx="14" fill="#fff" stroke="#D8C8A8" stroke-width="2"/><circle cx="760" cy="${506+i*86}" r="26" fill="#8A2B1A"/>${T(760,514+i*86,r[0],20,'#fff')}<text x="720" y="${514+i*86}" text-anchor="start" font-family="Almarai" font-weight="700" font-size="17" fill="#2b1d14">${r[1]}</text>`).join('')}
+<rect x="40" y="1000" width="760" height="150" rx="14" fill="#FFF0D0"/>
+${['مهم: الحرف مطبوع تحت الجواب الصحيح فقط، فلا تُبدَّل أماكن البطاقات.','الأمان: بطاقات مغلّفة بزوايا مدوّرة، بلا دبابيس معدنية أو قطع صغيرة، وصمغ غير سام.','قبل الطباعة: تُطابق صياغة الأسئلة مع نص الكتاب.'].map((t,i)=>`<text x="780" y="${1045+i*42}" text-anchor="start" font-family="Almarai" font-weight="700" font-size="17" fill="#5a3518">${t}</text>`).join('')}`);
+
+// 2 — cover (reuses the mock-up cover art)
+R+=page(COVER,'#1b1b1d','0 0 900 1240');
+
+// 3 — right panel: stations 1 & 2
+R+=page(`${cardP(30,560,'المحطة ١ — باب الفريج: من أنا؟','#E8467C')}
+${bubble(70,110,700,150,['في منتصف رمضان يلبس الأطفال الملابس الشعبية،','ويمرّون على البيوت يجمعون الحلوى…','فمن أنا؟'])}
+${under(S1,320,'ت')}
+${cardP(620,540,'المحطة ٢ — المجلس','#2DA05A')}
+<rect x="70" y="700" width="700" height="170" rx="16" fill="#F3D9A4" stroke="${OUT}" stroke-width="3"/><rect x="70" y="830" width="700" height="40" fill="url(#sadu)"/>${dallah(170,820,.7)}${finjan(260,850,1.1)}
+${kid(620,865,.7,{color:'#F7F3E8',armL:[-60,90],armR:[60,90]})}${bubble(380,712,170,58,['وصلت!'])}
+${TXT(420,915,'وصل الضيف! ماذا نفعل أولًا؟',28,'#2b1d14')}
+${under(S2,945,'ر')}`);
+
+// 4 — centre panel: wheel spot + letter strip
+R+=page(`${cardP(30,700,'المحطة ٣ — عجلة الوقت','#F08A1C')}
+${TXT(420,125,'متى نسمع مدفع الإفطار؟ دوّر العجلة!',28,'#2b1d14')}
+<circle cx="420" cy="420" r="262" fill="none" stroke="#C9B8A0" stroke-width="3" stroke-dasharray="12 9"/><circle cx="420" cy="420" r="6" fill="#8A2B1A"/>
+${T(420,400,'مكان العجلة (ص 7)',24,'#9a8f7c')}${T(420,440,'تُثبّت بمسمار ورق في هذه النقطة',18,'#9a8f7c')}
+${cannon(110,660,.6)}${T(640,700,'السهم والنافذة في الطبقة العليا',16,'#9a8f7c')}
+${cardP(760,250,'شريط الحروف','#8A2B1A')}
+${[0,1,2,3,4].map(i=>`<rect x="${650-i*120}" y="845" width="100" height="110" rx="14" fill="#FFF8EA" stroke="${OUT}" stroke-width="4"/>${T(700-i*120,920,'؟',46,'#d8c8b0')}`).join('')}
+${TXT(420,990,'اكتب كل حرف تجده في مربعه',22,'#7a6a58')}
+<rect x="80" y="1040" width="680" height="120" rx="20" fill="#2b2b30"/>${TXT(420,1090,'تحت الجواب الصحيح حرف ✨',28,'#FFD54A')}${TXT(420,1135,'وتحت الخطأ: «حاول مرة ثانية»',24,'#fff')}`);
+
+// 5 — left panel: stations 4 & 5
+const doors=[[110,800],[300,840],[480,770],[610,900]];const DW=110,DH=150,CORRECT=1;
+R+=page(`${cardP(30,560,'المحطة ٤ — صندوق الضيافة','#16A085')}
+${TXT(420,135,'أيُّ هذه من عادات الضيافة؟',30,'#2b1d14')}${stk(dallah(420,235,.7))}
+${under(S4,320,'ث')}
+${cardP(620,540,'المحطة ٥ — دوّر المسحّر!','#3F6FD8')}
+<clipPath id="nf5"><rect x="60" y="700" width="720" height="390" rx="14"/></clipPath><g clip-path="url(#nf5)"><rect x="60" y="700" width="720" height="390" fill="#16205E"/>
+${[...Array(36)].map((_,i)=>`<circle cx="${70+(i*61)%700}" cy="${710+(i*29)%90}" r="2" fill="#FFF6C8"/>`).join('')}<path d="M700 720 a28 28 0 1 0 22 44 a22 22 0 1 1 -22 -44z" fill="#FFF3B0"/>
+${house(40,1080,250,300,{color:'#B8925C',shade:'#9a7848',door:false,wins:[]})}${house(280,1080,230,260,{color:'#C49A62',shade:'#9a7848',door:false,wins:[]})}${house(500,1080,290,320,{barjeel:true,color:'#B8925C',shade:'#9a7848',door:false,wins:[]})}
+<rect x="60" y="1060" width="720" height="30" fill="#7F6B50"/></g>
+${doors.map(([x,y],i)=>`<rect x="${x}" y="${y}" width="${DW}" height="${DH}" rx="8" fill="#FFD966" stroke="${OUT}" stroke-width="3"/>`+(i===CORRECT?`${musahhar(x+55,y+DH-4,.62)}${letterBadge(x+DW-6,y+22,'ي',24)}`:`${T(x+DW/2,y+DH/2,'ليس',22,'#9a6a4a')}${T(x+DW/2,y+DH/2+28,'هنا 🙂',22,'#9a6a4a')}`)+tag(x+DW/2,y-8,'باب '+(i+1))).join('')}
+${TXT(420,1130,'ارفع الأبواب حتى تجد المسحّر 🥁',24,'#2b1d14')}`);
+
+// 6 — flaps sheet
+const flapCard=(x,y,w,h,label,col,big)=>`<rect x="${x-6}" y="${y-30}" width="${w+12}" height="${h+36}" rx="10" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="8 6"/>
+<rect x="${x}" y="${y-24}" width="${w}" height="22" rx="4" fill="#eee"/><text x="${x+w/2}" y="${y-8}" text-anchor="middle" font-family="Almarai" font-size="12" font-weight="700" fill="#888">ألصق من هنا فقط</text>
+<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="${col}" stroke="${OUT}" stroke-width="3"/>${big?T(x+w/2,y+h*.55,big,44,'#FFD54A'):T(x+w/2,y+h*.5,label,Math.min(30,w*.15),'#fff')}${big?'':T(x+w/2,y+h*.8,'ارفع ↑',18,'#fff','opacity=".85"')}`;
+let fl=`${T(420,60,'البطاقات المتحركة — تُقصّ وتُغلّف، ويُلصق الشريط العلوي فقط',22,'#8A2B1A')}`;
+[[S1,'المحطة ١',110],[S2,'المحطة ٢',370],[S4,'المحطة ٤',630]].forEach(([row,lab,y])=>{fl+=`<text x="810" y="${y-40}" text-anchor="start" font-family="Almarai" font-weight="800" font-size="20" fill="#5a3518">${lab}</text>`;row.forEach((o,i)=>{fl+=flapCard(slotX[i],y,FW,FH,o[0],o[1]);});});
+fl+=`<text x="810" y="880" text-anchor="start" font-family="Almarai" font-weight="800" font-size="20" fill="#5a3518">المحطة ٥ — الأبواب</text>`;
+[0,1,2,3].forEach(i=>{const x=600-i*180;fl+=`${flapCard(x,950,DW,DH,'','#9B5A2A','؟')}<circle cx="${x+DW-16}" cy="${950+DH/2}" r="6" fill="#F4C542"/>${tag(x+DW/2,950+DH+22,'باب '+(i+1))}`;});
+R+=page(fl,'#fff');
+
+// 7 — wheel (two layers)
+const opts=[['عند المغرب في رمضان','#F08A1C',1],['صباح العيد','#3F6FD8',0],['منتصف رمضان','#E8467C',0]];
+const cx=420,cy1=330,RB=262,RT=190;
+let wh=`${T(420,48,'العجلة — طبقتان تُثبّتان بمسمار ورق من الوسط',22,'#8A2B1A')}${T(420,74,'الطبقة السفلى (تدور)',18,'#5a3518')}`;
+wh+=`<g>`+opts.map((o,i)=>{const a0=(i*120-60)*Math.PI/180-Math.PI/2,a1=(i*120+60)*Math.PI/180-Math.PI/2;
+ return `<path d="M${cx} ${cy1} L${cx+RB*Math.cos(a0)} ${cy1+RB*Math.sin(a0)} A${RB} ${RB} 0 0 1 ${cx+RB*Math.cos(a1)} ${cy1+RB*Math.sin(a1)} Z" fill="${o[1]}" stroke="${OUT}" stroke-width="4"/>
+ <g transform="rotate(${i*120} ${cx} ${cy1})">${T(cx,cy1-RB+42,o[0],22,'#fff')}${o[2]?letterBadge(cx,cy1-125,'ا',34):`${T(cx,cy1-132,'حاول',20,'#fff')}${T(cx,cy1-106,'مرة ثانية',18,'#fff')}`}</g>`;}).join('')+`</g>
+<circle cx="${cx}" cy="${cy1}" r="${RB}" fill="none" stroke="${OUT}" stroke-width="4"/><circle cx="${cx}" cy="${cy1}" r="5" fill="${OUT}"/>`;
+const cy2=880;
+wh+=`${T(420,620,'الطبقة العليا (ثابتة): تُقصّ النافذة الحمراء المنقّطة',18,'#5a3518')}
+<path d="M${cx-26} ${cy2-RT-44} h52 l-26 40z" fill="#E0202B" stroke="${OUT}" stroke-width="3"/><rect x="${cx-12}" y="${cy2-RT-8}" width="24" height="14" fill="#E0202B"/>
+<circle cx="${cx}" cy="${cy2}" r="${RT}" fill="#FFF3D6" stroke="${OUT}" stroke-width="4"/><circle cx="${cx}" cy="${cy2}" r="${RT-12}" fill="none" stroke="url(#sadu)" stroke-width="16"/>
+<rect x="${cx-48}" y="${cy2-170}" width="96" height="88" rx="10" fill="#fff" stroke="#E0202B" stroke-width="3" stroke-dasharray="8 6"/>${T(cx,cy2-120,'✂ نافذة',16,'#E0202B')}
+${T(cx,cy2+10,'متى نسمع',26,'#8A2B1A')}${T(cx,cy2+44,'مدفع الإفطار؟',26,'#8A2B1A')}<circle cx="${cx}" cy="${cy2}" r="5" fill="${OUT}"/>${T(cx,cy2+110,'دوّرني ↻',24,'#5a3518')}`;
+R+=page(wh,'#fff');
+
+// 8 — back cover / sealed pocket
+R+=page(`<rect x="0" y="0" width="840" height="1188" fill="url(#paper)"/>${scroll(420,90,420,'الجيب المختوم',48)}
+${TXT(420,190,'اكتب كلمة السر:',30,'#FFD54A')}
+${[0,1,2,3,4].map(i=>`<rect x="${640-i*115}" y="220" width="95" height="108" rx="14" fill="#FFF8EA" stroke="${OUT}" stroke-width="4"/>`).join('')}
+<g filter="url(#sh)"><path d="M90 400 h660 v500 h-660z" fill="#C98B3C" stroke="${OUT}" stroke-width="5"/><path d="M90 400 L420 650 L750 400" fill="#B5773A" stroke="${OUT}" stroke-width="5" stroke-linejoin="round"/></g>
+<rect x="90" y="860" width="660" height="40" fill="url(#sadu)"/>${lock(420,640,1.25)}
+<rect x="150" y="790" width="540" height="48" rx="24" fill="#8A2B1A"/>${T(420,823,'لا يُفتح إلا إذا قلتم كلمة السر بصوتٍ عالٍ!',22,'#fff')}
+<rect x="90" y="960" width="660" height="170" rx="18" fill="#2b2b30"/>${TXT(420,1015,'للمكتبة: الظرف جيب حقيقي يُلصق من الجانبين والأسفل،',20,'#FFD54A')}${TXT(420,1050,'وفتحته من الأعلى، ويُختم بملصق القفل.',20,'#FFD54A')}${TXT(420,1090,'(كلمة السر لا تُكتب على الغلاف)',18,'#fff')}`,'#1b1b1d');
+
+// 9 — inside the pocket: medals + pledges
+const medal=(x,y)=>`<g><rect x="${x}" y="${y}" width="370" height="250" rx="22" fill="#FFF6E4" stroke="#8A2B1A" stroke-width="5"/><g transform="translate(${x+90},${y+120})"><circle r="52" fill="#FFD54A" stroke="${OUT}" stroke-width="4"/><path transform="scale(1.35)" d="M0 -22 L6 -7 L22 -7 L9 3 L14 19 L0 9 L-14 19 L-9 3 L-22 -7 L-6 -7Z" fill="#fff" stroke="${OUT}" stroke-width="2"/><path d="M-26 44 l-14 54 l24 -10 l10 18 l12 -50 M26 44 l14 54 l-24 -10 l-10 18 l-12 -50" fill="#CE1126" stroke="${OUT}" stroke-width="3"/></g>${T(x+250,y+80,'وسام',30,'#8A2B1A')}${T(x+250,y+122,'حارس التراث',30,'#8A2B1A')}${T(x+250,y+190,'الاسم: ..........',20,'#5a3518')}</g>`;
+const pledge=(x,y)=>`<g><rect x="${x}" y="${y}" width="370" height="250" rx="22" fill="#FFF3D6" stroke="${OUT}" stroke-width="4"/><rect x="${x}" y="${y}" width="370" height="250" rx="22" fill="none" stroke="url(#sadu)" stroke-width="12"/>${T(x+185,y+62,'✋ عهدي',30,'#8A2B1A')}${TXT(x+185,y+110,'أعاهد أن أحافظ على عادات',21,'#5a3518')}${TXT(x+185,y+144,'وتقاليد بلادي البحرين',21,'#5a3518')}${TXT(x+185,y+205,'التوقيع: ..........',19,'#5a3518')}</g>`;
+let pk=`${T(420,50,'داخل الجيب — تُقصّ وتُغلّف',22,'#8A2B1A')}<g stroke="#bbb" stroke-dasharray="10 8" stroke-width="2"><path d="M420 70 V1170 M20 340 H820 M20 615 H820 M20 890 H820"/></g>`;
+[0,1,2,3].forEach(r=>{pk+=medal(440,80+r*275)+pledge(30,80+r*275);});
+R+=page(pk,'#fff');
+document.getElementById('root').innerHTML=R;window.done=true;
+</script></body></html>
