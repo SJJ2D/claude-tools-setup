@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>صندوق يدّوه</title>
+<style>
+@page{size:A4 landscape;margin:0}
+*{box-sizing:border-box}html,body{margin:0;font-family:Almarai;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:297mm;height:210mm;position:relative;overflow:hidden;page-break-after:always;background:#fff}
+.page:last-child{page-break-after:auto}.page>svg{position:absolute;inset:0;width:297mm;height:210mm}
+#mock svg{display:block}
+</style>
+<script src="helpers.js"></script><script src="art.js"></script></head><body>
+<div id="mock"></div><div id="print"></div>
+<script>
+const mortar=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})"><path d="M-46 -40 h92 l-14 70 h-64 z" fill="#A0652F" stroke="${OUT}" stroke-width="4" stroke-linejoin="round"/><ellipse cx="0" cy="-40" rx="46" ry="12" fill="#6B3E1E" stroke="${OUT}" stroke-width="4"/><rect x="-40" y="30" width="80" height="12" rx="4" fill="#7A4A22" stroke="${OUT}" stroke-width="4"/><path d="M-10 -20 l50 -90" stroke="${OUT}" stroke-width="16" stroke-linecap="round"/><path d="M-10 -20 l50 -90" stroke="#C98B3C" stroke-width="10" stroke-linecap="round"/><path d="M-30 0 h60 M-28 14 h56" stroke="#7A4A22" stroke-width="3"/></g>`;
+const gbagA=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})">${bag(0,0,1.6,'#FFD54A')}</g>`;
+const basketA=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})">${basket(0,0,1.6)}</g>`;
+const coffee=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})">${dallah(-14,0,.8)}${finjan(48,26,1.1)}</g>`;
+const ITEMS=[
+ {n:'الكرم والضيافة',c:'#2DA05A',art:coffee,tool:'دلّة وفنجان'},
+ {n:'القرقاعون',c:'#E8467C',art:gbagA,tool:'كيس القرقاعون'},
+ {n:'الحية بيه',c:'#16A085',art:basketA,tool:'سلّة مزروعة'},
+ {n:'المسحّر',c:'#3F6FD8',art:drum,tool:'طبل'},
+ {n:'مدفع الإفطار',c:'#F08A1C',art:cannon,tool:'مدفع صغير'},
+ {n:'دق الحب',c:'#8E44AD',art:mortar,tool:'أداة دق الحب'}];
+const studs=(x0,y0,x1,y1,n)=>[...Array(n)].map((_,i)=>{const t=i/(n-1);return `<circle cx="${x0+(x1-x0)*t}" cy="${y0+(y1-y0)*t}" r="7" fill="#F4C542" stroke="${OUT}" stroke-width="2"/><circle cx="${x0+(x1-x0)*t-2}" cy="${y0+(y1-y0)*t-2}" r="2.2" fill="#fff"/>`}).join('');
+function slotGrid(x,y,w,h,filled){let s='';const cw=(w-40)/3,ch=(h-20)/2;
+ ITEMS.forEach((it,i)=>{const cx=x+w-20-cw*(i%3+1)+ (i%3)*-10+10, cy=y+Math.floor(i/2>=1.5?1:0)*0;});
+ ITEMS.forEach((it,i)=>{const col=i%3,row=Math.floor(i/3);const sx=x+w-(col+1)*cw-col*20,sy=y+row*(ch+20);
+  s+=`<rect x="${sx}" y="${sy}" width="${cw}" height="${ch}" rx="16" fill="#fff" stroke="${it.c}" stroke-width="5"/><rect x="${sx}" y="${sy}" width="${cw}" height="${ch*.28}" rx="14" fill="${it.c}"/><rect x="${sx}" y="${sy+ch*.18}" width="${cw}" height="${ch*.1}" fill="${it.c}"/>
+  ${T(sx+cw/2,sy+ch*.2,it.n,Math.min(ch*.15,cw*.11),'#fff')}`;
+  if(filled&&filled.includes(i)) s+=it.art(sx+cw/2,sy+ch*.68,ch/240);
+  else s+=`<rect x="${sx+cw*.18}" y="${sy+ch*.38}" width="${cw*.64}" height="${ch*.5}" rx="10" fill="#F2EADB" stroke="#B9AC96" stroke-width="3" stroke-dasharray="10 7"/>${T(sx+cw/2,sy+ch*.67,'ألصق الكنز هنا',Math.min(ch*.09,cw*.075),'#9a8f7c')}`;});
+ return s;}
+const sign=(cx,cy,w,h,sz)=>`<g filter="url(#sh)"><rect x="${cx-w/2}" y="${cy-h/2}" width="${w}" height="${h}" rx="${h/2}" fill="#F3D9A4" stroke="${OUT}" stroke-width="5"/><rect x="${cx-w/2+10}" y="${cy-h/2+10}" width="${w-20}" height="${h-20}" rx="${h/2-10}" fill="none" stroke="#8A2B1A" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round"/>${T(cx,cy+sz*.35,'صندوق يدّوه',sz,'#8A2B1A')}</g>`;
+const sadu=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#sadu)"/>`;
+
+// ═════ MOCKUP ═════
+let m=`<rect width="1600" height="1100" fill="url(#wall)"/>
+<rect y="820" width="1600" height="280" fill="#B27A47"/>${[...Array(8)].map((_,i)=>`<path d="M0 ${850+i*34} Q800 ${840+i*34} 1600 ${852+i*34}" stroke="#9C6838" stroke-width="3" fill="none" opacity=".6"/>`).join('')}
+<!-- lid -->
+<g filter="url(#sh)"><rect x="380" y="110" width="840" height="470" rx="26" fill="#5C3417" stroke="${OUT}" stroke-width="6"/>
+<rect x="410" y="140" width="780" height="410" rx="16" fill="#FFF6E4" stroke="${OUT}" stroke-width="4"/></g>
+${studs(400,130,1200,130,22)}${studs(400,560,1200,560,22)}
+${T(800,190,'طابق الكنز بعادته',40,'#8A2B1A')}
+${slotGrid(430,215,740,320,[0,3])}
+<!-- body -->
+<g filter="url(#sh)"><rect x="350" y="560" width="900" height="330" rx="22" fill="#7A4A22" stroke="${OUT}" stroke-width="6"/></g>
+<rect x="350" y="560" width="900" height="34" rx="14" fill="#3A2210" stroke="${OUT}" stroke-width="5"/>
+${[0,1].map(i=>`<rect x="350" y="${640+i*140}" width="900" height="26" fill="#5C3417" stroke="${OUT}" stroke-width="3"/>${studs(370,653+i*140,1230,653+i*140,26)}`).join('')}
+${[0,1,2].map(i=>`<rect x="${460+i*340}" y="600" width="26" height="286" fill="#5C3417" stroke="${OUT}" stroke-width="3"/>`).join('')}
+${sign(800,735,420,96,52)}
+<path d="M780 600 h40 v34 a20 20 0 0 1 -40 0z" fill="#E2B33C" stroke="${OUT}" stroke-width="4"/><circle cx="800" cy="626" r="6" fill="${OUT}"/>
+<!-- secret drawer -->
+<g filter="url(#sh)"><rect x="620" y="870" width="360" height="90" rx="10" fill="#8A5A2A" stroke="${OUT}" stroke-width="5"/></g>
+<circle cx="800" cy="930" r="12" fill="#E2B33C" stroke="${OUT}" stroke-width="3"/>
+${[0,1,2].map(i=>`<g transform="rotate(${-10+i*10} ${700+i*90} 870)"><rect x="${650+i*95}" y="830" width="110" height="70" rx="10" fill="#FFD54A" stroke="${OUT}" stroke-width="3"/>${T(705+i*95,862,'حارس',20,'#8A2B1A')}${T(705+i*95,886,'التراث',20,'#8A2B1A')}</g>`).join('')}
+${T(800,1000,'الدرج السري',26,'#fff','stroke="#3A2210" stroke-width="6" paint-order="stroke"')}
+<!-- items on the table -->
+${basketA(470,960,.9)}${cannon(1140,930,.8)}${mortar(250,980,.8)}
+<!-- kid guessing -->
+${kid(150,1060,1.05,{girl:true,color:'#FF5DA2',scarf:'#6A2C91',open:true,armL:[-60,180],armR:[60,180]})}
+<g><path d="M60 560 h190 q24 0 24 24 v50 q0 24 -24 24 h-110 l-30 30 l6 -30 h-56 q-24 0 -24 -24 v-50 q0 -24 24 -24z" fill="#fff" stroke="${OUT}" stroke-width="4"/>${T(155,624,'طبل؟!',38,'#3F6FD8')}</g>
+<!-- kid with hand in the sadu bag -->
+${kid(1490,1060,1.1,{color:'#3FAE49',armL:[-118,215],armR:[58,80]})}
+<g filter="url(#sh)"><path d="M1290 840 Q1270 980 1300 1030 Q1370 1060 1440 1030 Q1470 980 1440 840 Z" fill="url(#sadu)" stroke="${OUT}" stroke-width="5"/><ellipse cx="1365" cy="842" rx="78" ry="16" fill="#3A2210" stroke="${OUT}" stroke-width="4"/><path d="M1300 870 q65 22 130 0" stroke="#F4C542" stroke-width="6" fill="none"/></g>
+${T(1365,800,'كيس اللمس',26,'#5a3518')}
+<g><path d="M1330 470 h220 q24 0 24 24 v50 q0 24 -24 24 h-40 l20 34 l-50 -34 h-130 q-24 0 -24 -24 v-50 q0 -24 24 -24z" fill="#fff" stroke="${OUT}" stroke-width="4"/>${T(1440,532,'فيه شي مدوّر…',30,'#2b1d14')}</g>
+${stk(flag(1460,200,.8))}`;
+const D=defs.replace('</defs>',`<linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF2D9"/><stop offset="1" stop-color="#F6DDB0"/></linearGradient></defs>`);
+document.getElementById('mock').innerHTML=`<svg width="1600" height="1100" viewBox="0 0 1600 1100" xmlns="http://www.w3.org/2000/svg">${D}${m}</svg>`;
+
+// ═════ PRINT ═════
+const P=(inner)=>`<div class="page"><svg viewBox="0 0 1188 840" xmlns="http://www.w3.org/2000/svg">${D}${inner}</svg></div>`;
+let pr='';
+// guide
+pr+=P(`<rect width="1188" height="840" fill="#FFF8EC"/>${T(594,90,'صندوق يدّوه — ملف الطباعة',48,'#8A2B1A')}${T(594,140,'الدرس الأول: عاداتي وتقاليدي (الصف الثالث، ص 64–70)',24,'#5a3518')}
+${[['2','لوحة المطابقة: تُلصق داخل الغطاء، وتُثبّت شريط فيلكرو في كل خانة'],['3','لوحة الواجهة «صندوق يدّوه» + شريط «المس • خمّن • طابق»'],['4','أربع بطاقات «حارس التراث» للدرج السري (تُغلّف وتُدوّر زواياها)'],['5','مرجع للمكتبة: أشكال المجسمات الستة (طول كل مجسم 6–10 سم)']].map((r,i)=>`<rect x="140" y="${200+i*110}" width="908" height="88" rx="18" fill="#fff" stroke="#D8C8A8" stroke-width="3"/><circle cx="1000" cy="${244+i*110}" r="30" fill="#8A2B1A"/>${T(1000,254+i*110,r[0],30,'#fff')}<text x="950" y="${254+i*110}" text-anchor="start" font-family="Almarai" font-weight="700" font-size="25" fill="#2b1d14">${r[1]}</text>`).join('')}
+<rect x="140" y="660" width="908" height="120" rx="18" fill="#FFF0D0"/><text x="1020" y="710" text-anchor="start" font-family="Almarai" font-weight="700" font-size="22" fill="#5a3518">الأمان: لا مجسم أصغر من 5 سم، ولا أطراف حادة ولا زجاج، والألوان والصمغ غير سامة.</text><text x="1020" y="750" text-anchor="start" font-family="Almarai" font-weight="700" font-size="22" fill="#5a3518">قبل الطباعة: طابق أسماء العادات والأدوات مع نص الكتاب.</text>`);
+// match board
+pr+=P(`<rect width="1188" height="840" fill="#5C3417"/><rect x="24" y="24" width="1140" height="792" rx="26" fill="#FFF6E4"/>${studs(40,40,1148,40,30)}${studs(40,800,1148,800,30)}
+${T(594,120,'طابق الكنز بعادته',56,'#8A2B1A')}${slotGrid(70,170,1048,600,[])}`);
+// front sign
+pr+=P(`<rect width="1188" height="840" fill="#fff"/>${sign(594,250,1000,300,150)}
+<g>${[['✋','المس','#E8467C'],['❓','خمّن','#3F6FD8'],['🔗','طابق','#2DA05A']].map((r,i)=>`<rect x="${880-i*330}" y="520" width="250" height="210" rx="30" fill="${r[2]}" stroke="${OUT}" stroke-width="5"/><text x="${1005-i*330}" y="620" text-anchor="middle" font-size="80">${r[0]}</text>${T(1005-i*330,700,r[1],52,'#fff')}`).join('')}</g>
+${[0,1].map(i=>`<path d="M${860-i*330} 625 l-50 0 m12 -14 l-12 14 l12 14" stroke="${OUT}" stroke-width="6" fill="none" stroke-linecap="round"/>`).join('')}`);
+// guardian cards
+const card=(x,y)=>`<g><rect x="${x}" y="${y}" width="540" height="370" rx="28" fill="#FFF6E4" stroke="#8A2B1A" stroke-width="6"/><rect x="${x+14}" y="${y+14}" width="512" height="342" rx="20" fill="none" stroke="url(#sadu)" stroke-width="14"/>
+${T(x+300,y+100,'حارس التراث',50,'#8A2B1A')}
+<g transform="translate(${x+105},${y+150})"><circle r="62" fill="#FFD54A" stroke="${OUT}" stroke-width="5"/><circle r="46" fill="#F4C542" stroke="${OUT}" stroke-width="3"/><path transform="scale(1.6)" d="M0 -22 L6 -7 L22 -7 L9 3 L14 19 L0 9 L-14 19 L-9 3 L-22 -7 L-6 -7Z" fill="#fff" stroke="${OUT}" stroke-width="2"/><path d="M-30 50 l-20 70 l30 -14 l14 24 l16 -66 M30 50 l20 70 l-30 -14 l-14 24 l-16 -66" fill="#CE1126" stroke="${OUT}" stroke-width="3"/></g>
+${T(x+330,y+175,'حافظنا على عادات',28,'#5a3518')}${T(x+330,y+215,'وتقاليد بلادي البحرين',28,'#5a3518')}
+${T(x+330,y+300,'الفريق: ....................',26,'#5a3518')}</g>`;
+pr+=P(`<rect width="1188" height="840" fill="#fff"/><g stroke="#bbb" stroke-dasharray="10 8" stroke-width="2"><path d="M594 20 V820 M20 420 H1168"/></g>${card(34,30)}${card(614,30)}${card(34,440)}${card(614,440)}`);
+// reference sheet
+pr+=P(`<rect width="1188" height="840" fill="#fff"/>${T(594,80,'مرجع للمكتبة: أشكال المجسمات الستة',44,'#8A2B1A')}${T(594,120,'طول كل مجسم 6–10 سم، من فوم أو خشب أو صلصال مجفف، وعلى ظهره فيلكرو',22,'#5a3518')}
+${ITEMS.map((it,i)=>{const col=i%3,row=Math.floor(i/3),x=1188-80-(col+1)*320-col*14,y=160+row*330;return `<rect x="${x}" y="${y}" width="320" height="300" rx="22" fill="#FBF6EC" stroke="${it.c}" stroke-width="5"/>${it.art(x+160,y+150,1.4)}${T(x+160,y+270,it.tool,30,it.c)}`;}).join('')}`);
+document.getElementById('print').innerHTML=pr;
+window.done=true;
+</script></body></html>
