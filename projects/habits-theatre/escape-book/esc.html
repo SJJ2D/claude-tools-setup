@@ -1,0 +1,107 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#fff;font-family:Almarai}svg{display:block}</style>
+<script src="helpers.js"></script><script src="art.js"></script></head><body>
+<div id="cover"></div><div id="spread"></div><div id="back"></div>
+<script>
+const TXT=(x,y,t,sz,c,w=700)=>`<text x="${x}" y="${y}" text-anchor="middle" font-family="Almarai" font-weight="700" font-size="${sz}" fill="${c}">${t}</text>`;
+const lock=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})" filter="url(#sh)"><path d="M-46 -20 v-40 a46 46 0 0 1 92 0 v40" fill="none" stroke="#B8891E" stroke-width="18"/><path d="M-46 -20 v-40 a46 46 0 0 1 92 0 v40" fill="none" stroke="${OUT}" stroke-width="4" opacity=".5"/><rect x="-70" y="-24" width="140" height="120" rx="20" fill="#F4C542" stroke="${OUT}" stroke-width="5"/><rect x="-58" y="-12" width="116" height="96" rx="14" fill="none" stroke="#C99A2E" stroke-width="4"/><circle cx="0" cy="22" r="14" fill="${OUT}"/><path d="M-7 28 h14 l-4 30 h-6z" fill="${OUT}"/></g>`;
+const letterBadge=(x,y,L,r=44)=>`<g filter="url(#sh)"><circle cx="${x}" cy="${y}" r="${r}" fill="#FFD54A" stroke="${OUT}" stroke-width="4"/><circle cx="${x}" cy="${y}" r="${r-8}" fill="none" stroke="#C99A2E" stroke-width="3"/>${T(x,y+r*.42,L,r*1.2,'#8A2B1A')}</g>`;
+// flap: closed or open (lifted) ; content under
+function flap(x,y,w,h,label,col,state,under){ // state: 'closed' | 'right' | 'wrong'
+  if(state==='closed') return `<g filter="url(#sh)"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="${col}" stroke="${OUT}" stroke-width="3"/>${T(x+w/2,y+h*.52,label,Math.min(26,w*.13),'#fff')}${T(x+w/2,y+h*.85,'ارفع ↑',16,'#fff','opacity=".85"')}</g>`;
+  let s=`<g filter="url(#sh)"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="#FFFDF6" stroke="${col}" stroke-width="4"/></g>`;
+  s+= state==='right'? letterBadge(x+w/2,y+h/2+4,under,Math.min(h*.36,46)) : `${T(x+w/2,y+h/2-2,'حاول مرة',20,'#9a6a4a')}${T(x+w/2,y+h/2+24,'ثانية 💪',20,'#9a6a4a')}`;
+  s+=`<g filter="url(#sh)"><path d="M${x} ${y} L${x+w} ${y} L${x+w-10} ${y-h*.62} L${x+10} ${y-h*.62} Z" fill="${col}" stroke="${OUT}" stroke-width="3" opacity=".96"/>${T(x+w/2,y-h*.24,label,Math.min(22,w*.12),'#fff')}</g>`;
+  return s;}
+const card=(x,y,w,h,title,col)=>`<g filter="url(#sh)"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="20" fill="#FFF6E4" stroke="${OUT}" stroke-width="4"/></g><rect x="${x}" y="${y}" width="${w}" height="58" rx="20" fill="${col}" stroke="${OUT}" stroke-width="4"/><rect x="${x+2}" y="${y+36}" width="${w-4}" height="22" fill="${col}"/>${T(x+w/2,y+40,title,28,'#fff')}`;
+const bubble=(x,y,w,h,lines,col='#2b1d14')=>`<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="16" fill="#fff" stroke="${OUT}" stroke-width="3"/>${lines.map((l,i)=>TXT(x+w/2,y+38+i*34,l,23,col)).join('')}</g>`;
+const musahhar=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})"><path d="M-40 0 L-30 -110 L30 -110 L40 0 Z" fill="#F7F3E8" stroke="${OUT}" stroke-width="4"/><circle cx="0" cy="-140" r="34" fill="${skin[1]}" stroke="${OUT}" stroke-width="4"/><path d="M-36 -140 Q-40 -186 0 -188 Q40 -186 36 -140 L40 -100 L24 -126 Q0 -170 -24 -126 L-40 -100Z" fill="#fff" stroke="${OUT}" stroke-width="4"/><path d="M-32 -164 Q0 -178 32 -164" stroke="#222" stroke-width="8" fill="none"/><path d="M-22 -122 Q0 -98 22 -122 Q0 -112 -22 -122" fill="#4A3426"/>${face(0,-140,30,{open:true})}${drum(-40,-50,.6)}</g>`;
+const sadu=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#sadu)"/>`;
+
+// ═════ COVER ═════
+const W1=900,H1=1240;
+let c=`<rect width="${W1}" height="${H1}" rx="24" fill="url(#paper)"/><clipPath id="cc"><rect x="34" y="34" width="${W1-68}" height="${H1-68}" rx="14"/></clipPath>
+<linearGradient id="nt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0E1650"/><stop offset=".7" stop-color="#3B2F86"/><stop offset="1" stop-color="#8A5BB0"/></linearGradient>
+<g clip-path="url(#cc)"><rect width="${W1}" height="${H1}" fill="url(#nt)"/>
+${[...Array(60)].map((_,i)=>`<circle cx="${(i*137)%900}" cy="${(i*89)%560}" r="${1.5+(i%3)}" fill="#FFF6C8" opacity="${.5+(i%4)*.12}"/>`).join('')}
+<path d="M720 150 a60 60 0 1 0 48 94 a48 48 0 1 1 -48 -94z" fill="#FFF3B0"/>
+${house(-20,1000,300,330,{lit:true,barjeel:true,doorX:.5})}${house(600,1000,330,300,{lit:true,color:'#F0CF9A',doorX:.3})}
+<path d="M-10 640 Q450 720 910 640" stroke="${OUT}" stroke-width="3" fill="none"/>${[...Array(9)].map((_,i)=>{const x=40+i*100,y=652+Math.sin(i/8*Math.PI)*34;const cc=['#FF5DA2','#FFD54A','#3FAE49','#5BC0EB','#FF8A3D'][i%5];return `<ellipse cx="${x}" cy="${y+18}" rx="14" ry="20" fill="${cc}" stroke="${OUT}" stroke-width="2.5"/><circle cx="${x}" cy="${y+18}" r="28" fill="${cc}" opacity=".2"/>`}).join('')}
+<rect y="1000" width="900" height="240" fill="#E8C48A"/>
+${kid(250,1175,1.05,{color:'#3FAE49',open:true,armL:[-60,170],armR:[60,170]})}${kid(650,1175,1.05,{girl:true,color:'#FF5DA2',scarf:'#6A2C91',armL:[-60,70],armR:[60,120]})}
+</g><rect x="34" y="34" width="${W1-68}" height="${H1-68}" rx="14" fill="none" stroke="url(#sadu)" stroke-width="22"/>
+${scroll(450,330,600,'كتاب الفريج السري',64)}
+<g filter="url(#sh)"><rect x="200" y="400" width="500" height="58" rx="29" fill="#E8467C" stroke="${OUT}" stroke-width="4"/>${T(450,440,'مغامرة البحث عن كلمة السر',30,'#fff')}</g>
+${lock(450,560,1.0)}
+<g>${[0,1,2,3,4].map(i=>`<rect x="${265+i*76}" y="700" width="64" height="74" rx="12" fill="#FFF8EA" stroke="${OUT}" stroke-width="4"/>${T(297+i*76,752,'؟',44,'#8A2B1A')}`).join('')}</g>
+<g filter="url(#sh)"><rect x="230" y="800" width="440" height="64" rx="14" fill="#FFF8EA" stroke="${OUT}" stroke-width="3"/>${T(450,842,'المستكشف: ..........................',24,'#5a3518')}</g>
+${bubble(80,120,330,110,['يدّوه خبّت كنزها','في الفريج!'],'#8A2B1A')}`;
+document.getElementById('cover').innerHTML=svg(W1,H1,c);
+
+// ═════ SPREAD ═════
+const W2=2100,H2=1240,P=700;
+let s=`<rect width="${W2}" height="${H2}" fill="#d9cdb8"/><g filter="url(#sh)"><rect x="20" y="20" width="${W2-40}" height="${H2-40}" rx="20" fill="url(#paper)"/></g>
+<path d="M${P} 30 V${H2-30} M${2*P} 30 V${H2-30}" stroke="#000" stroke-width="6" opacity=".6"/>`;
+const R0=2*P,C0=P,L0=0;
+// station 1
+s+=card(R0+40,50,620,560,'المحطة ١ — باب الفريج: من أنا؟','#E8467C');
+s+=bubble(R0+70,130,560,150,['في منتصف رمضان يلبس الأطفال','الملابس الشعبية، ويمرّون على البيوت','يجمعون الحلوى… فمن أنا؟']);
+s+=stk(gbag(R0+150,330,.4));
+s+=flap(R0+460,410,170,150,'القرقاعون','#E8467C','right','ت')+flap(R0+265,410,170,150,'المسحّر','#3F6FD8','wrong')+flap(R0+70,410,170,150,'العرضة','#8E44AD','closed');
+// station 2
+s+=card(R0+40,640,620,560,'المحطة ٢ — المجلس','#2DA05A');
+s+=`<rect x="${R0+70}" y="720" width="560" height="200" rx="16" fill="#F3D9A4" stroke="${OUT}" stroke-width="3"/>${sadu(R0+70,880,560,40)}${dallah(R0+160,840,.75)}${finjan(R0+250,868,1.1)}`;
+s+=kid(R0+520,915,.75,{color:'#F7F3E8',armL:[-60,90],armR:[60,90]})+bubble(R0+300,735,170,60,['وصلت!']);
+s+=TXT(R0+350,965,'وصل الضيف! ماذا نفعل أولًا؟',26,'#2b1d14');
+s+=flap(R0+460,1010,170,150,'الترحيب به','#2DA05A','closed')+flap(R0+265,1010,170,150,'إطعامه','#F08A1C','closed')+flap(R0+70,1010,170,150,'تقديم القهوة','#16A085','closed');
+// station 3: wheel
+s+=card(C0+40,50,620,640,'المحطة ٣ — عجلة الوقت','#F08A1C');
+s+=TXT(C0+350,140,'متى نسمع مدفع الإفطار؟ دوّر العجلة!',26,'#2b1d14');
+const cx=C0+350,cy=375,Rw=185;const opts=[['عند المغرب في رمضان','#F08A1C'],['صباح العيد','#3F6FD8'],['منتصف رمضان','#E8467C']];
+s+=`<g filter="url(#sh)">`+opts.map((o,i)=>{const a0=i/3*Math.PI*2-Math.PI/2-Math.PI/3,a1=(i+1)/3*Math.PI*2-Math.PI/2-Math.PI/3,am=(a0+a1)/2;
+ return `<path d="M${cx} ${cy} L${cx+Rw*Math.cos(a0)} ${cy+Rw*Math.sin(a0)} A${Rw} ${Rw} 0 0 1 ${cx+Rw*Math.cos(a1)} ${cy+Rw*Math.sin(a1)} Z" fill="${o[1]}" stroke="${OUT}" stroke-width="4"/>${T(cx+Rw*.6*Math.cos(am),cy+Rw*.6*Math.sin(am)+8,o[0].length>12?'المغرب في رمضان':o[0],20,'#fff')}`;}).join('')+`</g>
+<circle cx="${cx}" cy="${cy}" r="${Rw}" fill="none" stroke="url(#sadu)" stroke-width="14"/><circle cx="${cx}" cy="${cy}" r="18" fill="#C9A227" stroke="${OUT}" stroke-width="3"/>
+<path d="M${cx-24} ${cy-Rw-40} h48 l-24 36z" fill="#E0202B" stroke="${OUT}" stroke-width="3"/>
+<g filter="url(#sh)"><rect x="${cx-60}" y="${cy+Rw+22}" width="120" height="90" rx="14" fill="#FFF8EA" stroke="${OUT}" stroke-width="4"/></g>${letterBadge(cx,cy+Rw+67,'ا',36)}
+${TXT(cx+150,cy+Rw+75,'← نافذة الحرف',20,'#7a6a58')}${cannon(C0+120,600,.6)}`;
+// letter strip
+s+=card(C0+40,720,620,250,'شريط الحروف','#8A2B1A');
+s+=['ت','ر','ا','ث','ي'].map((L,i)=>{const x=C0+520-i*110;return `<rect x="${x}" y="810" width="90" height="100" rx="14" fill="#FFF8EA" stroke="${OUT}" stroke-width="4"/>${T(x+45,880,i<3?L:'؟',i<3?56:46,i<3?'#8A2B1A':'#c9b8a0')}`;}).join('');
+s+=TXT(C0+350,945,'اجمع الحروف لتعرف كلمة السر',22,'#7a6a58');
+s+=`<g filter="url(#sh)"><rect x="${C0+90}" y="1010" width="520" height="160" rx="20" fill="#2b2b30"/></g>${TXT(C0+350,1070,'تحت الجواب الصحيح حرف ✨',26,'#FFD54A')}${TXT(C0+350,1115,'وتحت الخطأ: «حاول مرة ثانية»',24,'#fff')}`;
+// station 4
+s+=card(L0+40,50,620,480,'المحطة ٤ — صندوق الضيافة','#16A085');
+s+=TXT(L0+350,150,'أيُّ هذه من عادات الضيافة؟',28,'#2b1d14');
+s+=stk(dallah(L0+350,250,.7));
+s+=flap(L0+460,340,170,150,'تقديم القهوة','#16A085','closed')+flap(L0+265,340,170,150,'العرضة','#8E44AD','closed')+flap(L0+70,340,170,150,'المفرّخ','#E8467C','closed');
+// station 5: seek-find
+s+=card(L0+40,560,620,640,'المحطة ٥ — دوّر المسحّر!','#3F6FD8');
+s+=`<clipPath id="nf"><rect x="${L0+70}" y="640" width="560" height="460" rx="14"/></clipPath><g clip-path="url(#nf)"><rect x="${L0+70}" y="640" width="560" height="460" fill="#16205E"/>
+${[...Array(30)].map((_,i)=>`<circle cx="${L0+80+(i*53)%540}" cy="${650+(i*31)%120}" r="2" fill="#FFF6C8"/>`).join('')}
+<path d="M${L0+560} 680 a30 30 0 1 0 24 46 a24 24 0 1 1 -24 -46z" fill="#FFF3B0"/>
+${house(L0+60,1080,200,300,{lit:false,color:'#B8925C',shade:'#9a7848',door:false,wins:[]})}${house(L0+250,1080,190,260,{color:'#C49A62',shade:'#9a7848',door:false,wins:[]})}${house(L0+430,1080,210,320,{barjeel:true,color:'#B8925C',shade:'#9a7848',door:false,wins:[]})}
+<rect x="${L0+70}" y="1060" width="560" height="40" fill="#7F6B50"/></g>`;
+const spots=[[L0+110,860,'b'],[L0+290,900,'a'],[L0+470,830,'c'],[L0+540,960,'d']];
+spots.forEach(([x,y,k],i)=>{const w=90,h=120;
+ if(i===1){s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="#FFD966" stroke="${OUT}" stroke-width="3"/>${musahhar(x+45,y+h-2,.5)}${letterBadge(x+w+30,y+20,'ي',30)}<g filter="url(#sh)"><path d="M${x} ${y} L${x+w} ${y} L${x+w-6} ${y-60} L${x+6} ${y-60}Z" fill="#9B5A2A" stroke="${OUT}" stroke-width="3"/></g>`;}
+ else s+=`<g filter="url(#sh)"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="#9B5A2A" stroke="${OUT}" stroke-width="3"/><circle cx="${x+w-16}" cy="${y+h/2}" r="6" fill="#F4C542"/>${T(x+w/2,y+h/2+8,'؟',34,'#FFD54A')}</g>`;});
+s+=TXT(L0+350,1150,'ارفع الأبواب حتى تجد المسحّر 🥁',24,'#2b1d14');
+document.getElementById('spread').innerHTML=svg(W2,H2,s);
+
+// ═════ BACK ═════
+let b=`<rect width="${W1}" height="${H1}" rx="24" fill="url(#paper)"/>${scroll(450,100,440,'الجيب المختوم',50)}
+${TXT(450,200,'اكتب كلمة السر:',30,'#FFD54A')}
+${['ت','ر','ا','ث','ي'].map((L,i)=>`<rect x="${605-i*110}" y="230" width="90" height="104" rx="14" fill="#FFF8EA" stroke="${OUT}" stroke-width="4"/>${T(650-i*110,305,L,60,'#8A2B1A')}`).join('')}
+<g filter="url(#sh)"><path d="M120 400 h660 v430 h-660z" fill="#C98B3C" stroke="${OUT}" stroke-width="5"/><path d="M120 400 L450 640 L780 400" fill="#B5773A" stroke="${OUT}" stroke-width="5" stroke-linejoin="round"/></g>
+${sadu(120,790,660,40)}${lock(450,610,1.2)}
+<g filter="url(#sh)"><rect x="190" y="740" width="520" height="46" rx="23" fill="#8A2B1A"/></g>${T(450,772,'لا يُفتح إلا إذا قلتم كلمة السر: «تراثي!»',22,'#fff')}
+${TXT(450,900,'✨ داخل الجيب ✨',30,'#FFD54A')}
+<g filter="url(#sh)"><rect x="90" y="930" width="340" height="240" rx="22" fill="#FFF6E4" stroke="#8A2B1A" stroke-width="5"/></g>
+<g transform="translate(180,1050)"><circle r="50" fill="#FFD54A" stroke="${OUT}" stroke-width="4"/><path transform="scale(1.3)" d="M0 -22 L6 -7 L22 -7 L9 3 L14 19 L0 9 L-14 19 L-9 3 L-22 -7 L-6 -7Z" fill="#fff" stroke="${OUT}" stroke-width="2"/><path d="M-26 42 l-14 56 l24 -10 l10 18 l12 -52 M26 42 l14 56 l-24 -10 l-10 18 l-12 -52" fill="#CE1126" stroke="${OUT}" stroke-width="3"/></g>
+${T(320,1030,'وسام',30,'#8A2B1A')}${T(320,1072,'حارس',30,'#8A2B1A')}${T(320,1114,'التراث',30,'#8A2B1A')}
+<g filter="url(#sh)"><rect x="470" y="930" width="340" height="240" rx="22" fill="#FFF3D6" stroke="${OUT}" stroke-width="4"/></g><rect x="470" y="930" width="340" height="240" rx="22" fill="none" stroke="url(#sadu)" stroke-width="12"/>
+${T(640,990,'✋ عهدي',32,'#8A2B1A')}${TXT(640,1040,'أعاهد أن أحافظ',24,'#5a3518')}${TXT(640,1074,'على عادات وتقاليد',24,'#5a3518')}${TXT(640,1108,'بلادي البحرين',24,'#5a3518')}
+${stk(flag(90,170,.5))}`;
+document.getElementById('back').innerHTML=svg(W1,H1,b);
+window.done=true;
+</script></body></html>
