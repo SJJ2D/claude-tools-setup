@@ -4,7 +4,7 @@ window.__buildAR = async function () {
   await document.fonts.load("800 64px Changa", 'الكواكب');
   Z.arBase.visible = true; Z.arRim.visible = true; Z.sparkles.visible = false; Z.sunGlows.forEach(s => s.visible = false);
   Z.ring.rotation.set(0, 0, 0);
-  Z.items.forEach(x => { x.grp.scale.set(1, 1, 1); x.grp.visible = true; x.model.scale.set(1, 1, 1); x.model.position.y = .36; x.ped.position.y = -.06; x.model.visible = true; });
+  Z.items.forEach(x => { x.grp.scale.set(1, 1, 1); x.grp.visible = true; x.model.scale.set(1, 1, 1); x.model.position.y = .44; x.ped.position.y = -.06; x.model.visible = true; });
   Z.flyer.position.set(-4.4, 1.5, -2.6); Z.flyer.rotation.set(0, .8, -.5);
   Z.mini.forEach((m, i) => { const a = i * 1.57 + .4; m.position.set(Math.cos(a) * 1.95, .05, Math.sin(a) * 1.95); });
   Z.stage.position.set(0, 0, 0); Z.stage.rotation.set(0, 0, 0); Z.stage.scale.set(1, 1, 1);
@@ -37,13 +37,13 @@ window.__buildAR = async function () {
     const tex = new T.CanvasTexture(cv);
     const m = new T.MeshStandardMaterial({ map: tex, emissiveMap: tex, emissive: new T.Color(.7, .7, .7), roughness: .9, transparent: true });
     const pl = new T.Mesh(new T.PlaneGeometry(1.5, .375), m);
-    const th = -i * Z.STEP, r = Z.R + 1.0;
-    pl.position.set(r * Math.sin(th), .02, r * Math.cos(th)); pl.rotation.set(-0.35, th, 0, 'YXZ');
+    const th = -i * Z.STEP, r = Z.RI[i] + .02;
+    pl.position.set(r * Math.sin(th), -.69, r * Math.cos(th)); pl.position.x += 0; pl.rotation.set(-0.35, th, 0, 'YXZ'); pl.translateZ(.75);
     c.add(pl);
   });
   function roundRect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
   const root = new T.Group(); root.name = 'PlanetsHub';
-  const S = 0.045; c.scale.setScalar(S); c.position.y = 0.32 * S; root.add(c);
+  const S = 0.045; c.scale.setScalar(S); c.position.y = 0.73 * S; root.add(c);
   root.updateMatrixWorld(true);
   let n = 0; root.traverse(o => { if (o.isMesh) n++; });
   return { json: JSON.stringify(root.toJSON()), meshes: n };

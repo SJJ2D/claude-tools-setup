@@ -48,7 +48,7 @@ var ICON={
  tech:SV('<path d="M12 2.5c3 2.3 4.5 5.6 4.5 9.5l-1.8 4.5H9.3L7.5 12c0-3.9 1.5-7.2 4.5-9.5z" fill="#fff"/><circle cx="12" cy="10" r="1.8"/><path d="M9.5 18.5l2.5 3 2.5-3"/>'),
  activity:SV('<rect x="3" y="12" width="18" height="8" rx="3" fill="#fff"/><path d="M9 12V6"/><circle cx="9" cy="5" r="2.2" fill="#FF4F7B"/><circle cx="15.5" cy="16" r="1.3" fill="#0A0C2C"/><circle cx="18" cy="16" r="1.3" fill="#0A0C2C"/>'),
  assess:SV('<circle cx="12" cy="10" r="7" fill="#fff"/><path d="M12 6.3l1.2 2.4 2.6.4-1.9 1.8.5 2.6L12 12.3l-2.4 1.2.5-2.6-1.9-1.8 2.6-.4z" fill="#0A0C2C"/><path d="M8.5 16.5L7 22l5-2 5 2-1.5-5.5"/>'),
- pano:SV('<circle cx="12" cy="12" r="9" fill="#fff"/><ellipse cx="12" cy="12" rx="9" ry="3.6"/><path d="M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/>'),
+ nasa:SV('<circle cx="12" cy="12" r="9" fill="#fff"/><ellipse cx="12" cy="12" rx="9" ry="3.6"/><path d="M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/>'),
  refs:SV('<rect x="3" y="15" width="18" height="5" rx="1.5" fill="#fff"/><rect x="5" y="10" width="15" height="5" rx="1.5" fill="#fff"/><rect x="4" y="5" width="13" height="5" rx="1.5" fill="#fff"/>')
 };
 var TIPS={
@@ -56,12 +56,12 @@ var TIPS={
  objective:"هذا ما سيصمّمه التلميذ في نهاية الدرس.",
  lesson:"تعال نتعرّف إلى درس الكواكب (ص ٣٤–٣٩).",
  plan:"قلّب صفحات الخطة، ونزّلها PDF أو Word.",
- tech:"رحلتان تنتظرانك: Stellarium واللعبة، ومعهما جولة 360.",
+ tech:"رحلتان تنتظرانك: Stellarium واللعبة.",
  stellar:"ارفع الجهاز وابحث عن الكواكب فوق صفّك!",
  game:"اسحب كل كوكب إلى مداره واجمع النجوم.",
  activity:"أربع مراحل، جرّب كل واحدة بيدك.",
  assess:"هكذا نعرف أن التلميذ صمّم النموذج بنفسه.",
- pano:"قف في محطة الفضاء ودُر حولك!",
+ nasa:"شاهد الكواكب تدور حول الشمس مع ناسا!",
  refs:"هذه المصادر التي اعتمدت عليها الخطة."
 };
 Object.keys(PANELS).forEach(function(k){var orig=PANELS[k];PANELS[k]=function(){
@@ -156,7 +156,7 @@ function xrFrame(frame){if(!frame||!xrHit||placedAR)return;var ref=renderer.xr.g
   if(hits.length){reticle.visible=true;reticle.matrix.fromArray(hits[0].getPose(ref).transform.matrix);}else reticle.visible=false;}
 function xrHint(m){var h=$("#xrhint");if(!m){h.hidden=true;return;}h.textContent=m;h.hidden=false;}
 var PLACED_MSG="ثبّتّ النظام الشمسي. امشِ حوله، واسحب بإصبعك يمينًا ويسارًا لتدوير العوالم، واضغط على أي مجسم لتفتحه.";
-function placeHub(){if(!reticle.visible)return;stage.position.setFromMatrixPosition(reticle.matrix);stage.position.y+=.32*arScale;
+function placeHub(){if(!reticle.visible)return;stage.position.setFromMatrixPosition(reticle.matrix);stage.position.y+=.73*arScale;
   var cp=new THREE.Vector3().setFromMatrixPosition(PC().matrixWorld);stage.rotation.set(0,Math.atan2(cp.x-stage.position.x,cp.z-stage.position.z),0);
   stage.visible=true;placedAR=true;reticle.visible=false;document.body.classList.add("placed");xrHint("");sfx("start");
   if(G&&!reduce){stage.scale.setScalar(arScale*.2);G.to(stage.scale,{x:arScale,y:arScale,z:arScale,duration:.9,ease:"elastic.out(1,.6)"});}else stage.scale.setScalar(arScale);
@@ -182,7 +182,7 @@ var camFallback=null;
 camBtn.addEventListener("click",function(e){if(xrSession){e.stopImmediatePropagation();xrSession.end();return;}
   if(xrOK&&!stream){e.stopImmediatePropagation();startXR();}},true);
 camFallback=function(){xrOK=false;camBtn.click();xrOK=true;};
-$("#tourBtn").addEventListener("click",function(e){if(xrSession){e.stopImmediatePropagation();endXRThen(openPano);}},true);
+$("#tourBtn").addEventListener("click",function(e){if(xrSession){e.stopImmediatePropagation();endXRThen(function(){openPanel("nasa");});}},true);
 var _openAct=openAct;openAct=function(i){if(xrSession){endXRThen(function(){_openAct(i);});return;}_openAct(i);};
 var _openPano=openPano;openPano=function(){if(xrSession){endXRThen(_openPano);return;}_openPano();};
 if(navigator.xr&&navigator.xr.isSessionSupported){navigator.xr.isSessionSupported("immersive-ar").then(function(ok){xrOK=!!ok;
@@ -250,7 +250,7 @@ function ar8Module(){return{name:"planetshub",
     AR8.c.set(0,-.15);AR8.ray.setFromCamera(AR8.c,AR8.cam);var h=AR8.ray.intersectObject(AR8.ground)[0];
     AR8.ret.visible=!!h;if(h){AR8.ret.position.copy(h.point);AR8.aim=h.point.clone();}},
   onCameraStatusChange:function(e){if(e.status==="failed"){ar8Fail();}}};}
-function ar8Place(){if(!AR8.aim)return;stage.position.copy(AR8.aim);stage.position.y+=.32*arScale;
+function ar8Place(){if(!AR8.aim)return;stage.position.copy(AR8.aim);stage.position.y+=.73*arScale;
   var cp=AR8.cam.position;stage.rotation.set(0,Math.atan2(cp.x-stage.position.x,cp.z-stage.position.z),0);
   stage.visible=true;placedAR=true;AR8.ret.visible=false;document.body.classList.add("placed");xrHint("");sfx("start");
   if(G&&!reduce){stage.scale.setScalar(arScale*.2);G.to(stage.scale,{x:arScale,y:arScale,z:arScale,duration:.9,ease:"elastic.out(1,.6)"});}else stage.scale.setScalar(arScale);
