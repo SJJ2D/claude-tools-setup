@@ -1,0 +1,136 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#fff;font-family:Almarai}svg{display:block}</style>
+<script src="helpers.js"></script></head><body>
+<div id="cover"></div><div id="spread"></div><div id="back"></div>
+<script>
+const F='font-family="Almarai" font-weight="800"';
+const T=(x,y,t,sz,c,extra='')=>`<text x="${x}" y="${y}" text-anchor="middle" ${F} font-size="${sz}" fill="${c}" ${extra}>${t}</text>`;
+const defs=`<defs>
+<filter id="stk" x="-20%" y="-20%" width="140%" height="140%"><feMorphology in="SourceAlpha" operator="dilate" radius="7" result="d"/><feFlood flood-color="#fff"/><feComposite in2="d" operator="in" result="w"/><feDropShadow in="w" dx="2" dy="4" stdDeviation="3" flood-opacity=".45" result="ws"/><feMerge><feMergeNode in="ws"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="6" stdDeviation="6" flood-opacity=".45"/></filter>
+<pattern id="sadu" width="40" height="20" patternUnits="userSpaceOnUse"><rect width="40" height="20" fill="#8B1E2D"/><path d="M0 20 L10 0 L20 20 L30 0 L40 20" fill="none" stroke="#F4C542" stroke-width="3"/><circle cx="10" cy="14" r="2.5" fill="#fff"/><circle cx="30" cy="14" r="2.5" fill="#fff"/></pattern>
+<pattern id="paper" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#1b1b1d"/><circle cx="2" cy="2" r=".8" fill="#2a2a2e"/></pattern>
+</defs>`;
+// ── sticker art ──
+const dallah=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})"><path d="M-30 40 Q-50 -10 -18 -30 L-14 -60 L14 -60 L18 -30 Q50 -10 30 40 Z" fill="#E2B33C" stroke="${OUT}" stroke-width="4"/><path d="M-26 0 Q-80 -20 -78 -70 l-10 -6" stroke="${OUT}" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M-26 0 Q-80 -20 -78 -70 l-10 -6" stroke="#E2B33C" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M-18 -64 Q0 -96 18 -64 Z" fill="#F4D272" stroke="${OUT}" stroke-width="4"/><circle cx="0" cy="-92" r="7" fill="#E2B33C" stroke="${OUT}" stroke-width="3"/><path d="M24 -36 Q62 -30 42 22" stroke="${OUT}" stroke-width="5" fill="none"/><rect x="-36" y="36" width="72" height="12" rx="4" fill="#C99A2E" stroke="${OUT}" stroke-width="4"/><path d="M-30 6 h60" stroke="#C99A2E" stroke-width="5"/></g>`;
+const finjan=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})"><path d="M-22 -16 h44 l-8 30 h-28 z" fill="#fff" stroke="${OUT}" stroke-width="4"/><path d="M-18 -4 h36" stroke="#2DA05A" stroke-width="5"/><ellipse cx="0" cy="-16" rx="22" ry="5" fill="#B5732E" stroke="${OUT}" stroke-width="3"/></g>`;
+const flag=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})"><path d="M0 -60 v130" stroke="#8a8a8a" stroke-width="6"/><rect x="0" y="-60" width="110" height="70" fill="#CE1126" stroke="${OUT}" stroke-width="3"/><path d="M0 -60 h28 l14 7 l-14 7 l14 7 l-14 7 l14 7 l-14 7 l14 7 l-14 7 l14 7 l-14 7 h-28 z" fill="#fff" stroke="${OUT}" stroke-width="2"/></g>`;
+const dhow=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})"><path d="M-90 10 L90 10 L64 44 L-70 44 Z" fill="#9B5A2A" stroke="${OUT}" stroke-width="4"/><path d="M0 10 V-110" stroke="${OUT}" stroke-width="5"/><path d="M-4 -106 Q76 -50 58 6 L-4 6 Z" fill="#FFF8E7" stroke="${OUT}" stroke-width="4"/><path d="M-100 52 q25 -10 50 0 t50 0 t50 0 t50 0" stroke="#1EA7D6" stroke-width="8" fill="none"/></g>`;
+const pearls=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})"><path d="M-50 10 Q0 50 50 10 Q0 -10 -50 10z" fill="#3A6E8F" stroke="${OUT}" stroke-width="4"/>${[-24,-8,8,24,0,-16,16].map((d,i)=>`<circle cx="${d}" cy="${i<4?6:-8}" r="11" fill="#F7F4EE" stroke="${OUT}" stroke-width="3"/><circle cx="${d-3}" cy="${(i<4?6:-8)-3}" r="3" fill="#fff"/>`).join('')}</g>`;
+const drum=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})"><ellipse cx="0" cy="-30" rx="50" ry="16" fill="#F2E3C6" stroke="${OUT}" stroke-width="4"/><path d="M-50 -30 v54 a50 16 0 0 0 100 0 v-54" fill="#C0392B" stroke="${OUT}" stroke-width="4"/>${[0,1,2,3].map(i=>`<path d="M${-44+i*24} -14 l12 36 l12 -36" stroke="#FFD54A" stroke-width="5" fill="none"/>`).join('')}</g>`;
+const cannon=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})"><g transform="rotate(-15)"><rect x="-50" y="-20" width="130" height="40" rx="18" fill="#3A3F47" stroke="${OUT}" stroke-width="4"/><rect x="70" y="-26" width="20" height="52" rx="7" fill="#2A2E35" stroke="${OUT}" stroke-width="4"/></g><circle cx="-10" cy="30" r="28" fill="#A0652F" stroke="${OUT}" stroke-width="4"/><circle cx="-10" cy="30" r="7" fill="${OUT}"/></g>`;
+const miniHouse=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})">${house(-80,60,160,110,{barjeel:true,doorX:.55,wins:[[.12,.3]]})}</g>`;
+const palmS=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})">${palm(0,0,1)}</g>`;
+const gbag=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})">${bag(0,0,2,'#FFD54A')}</g>`;
+const stk=inner=>`<g filter="url(#stk)">${inner}</g>`;
+const scroll=(cx,cy,w,t,sz=46)=>`<g filter="url(#sh)"><rect x="${cx-w/2}" y="${cy-38}" width="${w}" height="76" rx="8" fill="#F3D9A4" stroke="${OUT}" stroke-width="4"/><path d="M${cx-w/2} ${cy-38} q-26 0 -26 38 q0 38 26 38" fill="#E3C080" stroke="${OUT}" stroke-width="4"/><path d="M${cx+w/2} ${cy-38} q26 0 26 38 q0 38 -26 38" fill="#E3C080" stroke="${OUT}" stroke-width="4"/>${T(cx,cy+sz*.36,t,sz,'#8A2B1A')}</g>`;
+const svg=(w,h,inner)=>`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">${defs}${inner}</svg>`;
+
+// ═════════ COVER ═════════
+const W1=900,H1=1240;
+let c=`<rect width="${W1}" height="${H1}" rx="24" fill="url(#paper)"/>
+<rect x="34" y="34" width="${W1-68}" height="${H1-68}" rx="14" fill="#9fdcff"/>
+<clipPath id="cc"><rect x="34" y="34" width="${W1-68}" height="${H1-68}" rx="14"/></clipPath><g clip-path="url(#cc)">
+<rect x="0" y="0" width="${W1}" height="${H1}" fill="url(#skyc)"/>
+<circle cx="740" cy="190" r="70" fill="#FFD54A" stroke="#F5A623" stroke-width="6"/>
+${[[160,170],[420,120]].map(([x,y])=>`<path d="M${x} ${y} a30 30 0 0 1 56 -12 a26 26 0 0 1 48 10 a22 22 0 0 1 4 44 h-104 a22 22 0 0 1 -4 -42z" fill="#fff" stroke="${OUT}" stroke-width="2.5"/>`).join('')}
+${flag(90,330,1.5)}
+<g transform="translate(560,560) scale(.9)">${house(0,300,330,300,{barjeel:true,doorX:.45})}</g>
+${palm(520,880,1.3)}
+<path d="M0 820 Q450 790 900 820 V1000 H0Z" fill="#1EA7D6"/>${dhow(220,840,.8)}
+<path d="M0 900 Q450 860 900 900 V1240 H0Z" fill="#F2CF8C"/>
+${kid(250,1120,1.25,{color:'#3FAE49',armL:[-60,70],armR:[60,110],extra:bag(330,1000,1.1,'#FFD54A')})}
+${kid(460,1130,1.3,{girl:true,color:'#FF5DA2',scarf:'#6A2C91',open:true,armL:[-62,180],armR:[62,180]})}
+${kid(670,1120,1.25,{color:'#5BC0EB',armL:[-60,110],armR:[60,70]})}${dallah(588,1000,.7)}
+</g>
+<rect x="34" y="34" width="${W1-68}" height="${H1-68}" rx="14" fill="none" stroke="url(#sadu)" stroke-width="22"/>
+${scroll(450,500,560,'عاداتي وتقاليدي',64)}
+<g filter="url(#sh)"><rect x="270" y="580" width="360" height="62" rx="31" fill="#2DA05A" stroke="${OUT}" stroke-width="4"/>${T(450,623,'مجلة فريجنا',36,'#fff')}</g>
+<g filter="url(#sh)"><rect x="230" y="666" width="440" height="72" rx="14" fill="#FFF8EA" stroke="${OUT}" stroke-width="3"/>${T(450,698,'الاسم: ............................',24,'#5a3518')}${T(450,728,'الصف الثالث — الشعبة: .......',22,'#5a3518')}</g>`;
+document.getElementById('cover').innerHTML=svg(W1,H1,c.replace('<rect x="0" y="0" width="900" height="1240" fill="url(#skyc)"/>','<linearGradient id="skyc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6EC6FF"/><stop offset="1" stop-color="#DDF4FF"/></linearGradient><rect x="0" y="0" width="900" height="1240" fill="url(#skyc)"/>'));
+
+// ═════════ SPREAD ═════════
+const W2=2100,H2=1240,P=700;
+let s=`<rect width="${W2}" height="${H2}" fill="#d9cdb8"/>
+<g filter="url(#sh)"><rect x="20" y="20" width="${W2-40}" height="${H2-40}" rx="20" fill="url(#paper)"/></g>
+<path d="M${P} 30 V${H2-30} M${2*P} 30 V${H2-30}" stroke="#000" stroke-width="6" opacity=".6"/><path d="M${P+4} 30 V${H2-30} M${2*P+4} 30 V${H2-30}" stroke="#3a3a3e" stroke-width="2"/>`;
+// RIGHT panel (x 1400..2080): باب الفريج + القيم
+const R0=2*P;
+s+=scroll(R0+350,110,420,'ألاحظ وأكتشف',44);
+// door frame
+s+=`<g filter="url(#sh)"><rect x="${R0+150}" y="190" width="400" height="430" rx="10" fill="#E9C48C" stroke="${OUT}" stroke-width="4"/>
+<path d="M${R0+190} 600 V300 a160 90 0 0 1 320 0 V600 Z" fill="#FFF8EA" stroke="${OUT}" stroke-width="4"/>
+${T(R0+350,350,'المجتمع البحريني',34,'#8A2B1A')}${T(R0+350,400,'يجمع بين',34,'#8A2B1A')}${T(R0+350,450,'الأصالة والتنوّع',34,'#8A2B1A')}
+${stk(miniHouse(R0+350,565,.4))}
+<path d="M${R0+510} 600 L${R0+510} 225 L${R0+640} 185 L${R0+640} 655 Z" fill="#9B5A2A" stroke="${OUT}" stroke-width="4"/>
+${[0,1,2,3].map(i=>`<path d="M${R0+515} ${300+i*85} L${R0+635} ${270+i*95}" stroke="#6E3B15" stroke-width="5"/>`).join('')}
+${[0,1,2].map(i=>[0,1].map(j=>`<circle cx="${R0+535+j*80}" cy="${300+i*110-j*25}" r="7" fill="#F4C542" stroke="${OUT}" stroke-width="2"/>`).join('')).join('')}
+<circle cx="${R0+530}" cy="430" r="12" fill="#F4C542" stroke="${OUT}" stroke-width="3"/></g>
+${T(R0+350,660,'افتح الباب ←',26,'#FFD54A')}`;
+const vals=[['الانتماء','#E8467C'],['الاحترام','#2DA05A'],['الاعتزاز بالهوية','#3F6FD8'],['المحافظة على التراث','#F08A1C']];
+vals.forEach(([v,cl],i)=>{const x=R0+60+(i%2)*310,y=720+Math.floor(i/2)*280;const fs=v.length>12?26:32;
+ if(i===2){ s+=`<g filter="url(#sh)"><rect x="${x}" y="${y}" width="270" height="170" rx="16" fill="#fff" stroke="${cl}" stroke-width="6"/>${T(x+135,y+98,v,fs,cl)}</g><g filter="url(#sh)"><path d="M${x} ${y} L${x+270} ${y} L${x+255} ${y-90} L${x+15} ${y-90} Z" fill="${cl}" stroke="${OUT}" stroke-width="3" opacity=".95"/>${T(x+135,y-35,'قيمة ٣',28,'#fff')}</g>`; }
+ else s+=`<g filter="url(#sh)"><rect x="${x}" y="${y}" width="270" height="170" rx="16" fill="${cl}" stroke="${OUT}" stroke-width="3"/>${T(x+135,y+80,'قيمة '+'١٢٣٤'[i],34,'#fff')}${T(x+135,y+130,'اقلبني ↑',24,'#fff','opacity=".85"')}</g>`;});
+// CENTER panel: wheel + cannon
+const C0=P;
+s+=scroll(C0+350,110,440,'عجلة المناسبات',44);
+const occ=['القرقاعون','الحية بيه','المسحّر','مدفع الإفطار','العرضة','المرادادة','دق الحب','اليَنّون','المجالس الرمضانية'];
+const oc=['#E8467C','#2DA05A','#3F6FD8','#F08A1C','#8E44AD','#16A085','#D35400','#2980B9','#C0392B'];
+const cx=C0+350,cy=480,Rw=290;let wheel='';
+occ.forEach((o,i)=>{const a0=(i/9)*Math.PI*2-Math.PI/2,a1=((i+1)/9)*Math.PI*2-Math.PI/2;
+ wheel+=`<path d="M${cx} ${cy} L${cx+Rw*Math.cos(a0)} ${cy+Rw*Math.sin(a0)} A${Rw} ${Rw} 0 0 1 ${cx+Rw*Math.cos(a1)} ${cy+Rw*Math.sin(a1)} Z" fill="${oc[i]}" stroke="${OUT}" stroke-width="3"/>`;});
+s+=`<g filter="url(#sh)">${wheel}<circle cx="${cx}" cy="${cy}" r="${Rw}" fill="none" stroke="${OUT}" stroke-width="5"/></g>
+<!-- front plate with windows -->
+<g filter="url(#sh)"><path d="M${cx} ${cy} m-250 0 a250 250 0 1 0 500 0 a250 250 0 1 0 -500 0 Z M${cx-95} ${cy-230} h190 v150 h-190 Z M${cx-150} ${cy+40} h300 v80 h-300 Z" fill="#FFF3D6" fill-rule="evenodd" stroke="${OUT}" stroke-width="4"/></g>
+<circle cx="${cx}" cy="${cy}" r="250" fill="none" stroke="url(#sadu)" stroke-width="18"/>
+<rect x="${cx-95}" y="${cy-230}" width="190" height="150" fill="#E8467C"/>${bag(cx,cy-150,1.6,'#FFD54A')}
+<rect x="${cx-150}" y="${cy+40}" width="300" height="80" fill="#fff"/>${T(cx,cy+92,'منتصف شهر رمضان',32,'#E8467C')}
+${T(cx,cy-40,'القرقاعون',40,'#8A2B1A')}
+<circle cx="${cx}" cy="${cy}" r="16" fill="#C9A227" stroke="${OUT}" stroke-width="3"/>
+${T(cx,cy+190,'دوّرني ↻',34,'#5a3518')}
+
+<!-- cannon pull-tab -->
+<g filter="url(#sh)"><rect x="${C0+60}" y="860" width="580" height="320" rx="20" fill="#FFB46A" stroke="${OUT}" stroke-width="4"/></g>
+${T(C0+350,915,'اسحب الشريط!',34,'#5a3518')}
+${cannon(C0+230,1040,1.3)}
+<g><circle cx="${C0+450}" cy="1010" r="60" fill="#fff" stroke="${OUT}" stroke-width="4"/><circle cx="${C0+520}" cy="980" r="54" fill="#fff" stroke="${OUT}" stroke-width="4"/><circle cx="${C0+490}" cy="1040" r="56" fill="#fff" stroke="${OUT}" stroke-width="4"/><circle cx="${C0+485}" cy="1010" r="60" fill="#fff"/>${T(C0+485,1022,'بووم!',44,'#E0202B')}</g>
+<rect x="${C0+590}" y="1080" width="120" height="44" rx="10" fill="#E0202B" stroke="${OUT}" stroke-width="3"/>${T(C0+650,1110,'← اسحب',22,'#fff')}
+${T(C0+350,1150,'يُعلن وقتَ الإفطار في رمضان',26,'#5a3518')}`;
+// LEFT panel: stacked flaps + pockets
+const L0=0;
+s+=scroll(L0+360,110,420,'الكرم والضيافة',44);
+const steps=[['٣','إطعام الضيف','#E8467C'],['٢','تقديم القهوة باليمين','#F08A1C'],['١','الترحيب بالضيف','#2DA05A']];
+steps.forEach(([n,t,cl],i)=>{const y=200+i*70;s+=`<g filter="url(#sh)"><rect x="${L0+130}" y="${y}" width="460" height="${i===2?250:240}" rx="16" fill="${cl}" stroke="${OUT}" stroke-width="3"/><circle cx="${L0+545}" cy="${y+34}" r="22" fill="#fff" stroke="${OUT}" stroke-width="3"/>${T(L0+545,y+44,n,26,cl)}${T(L0+340,y+46,t,30,'#fff')}</g>`;});
+s+=`${dallah(L0+290,500,.75)}${finjan(L0+410,520,1.2)}${T(L0+360,575,'ارفع البطاقة ↑',24,'#fff')}`;
+s+=scroll(L0+360,650,280,'أصنّف',40);
+const pocket=(x,shape,label,cl,cards)=>{let p='';
+ cards.forEach((cd,j)=>{p+=`<g transform="rotate(${-8+j*12} ${x} 760)"><rect x="${x-60}" y="${700-j*6}" width="120" height="80" rx="8" fill="#fff" stroke="${OUT}" stroke-width="2.5"/>${T(x,748-j*6,cd,20,'#333')}</g>`;});
+ return p+`<g filter="url(#sh)">${shape}</g>${T(x,1020,label,26,'#fff')}`;};
+const thobe=x=>`<path d="M${x-55} 760 L${x-95} 800 L${x-75} 830 L${x-55} 815 L${x-60} 990 L${x+60} 990 L${x+55} 815 L${x+75} 830 L${x+95} 800 L${x+55} 760 Q${x} 780 ${x-55} 760Z" fill="#F7F3E8" stroke="${OUT}" stroke-width="4"/><path d="M${x} 775 v60" stroke="${OUT}" stroke-width="3"/>`;
+const dress=x=>`<path d="M${x-50} 760 L${x-95} 800 L${x-75} 830 L${x-50} 815 L${x-80} 990 L${x+80} 990 L${x+50} 815 L${x+75} 830 L${x+95} 800 L${x+50} 760 Q${x} 785 ${x-50} 760Z" fill="#7B3FA0" stroke="${OUT}" stroke-width="4"/>${[...Array(8)].map((_,i)=>`<circle cx="${x-60+i*17}" cy="${960}" r="5" fill="#FFD54A"/>`).join('')}<path d="M${x-30} 790 Q${x} 820 ${x+30} 790" stroke="#FFD54A" stroke-width="5" fill="none"/>`;
+const dpocket=x=>`<g transform="translate(${x},900) scale(1.45)"><path d="M-30 40 Q-55 -10 -20 -32 L20 -32 Q55 -10 30 40 Z" fill="#E2B33C" stroke="${OUT}" stroke-width="3"/><rect x="-36" y="36" width="72" height="12" rx="4" fill="#C99A2E" stroke="${OUT}" stroke-width="3"/><path d="M-30 -10 Q-70 -30 -66 -64" stroke="${OUT}" stroke-width="9" fill="none"/><path d="M-30 -10 Q-70 -30 -66 -64" stroke="#E2B33C" stroke-width="4" fill="none"/></g>`;
+s+=pocket(L0+560,thobe(L0+560),'عادات الرجال','',['العرضة','الدقلة']);
+s+=pocket(L0+360,dress(L0+360),'عادات النساء','',['المفرّخ']);
+s+=pocket(L0+160,dpocket(L0+160),'الضيافة','',['القهوة','الترحيب']);
+s+=`<g><rect x="${L0+90}" y="1060" width="540" height="56" rx="28" fill="#2b2b30"/>${T(L0+360,1097,'⚠️ التصنيف يُطابَق مع جدول الكتاب',22,'#FFD54A')}</g>`;
+// stickers in margins
+s+=stk(flag(R0+75,300,.6))+stk(pearls(R0+75,520,.8))+stk(dhow(C0+620,700,.55))+stk(palmS(C0+70,800,.55))+stk(drum(L0+630,560,.75))+stk(gbag(R0+620,1170,.6))+stk(finjan(L0+70,560,1.3))+stk(dallah(C0+620,240,.6))+stk(miniHouse(C0+80,260,.5));
+document.getElementById('spread').innerHTML=svg(W2,H2,s);
+
+// ═════════ BACK ═════════
+let b=`<rect width="${W1}" height="${H1}" rx="24" fill="url(#paper)"/>
+${scroll(450,110,460,'أقوّم ما تعلّمت',48)}`;
+const qs=[['متى نحتفل بالقرقاعون؟','في منتصف رمضان','#E8467C'],['ماذا يفعل المسحّر؟','يوقظ الناس للسحور','#3F6FD8'],['بأيّ يدٍ نقدّم القهوة؟','باليد اليمنى','#2DA05A'],['ماذا نرمي في الحية بيه؟','سلّة مزروعة في البحر','#F08A1C']];
+qs.forEach(([q,a,cl],i)=>{const x=70+(i%2)*400,y=300+Math.floor(i/2)*270;
+ b+=`<g filter="url(#sh)"><rect x="${x}" y="${y}" width="360" height="220" rx="18" fill="#fff" stroke="${cl}" stroke-width="6"/>${T(x+180,y+130,a,30,cl)}</g>`;
+ if(i===0) b+=`<g filter="url(#sh)"><path d="M${x} ${y} L${x+360} ${y} L${x+340} ${y-110} L${x+20} ${y-110}Z" fill="${cl}" stroke="${OUT}" stroke-width="3"/>${T(x+180,y-48,q,26,'#fff')}</g>`;
+ else b+=`<g filter="url(#sh)"><rect x="${x}" y="${y}" width="360" height="220" rx="18" fill="${cl}" stroke="${OUT}" stroke-width="3"/>${T(x+180,y+110,q,28,'#fff')}${T(x+180,y+175,'ارفع للإجابة ↑',22,'#fff','opacity=".85"')}</g>`;});
+b+=`<g filter="url(#sh)"><rect x="70" y="830" width="760" height="330" rx="24" fill="#FFF3D6" stroke="${OUT}" stroke-width="4"/></g>
+<rect x="70" y="830" width="760" height="330" rx="24" fill="none" stroke="url(#sadu)" stroke-width="16"/>
+${T(450,905,'✋ عهدي',46,'#8A2B1A')}${T(450,965,'أُعاهد أن أحافظ على عادات',32,'#5a3518')}${T(450,1010,'وتقاليد بلادي البحرين',32,'#5a3518')}
+<circle cx="250" cy="1085" r="52" fill="none" stroke="#8a7a66" stroke-width="3" stroke-dasharray="8 6"/>${T(250,1093,'بصمتي',22,'#8a7a66')}
+${[0,1,2].map(i=>`<path transform="translate(${560+i*80},1085) scale(1.4)" d="M0 -22 L6 -7 L22 -7 L9 3 L14 19 L0 9 L-14 19 L-9 3 L-22 -7 L-6 -7Z" fill="#FFD54A" stroke="${OUT}" stroke-width="2.5"/>`).join('')}
+${stk(flag(75,150,.5))}${stk(dallah(800,150,.45))}`;
+document.getElementById('back').innerHTML=svg(W1,H1,b);
+window.done=true;
+</script></body></html>
