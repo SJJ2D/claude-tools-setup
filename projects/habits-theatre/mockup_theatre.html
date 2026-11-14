@@ -1,0 +1,90 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#fff}canvas{display:block}</style>
+<script src="three.min.js"></script></head><body>
+<script>
+const W=1800,H=1200;
+const r=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+r.setSize(W,H);r.shadowMap.enabled=true;r.shadowMap.type=THREE.PCFSoftShadowMap;
+r.outputColorSpace=THREE.SRGBColorSpace;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.05;
+document.body.appendChild(r.domElement);
+const S=new THREE.Scene();
+{const c=document.createElement('canvas');c.width=4;c.height=256;const g=c.getContext('2d');const gr=g.createLinearGradient(0,0,0,256);gr.addColorStop(0,'#cfe9f7');gr.addColorStop(1,'#f6efe4');g.fillStyle=gr;g.fillRect(0,0,4,256);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;S.background=t;}
+const cam=new THREE.PerspectiveCamera(32,W/H,.1,100);cam.position.set(2.6,3.4,11.2);cam.lookAt(0.5,1.5,0.8);
+S.add(new THREE.HemisphereLight(0xffffff,0xb89b78,.9));
+const sun=new THREE.DirectionalLight(0xffffff,2.2);sun.position.set(-6,10,8);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera,{left:-10,right:10,top:10,bottom:-10});sun.shadow.bias=-.0005;S.add(sun);
+const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85},o));
+const add=(geo,mat,x,y,z,p=S)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;p.add(m);return m;};
+function tex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.direction='rtl';draw(g,w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t;}
+function rr(g,x,y,w,h,r){g.beginPath();g.roundRect(x,y,w,h,r);}
+
+add(new THREE.BoxGeometry(16,.3,10),M(0xe9e3da),0,-.15,1).receiveShadow=true;
+const wall=M(0xE4C79A,{roughness:.95}), trim=M(0xCFA873), wood=M(0x8a5a35);
+const BW=5,BH=3.6,BD=3.4,Z=BD/2, oy0=.75,oy1=2.65,ox=1.55;
+// box shell (back, sides, top, floor)
+add(new THREE.BoxGeometry(BW,.1,BD),wood,0,.05,0);
+add(new THREE.BoxGeometry(BW,BH,.1),wall,0,BH/2,-Z);
+add(new THREE.BoxGeometry(.1,BH,BD),wall,-BW/2,BH/2,0);add(new THREE.BoxGeometry(.1,BH,BD),wall,BW/2,BH/2,0);
+add(new THREE.BoxGeometry(BW,.1,BD),wall,0,BH,0);
+// facade with opening
+add(new THREE.BoxGeometry(BW/2-ox,BH,.2),wall,-(ox+(BW/2-ox)/2),BH/2,Z);
+add(new THREE.BoxGeometry(BW/2-ox,BH,.2),wall,(ox+(BW/2-ox)/2),BH/2,Z);
+add(new THREE.BoxGeometry(2*ox,oy0,.2),wall,0,oy0/2,Z);
+add(new THREE.BoxGeometry(2*ox,BH-oy1,.2),wall,0,(BH+oy1)/2,Z);
+// stage frame
+add(new THREE.BoxGeometry(2*ox+.2,.14,.3),wood,0,oy0,Z+.05);add(new THREE.BoxGeometry(2*ox+.2,.14,.3),wood,0,oy1,Z+.05);
+add(new THREE.BoxGeometry(.12,oy1-oy0,.3),wood,-ox-.04,(oy0+oy1)/2,Z+.05);add(new THREE.BoxGeometry(.12,oy1-oy0,.3),wood,ox+.04,(oy0+oy1)/2,Z+.05);
+// crenellations + barjeel
+for(let k=-4;k<=4;k++)add(new THREE.BoxGeometry(.32,.26,.32),wall,k*.56,BH+.13,Z-.1);
+add(new THREE.BoxGeometry(BW+.1,.08,.25),trim,0,BH-.1,Z+.08);
+const bj=new THREE.Group();bj.position.set(-1.5,BH,-.6);S.add(bj);
+add(new THREE.BoxGeometry(1,1.5,1),wall,0,.75,0,bj);for(let k=0;k<4;k++)add(new THREE.BoxGeometry(.12,.95,1.04),trim,-.36+k*.24,.9,0,bj);add(new THREE.BoxGeometry(1.1,.08,1.1),trim,0,1.5,0,bj);
+// windows + small side door
+[[-2.05,2.9],[2.05,2.9]].forEach(([x,y])=>add(new THREE.BoxGeometry(.4,.5,.05),M(0x5a3518),x,y,Z+.11));
+add(new THREE.BoxGeometry(.55,1.0,.05),M(0x9b5a2a),-2.05,.55,Z+.11);
+// sign
+const sgn=tex(900,200,(g,w,h)=>{g.fillStyle='#8a3b14';rr(g,4,4,w-8,h-8,40);g.fill();g.fillStyle='#FFF3D6';rr(g,22,22,w-44,h-44,30);g.fill();g.fillStyle='#8a3b14';g.font='800 110px Almarai';g.textAlign='center';g.textBaseline='middle';g.fillText('مسرح الفريج',w/2,h/2+6);});
+add(new THREE.PlaneGeometry(2.6,.58),new THREE.MeshBasicMaterial({map:sgn}),0,3.12,Z+.12).castShadow=false;
+// scene inside: Gergaoon night
+const scn=tex(1200,760,(g,w,h)=>{const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,'#1d2b6b');gr.addColorStop(.7,'#4a3d8f');gr.addColorStop(1,'#e0a85a');g.fillStyle=gr;g.fillRect(0,0,w,h);
+ g.fillStyle='#fff8d0';g.beginPath();g.arc(1000,120,70,0,7);g.fill();g.fillStyle='#1d2b6b';g.beginPath();g.arc(1030,100,62,0,7);g.fill();
+ for(let i=0;i<60;i++){g.fillStyle='rgba(255,255,255,.8)';g.fillRect(Math.random()*w,Math.random()*h*.45,3,3);}
+ // houses
+ g.fillStyle='#c9a06a';[[0,380,320,380],[300,330,280,430],[880,360,320,400]].forEach(([x,y,ww,hh])=>{g.fillRect(x,y,ww,hh);for(let k=0;k<ww;k+=50)g.fillRect(x+k+8,y-24,30,24);});
+ g.fillStyle='#ffd27a';[[80,450],[200,450],[380,420],[960,440],[1080,440]].forEach(([x,y])=>g.fillRect(x,y,50,60));
+ // lanterns string
+ g.strokeStyle='#5a3518';g.lineWidth=3;g.beginPath();g.moveTo(300,300);g.quadraticCurveTo(600,380,900,320);g.stroke();
+ ['#E8467C','#F7C531','#2DA05A','#3F6FD8','#F08A1C'].forEach((c,i)=>{const x=360+i*120,y=330+Math.sin(i/4*Math.PI)*36;g.fillStyle=c;g.beginPath();g.ellipse(x,y+22,16,24,0,0,7);g.fill();});
+ // ground
+ g.fillStyle='#e8c48a';g.fillRect(0,650,w,110);
+ // kids
+ const kid=(x,c,bag)=>{g.fillStyle=c;g.beginPath();g.moveTo(x-45,690);g.lineTo(x+45,690);g.lineTo(x+30,540);g.lineTo(x-30,540);g.fill();g.fillStyle='#c99b74';g.beginPath();g.arc(x,510,34,0,7);g.fill();g.fillStyle='#222';g.beginPath();g.arc(x,500,34,Math.PI,0);g.fill();
+  g.fillStyle=bag;g.beginPath();g.ellipse(x+62,610,30,40,0,0,7);g.fill();g.strokeStyle=bag;g.lineWidth=6;g.beginPath();g.moveTo(x+30,560);g.lineTo(x+62,575);g.stroke();
+  ['#fff','#F7C531','#E8467C'].forEach((cc,j)=>{g.fillStyle=cc;g.beginPath();g.arc(x+50+j*12,600+j*8,6,0,7);g.fill();});};
+ kid(430,'#2DA05A','#F7C531');kid(640,'#E8467C','#3F6FD8');kid(850,'#F08A1C','#E8467C');
+});
+add(new THREE.PlaneGeometry(3.2,2.0),new THREE.MeshBasicMaterial({map:scn}),0,1.7,-.2);
+// curtains (wavy, half open)
+function curtain(x0,w,side){const geo=new THREE.PlaneGeometry(w,oy1-oy0,30,1);const p=geo.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i);p.setZ(i,Math.sin((x+w)*16)*.05);}geo.computeVertexNormals();
+ const m=add(geo,new THREE.MeshStandardMaterial({color:0xC0182A,roughness:.7,side:THREE.DoubleSide}),x0,(oy0+oy1)/2,Z+.25);return m;}
+curtain(-ox+.38,.78);curtain(ox-.38,.78);
+add(new THREE.BoxGeometry(2*ox+.4,.22,.18),M(0xC0182A,{roughness:.7}),0,oy1-.06,Z+.3);
+[-1,1].forEach(s=>add(new THREE.TorusGeometry(.12,.03,8,20),M(0xE8C25A,{metalness:.5,roughness:.4}),s*(ox-.4),(oy0+oy1)/2-.1,Z+.32));
+// crank on right side
+const cr=new THREE.Group();cr.position.set(BW/2+.08,1.7,0.2);S.add(cr);
+const disc=add(new THREE.CylinderGeometry(.35,.35,.08,32),wood,0,0,0,cr);disc.rotation.z=Math.PI/2;
+const arm=add(new THREE.BoxGeometry(.07,.5,.1),M(0x6e3b15),.08,.22,0,cr);
+const knob=add(new THREE.CylinderGeometry(.08,.08,.3,20),M(0xE8C25A,{roughness:.5}),.22,.45,0,cr);knob.rotation.z=Math.PI/2;
+const lt=tex(400,120,(g,w,h)=>{g.fillStyle='#FFF3D6';rr(g,0,0,w,h,24);g.fill();g.fillStyle='#8a3b14';g.font='800 60px Almarai';g.textAlign='center';g.textBaseline='middle';g.fillText('لِفّ المقبض ↻',w/2,h/2+4);});
+const lb=add(new THREE.PlaneGeometry(1.0,.3),new THREE.MeshBasicMaterial({map:lt}),BW/2+.06,.9,.2);lb.rotation.y=Math.PI/2;
+// riddle cards on a little stand + time cards
+const cols=['#E8467C','#2DA05A','#3F6FD8','#F08A1C'];
+const card=(t,c,big)=>tex(420,260,(g,w,h)=>{g.fillStyle='#fff';rr(g,0,0,w,h,26);g.fill();g.strokeStyle=c;g.lineWidth=14;rr(g,7,7,w-14,h-14,22);g.stroke();g.fillStyle=c;g.font=big?'800 120px Almarai':'800 54px Almarai';g.textAlign='center';g.textBaseline='middle';g.fillText(t,w/2,h/2+4);});
+[['لغز ١','#E8467C'],['لغز ٢','#2DA05A'],['لغز ٣','#3F6FD8'],['لغز ٤','#F08A1C']].forEach(([t,c],i)=>{const m=add(new THREE.BoxGeometry(.85,.53,.03),[0,0,0,0,new THREE.MeshStandardMaterial({map:card(t,c,false)}),0].map(x=>x||M(0xffffff)),-1.6+i*1.05,.3,Z+1.35);m.rotation.x=-.35;});
+add(new THREE.BoxGeometry(4.6,.06,.5),wood,-.05,.03,Z+1.25);
+[['منتصف رمضان',2.9,3.3,.2],['قبل السحور',4.0,3.0,-.15],['يوم عرفة',3.3,4.0,-.3],['أذان المغرب',4.4,3.9,.25]].forEach(([t,x,z,ry])=>{const c=add(new THREE.BoxGeometry(1.0,.015,.55),[0,0,new THREE.MeshStandardMaterial({map:card(t,'#8a5a35')}),0,0,0].map(m=>m||M(0xffffff)),x,.01,z);c.rotation.y=ry;});
+// a real hand drum prop (المسحّر)
+const dr=new THREE.Group();dr.position.set(-3.4,.0,2.6);S.add(dr);
+add(new THREE.CylinderGeometry(.42,.42,.45,32),M(0xB5462A),0,.23,0,dr);add(new THREE.CylinderGeometry(.43,.43,.03,32),M(0xF2E3C6),0,.46,0,dr);
+r.render(S,cam);window.done=true;
+</script></body></html>
