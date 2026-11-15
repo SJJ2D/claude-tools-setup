@@ -122,7 +122,7 @@ def s4():
 
 # 5: development + attachments + references
 def s5():
-    cards = ''.join(f'<div class="mini" style="border-color:{c}88"><img src="{E}{i}.svg"><p style="color:{c}">{n}</p></div>'
+    cards = ''.join(f'<div class="mini" style="border-color:{c}88;flex-direction:row;gap:8px;padding:4px 8px"><img src="{E}{i}.svg" style="width:44px;height:44px"><p style="color:{c};font-size:21px">{n}</p></div>'
                     for i, c, n in [('man_rowing_boat', '#0F9FB2', 'بطاقة التجديف'), ('diving_mask', '#6C5CE7', 'بطاقة الغطس'),
                                     ('crab', '#F2683F', 'بطاقة السلطعون'), ('flamingo', '#F06A9B', 'بطاقة الفلامنجو')])
     more = ''.join(f'<div class="tl" style="padding:4px 16px">{ic(i,40)}<p>{t}</p></div>' for i, t in [('house', 'بطاقة التحدّي الأسبوعي'),
@@ -141,8 +141,11 @@ def s5():
 </div>
 <div class="c6" style="flex:1;gap:10px"><h3>{ic('clipboard')} المرفقات والمواد الداعمة</h3>
   <div class="row" style="gap:16px;flex:1">
-    <div style="flex:1.3;display:flex;gap:10px">{cards}</div>
-    <div style="width:240px;flex:none;display:flex;flex-direction:column;justify-content:center;gap:6px"><img src="img/sb/01.jpg" style="width:100%;border-radius:14px;border:3px solid #fff;box-shadow:0 6px 14px rgba(14,58,91,.15)"><p style="text-align:center;font-weight:800;color:var(--navy);font-size:22px">فيديو توضيحي (3:19)</p></div>
+    <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px">{cards}</div>
+    <div style="flex:none;display:flex;gap:14px;align-items:center">
+      <div style="width:250px;display:flex;flex-direction:column;gap:6px"><img id="vid1" src="img/sb/01.jpg" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:14px;border:3px solid #fff;box-shadow:0 6px 14px rgba(14,58,91,.15)"><p style="text-align:center;font-weight:800;color:var(--navy);font-size:20px">فيديو توضيحي (3:19)</p></div>
+      <div style="width:132px;display:flex;flex-direction:column;gap:6px"><img id="vid2" src="img/sb/v2.jpg" style="width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:14px;border:3px solid #fff;box-shadow:0 6px 14px rgba(14,58,91,.15)"><p style="text-align:center;font-weight:800;color:var(--navy);font-size:18px;line-height:1.2">تطبيق الحركات (3:41)</p></div>
+    </div>
     <div style="flex:1;display:flex;flex-direction:column;gap:6px">{more}</div>
   </div>
   <p class="refs" dir="ltr" style="text-align:left"><b>References:</b> American Academy of Pediatrics. (2026, July 31). <i>How to keep young athletes &amp; active kids safe in hot weather</i>. HealthyChildren.org. https://www.healthychildren.org/English/health-issues/injuries-emergencies/sports-injuries/Pages/Exercise-Related-Heat-Illness.aspx<br>
