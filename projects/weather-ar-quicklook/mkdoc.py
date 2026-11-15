@@ -41,7 +41,7 @@ table([('الاسم', 'سجاد مهدي عبدالله الصياد'), ('الر
        ('عنوان المشروع', 'الطقس: مشروعي الفردي في الواقع المعزز (العلوم، الصف الثالث الابتدائي)')])
 para('', space=4)
 para('رابط المشروع الفردي', 14, True, color='24205A')
-table([('الرابط', 'https://spiffy-gumption-19d291.netlify.app/weather/'), ('رابط بديل', 'https://claude.ai/artifact/AM1jCeH1bKPded7TnTdQGZ')])
+table([('الرابط', 'https://thewatercycle0.netlify.app/weather/'), ('رابط بديل', 'https://claude.ai/artifact/AM1jCeH1bKPded7TnTdQGZ')])
 para('يعمل الرابط على الهاتف والجهاز اللوحي والحاسوب. زر «الواقع المعزز» يثبّت الجزيرة على سطح حقيقي (طاولة أو سرير) عبر الكاميرا، ويمكن الضغط على أي مجسم لفتحه.', 11, color='5A5694')
 D.add_page_break()
 para('توثيق العمل الفردي (لقطات الشاشة)', 15, True, color='24205A', space=8)
