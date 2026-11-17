@@ -223,3 +223,8 @@
 
 ### charlie947/motion-graphics-skills (commit 229022e، MIT)
 15 وصفة نصية فوق HyperFrames: animated-chart، apple-launch-film، brand-intake، launch-video، loop-cover، milestone-reveal، model-showdown، motion-brief-writer، motion-effects، newsletter-promo، reel-export، title-sequence-3d، vox-explainer، motion-prompt-writer، reference-to-motion. بلا سكربتات تنفيذية؛ لم تُنسخ assets (13MB). توصياتها بتثبيت مهارات خارجية تُراجع أولاً.
+
+### مراجعة روابط نوفمبر 2026 (مرشّحات، غير مركّبة)
+- **مرشّحة للتجربة عند الحاجة (مكتبات JS صغيرة من CDN، بلا تركيب):** Rough.js (رسم كأنه باليد، MIT)، mo.js (أختام وانفجارات صغيرة، MIT)، anime.js (حركة مطاطية، MIT). Motion Canvas (TypeScript للشرح خطوة بخطوة، MIT) بديل لا نحتاجه مع HyperFrames. WhisperX (أوقات كلمات أدق، BSD) يُقارن بمحرّكنا الحالي قبل اعتماده.
+- **أدلة محفوظة كمراجع في فرع `refs`:** دليل Motion graphics with Claude Code (ملخّصه في `skills/motion-craft/references/text-motion-recipes.md`)، و«5 Boring Jobs» (برومبتات عامة: قص الصمت، تنظيف CSV، الإيصالات، فرز المجلدات، دمج PDF؛ قيمتها في نمط البرومبت: المهمة + القواعد + تقرير للتحقق).
+- **مرفوضة:** Coolify (استضافة ذاتية على VPS، نستخدم Netlify)، مكتبة Notion «Claude Creative Skill Library» (مهارات تكتب برومبتات لمولّدات صور/فيديو مدفوعة؛ تحتاج تسجيل دخول، وعندنا vox-explainer وmotion-design)، تطبيق Android «locally-uncensored» APK (تطبيق جوال لنماذج محلية بلا قيود؛ لا ينفع في الحاوية ولا يُنصح بتثبيت APK من خارج المتجر).
