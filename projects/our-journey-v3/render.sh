@@ -15,7 +15,7 @@ prep_logo () {  # $1 name  $2 src  $3 crop  $4 ss  $5 pre-filter  $6 outline rad
     -c:v libx264 -crf 8 -preset fast -an "prep/logo_$1.mp4"
   d=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "prep/logo_$1.mp4")
   # real alpha: letters keep their black outline; glow keeps its colour; fade in 0.3 s / out 0.4 s
-  rm -rf "prep/$1"; python3 make_alpha.py "prep/logo_$1.mp4" "prep/$1" "$6"
+  rm -rf "prep/$1"; python3 make_alpha.py "prep/logo_$1.mp4" "prep/$1" "$6" "${7:-}"
   echo "logo $1: $d s"
 }
 prep_logo sa "$A/logo_sa.mov" 710:620:1050:150  0    "" 5
@@ -23,12 +23,12 @@ prep_logo vc "$A/logo_vc.mov" 700:890:1060:200  1.1  "" 4   # 0-1.1 s is a full-
 prep_logo iv "$A/logo_iv.mov" 940:725:940:260   0    "" 5
 prep_logo v  "$A/logo_v.mov"  685:600:230:670   0    "" 5
 # GTA VI background is dark grey (28,29,39): pull it down to black so screen blend leaves no box
-prep_logo vi "$A/logo_vi.mov" 1232:930:724:180  0    "lutrgb=r='clip((val-30)*255/225,0,255)':g='clip((val-31)*255/224,0,255)':b='clip((val-41)*255/214,0,255)'," 4
+prep_logo vi "$A/logo_vi.mov" 1232:930:724:180  0    "lutrgb=r='clip((val-30)*255/225,0,255)':g='clip((val-31)*255/224,0,255)':b='clip((val-41)*255/214,0,255)'," 4 hold   # hold = no fade-out
 
 # ---------- 2) Timeline (seconds, checked frame by frame) ----------
-T_SA=1.00; T_VC=25.03; T_IV=54.08; T_V=103.12; T_VI=216.50
+T_SA=1.00; T_VC=25.03; T_IV=54.08; T_V=103.12; T_VI=226.125   # GTA VI logo: the walk-from-behind shot, stays until the end
 SRC_DUR=230.377
-ELDER_START=$(python3 -c "print(round($T_VI-9.5,3))")          # second 9.5 of Elderbrook = GTA VI logo
+ELDER_START=207.0                                                # song timing unchanged (kept as in the first render)
 ELDER_LEN=28.28
 END=$(python3 -c "print(round($ELDER_START+$ELDER_LEN,3))")    # film extended so the song plays to the end
 EXT=$(python3 -c "print(round($END-$SRC_DUR,3))")
@@ -57,14 +57,19 @@ FC+="[p1][p2]concat=n=2:v=1:a=0,trim=duration=$END,setpts=PTS-STARTPTS,format=yu
 i=1
 for L in sa vc iv v vi; do
   eval T=\$T_$(echo $L | tr a-z A-Z)
-  FC+="[$i:v]setpts=PTS-STARTPTS+$T/TB[l$i];"
+  if [ "$L" = vi ]; then
+    HOLD=$(python3 -c "print(round($END-$T_VI,3))")
+    FC+="[$i:v]tpad=stop_mode=clone:stop_duration=15,trim=duration=$HOLD,setpts=PTS-STARTPTS+$T/TB[l$i];"
+  else
+    FC+="[$i:v]setpts=PTS-STARTPTS+$T/TB[l$i];"
+  fi
   i=$((i+1))
 done
 FC+="[bg][l1]overlay=(W-w)/2:(H-h)/2:eof_action=pass[b1];"
 FC+="[b1][l2]overlay=(W-w)/2:(H-h)/2:eof_action=pass[b2];"
 FC+="[b2][l3]overlay=(W-w)/2:(H-h)/2:eof_action=pass[b3];"
 FC+="[b3][l4]overlay=(W-w)/2:(H-h)/2:eof_action=pass[b4];"
-FC+="[b4][l5]overlay=(W-w)/2:(H-h)/2:eof_action=pass[vlog];"
+FC+="[b4][l5]overlay=(W-w)/2:30:eof_action=pass[vlog];"   # GTA VI sits in the sky above the group
 FC+="[vlog]format=yuv420p,fade=t=out:st=$FADE_ST:d=1.2[vout];"
 # film sound kept under the music at 30 %
 FC+="[0:a]aresample=48000,volume=0.3,apad=whole_dur=$END[film];"
@@ -78,5 +83,5 @@ ffmpeg -v error -stats -y \
   -i "$A/mus_sa.mp4" -i "$A/mus_v.mov" -i "$A/mus_flower.mov" -i "$A/mus_raul.mp4" -i "$A/mus_elder.mp4" \
   -filter_complex "$FC" -map "[vout]" -map "[aout]" \
   -c:v libx264 -profile:v high -crf 18 -preset slow -r 24 -pix_fmt yuv420p \
-  -c:a aac -b:a 256k -movflags +faststart our_journey_final_v3.mp4
+  -t $END -c:a aac -b:a 256k -movflags +faststart our_journey_final_v3.mp4
 echo done

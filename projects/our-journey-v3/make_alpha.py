@@ -11,6 +11,7 @@ import numpy as np
 from PIL import Image
 
 src, out, rad = sys.argv[1], sys.argv[2], int(sys.argv[3])
+hold = len(sys.argv) > 4 and sys.argv[4] == 'hold'   # no fade-out: logo stays to the end
 os.makedirs(out, exist_ok=True)
 w, h = map(int, subprocess.run(
     ['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width,height',
@@ -56,7 +57,7 @@ for i, fr in enumerate(frames):
     col = np.where(core[..., None] > 0.5, rgb, rgb / np.maximum(a[..., None], 1e-3))
     t = i / fps
     dur = n / fps
-    fade = min(1.0, t / 0.3, max(0.0, (dur - t) / 0.4))
+    fade = min(1.0, t / 0.3) if hold else min(1.0, t / 0.3, max(0.0, (dur - t) / 0.4))
     a = a * fade
     # clean the frame border (crop edges)
     a[:2, :] = a[-2:, :] = 0
