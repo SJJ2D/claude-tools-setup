@@ -5,6 +5,7 @@
 
 | المجلد | المشروع | الفيديو النهائي على فرع `videos` |
 |---|---|---|
+| `our-journey-v3/` | مونتاج شعارات GTA المتحركة وموسيقى الحقب على فيلم الرحلة (ffmpeg + قناة شفافية للشعارات) | — (شخصي خاص، لا يُرفع) |
 | `gta6-voxel/` | إعلان GTA6 فوكسل v2 (Three.js + onetake). `comp2.html` هو v2 و`comp.html` هو المسودة الأولى | `gta6_voxel_v2.mp4`، `gta6_voxel_v2_story.mp4` |
 | `repo-intro/` | الفيديو التعريفي للمستودع (onetake، تعليق بالفصحى) | — (مسودة) |
 | `great-war-v2/` | إعلان «الحرب العظمى» v2 (Three.js، شخصيات، تبديل GTA) | `Great_War_v2.mp4`، `Great_War_v2_story_9x16.mp4` |
