@@ -6,6 +6,7 @@ description: إنتاج فيلم سينمائي قصير بالذكاء الاص
 # فيلم سينمائي بالذكاء الاصطناعي (مرجع: our_journey)
 
 المرجع المحلَّل: `our_journey_final_v2.mp4` (230ث، 1280×720، 24fps). المونتاج اللاحق (الشعارات والموسيقى) في `projects/our-journey-v3/`.
+**قبل أي توليد اقرأ `realistic-generation.md`:** كيف يولّد النموذج، ووصفة المظهر الواقعي، والعمل بتوليد التطبيق غير المحدود، والبديل المفتوح المصدر.
 اقرأ معها: `skills/motion-craft/SKILL.md` (الإيقاع والتحقق)، ومهارات `cinematic-shot-direction` و`storyboard-previsualization` و`performance-direction` و`color-grading-finishing` و`audio-mixing-mastering`.
 
 ## 1) ما الذي يجعل المرجع قوياً (مقاس بالأرقام)
