@@ -256,5 +256,41 @@ el = after.getnext()
 while el is not None and el.tag == W('w:p') and el.find('.//' + W('w:sectPr')) is None and not ''.join(t.text or '' for t in el.iter(W('w:t'))).strip():
     nxt = el.getnext(); el.getparent().remove(el); el = nxt
 
+
+# ---------- RTL fix for Word: schema order + logical alignment
+PPR = ['pStyle','keepNext','keepLines','pageBreakBefore','framePr','widowControl','numPr','suppressLineNumbers','pBdr','shd','tabs',
+       'suppressAutoHyphens','kinsoku','wordWrap','overflowPunct','topLinePunct','autoSpaceDE','autoSpaceDN','bidi','adjustRightInd',
+       'snapToGrid','spacing','ind','contextualSpacing','mirrorIndents','suppressOverlap','jc','textDirection','textAlignment',
+       'textboxTightWrap','outlineLvl','divId','cnfStyle','rPr','sectPr','pPrChange']
+RPR = ['rStyle','rFonts','b','bCs','i','iCs','caps','smallCaps','strike','dstrike','outline','shadow','emboss','imprint','noProof',
+       'snapToGrid','vanish','webHidden','color','spacing','w','kern','position','sz','szCs','highlight','u','effect','bdr','shd',
+       'fitText','vertAlign','rtl','cs','em','lang','eastAsianLayout','specVanish','oMath']
+def reorder(el, order):
+    kids = list(el)
+    def key(c):
+        n = c.tag.split('}')[1]
+        return order.index(n) if n in order else len(order)
+    seen = {}
+    for c in kids:
+        n = c.tag
+        if n in seen and n.endswith(('}bidi', '}rtl', '}szCs')): el.remove(c); continue
+        seen[n] = 1
+    kids = sorted(list(el), key=key)
+    for c in kids: el.remove(c)
+    for c in kids: el.append(c)
+body = D.element.body
+for pPr in body.iter(W('w:pPr')):
+    reorder(pPr, PPR)
+    if pPr.find(W('w:bidi')) is not None:
+        jc = pPr.find(W('w:jc'))
+        if jc is not None and jc.get(W('w:val')) in ('right', 'end'): pPr.remove(jc)   # start = right in an RTL paragraph
+for rPr in body.iter(W('w:rPr')):
+    reorder(rPr, RPR)
+TBLPR = ['tblStyle','tblpPr','tblOverlap','bidiVisual','tblStyleRowBandSize','tblStyleColBandSize','tblW','jc','tblCellSpacing','tblInd',
+         'tblBorders','shd','tblLayout','tblCellMar','tblLook','tblCaption','tblDescription']
+TRPR = ['cnfStyle','divId','gridBefore','gridAfter','wBefore','wAfter','cantSplit','trHeight','tblHeader','tblCellSpacing','jc','hidden']
+for t in body.iter(W('w:tblPr')): reorder(t, TBLPR)
+for t in body.iter(W('w:trPr')): reorder(t, TRPR)
+
 D.save(f'{OUT}/STEAM_Weather_202102571.docx')
 print('saved')
