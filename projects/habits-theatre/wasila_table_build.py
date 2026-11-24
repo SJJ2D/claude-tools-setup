@@ -46,7 +46,7 @@ def cell(c, lines, bold=False, color=None):
 h = D.add_paragraph(); p_rtl(h); run(h, 'الوسيلة الثالثة:', True, 'C00000', 14)
 
 t = D.add_table(rows=0, cols=2); t.style = 'Table Grid'; t.alignment = WD_TABLE_ALIGNMENT.CENTER
-tblPr = t._tbl.tblPr; bv = OxmlElement('w:bidiVisual'); tblPr.insert(1, bv)
+tblPr = t._tbl.tblPr
 RED = 'C00000'
 rows = [
  ('اسم الكتاب المدرسي', 'الدراسات الاجتماعية'),
@@ -59,11 +59,12 @@ rows = [
    '• تُصنّف العادات إلى عادات الرجال، وعادات النساء، وعادات الضيافة.',
    '• نحافظ على عادات بلادنا وتقاليدها ونعتز بهويتنا.']),
  ('الهدف السلوكي المتعلق بالوسيلة (بالاستعانة بجداول الأهداف)',
-  'أن يربط التلميذ خمسًا من العادات والتقاليد البحرينية بوقتها أو طريقة ممارستها ربطًا صحيحًا من خلال حل ألغاز (كتاب الفريج السري).'),
- ('مستوى الهدف السلوكي المتعلق بالوسيلة', 'الفهم'),
+  'أن يحلّ التلميذ خلال خمس عشرة دقيقة خمسة مواقف وألغاز في (كتاب الفريج السري) مستخدمًا ما تعلّمه عن العادات والتقاليد البحرينية، فيحدد المناسبة أو وقتها أو خطوة الضيافة المناسبة لكل موقف، ويجمع حروف كلمة السر (تراثي) كاملة.'),
+ ('مستوى الهدف السلوكي المتعلق بالوسيلة', 'التطبيق'),
 ]
 for k, v in rows:
-    c = t.add_row().cells
+    cc = t.add_row().cells
+    c = [cc[1], cc[0]]          # c[0] = label (right), c[1] = answer (left)
     cell(c[0], k, True, RED)
     if v is None:
         c[1].text = ''
@@ -73,8 +74,8 @@ for k, v in rows:
     else:
         cell(c[1], v)
 for r in t.rows:
-    r.cells[0].width = Cm(4.6); r.cells[1].width = Cm(12.4)
-for gc, w in zip(t._tbl.tblGrid.findall(W('w:gridCol')), (4.6, 12.4)): gc.set(W('w:w'), str(int(w * 567)))
+    r.cells[0].width = Cm(12.4); r.cells[1].width = Cm(4.6)
+for gc, w in zip(t._tbl.tblGrid.findall(W('w:gridCol')), (12.4, 4.6)): gc.set(W('w:w'), str(int(w * 567)))
 tw = tblPr.find(W('w:tblW')); tw.set(W('w:w'), str(int(17 * 567))); tw.set(W('w:type'), 'dxa')
 lay = OxmlElement('w:tblLayout'); lay.set(W('w:type'), 'fixed'); tw.addnext(lay)
 D.save('/home/user/work/habits/wasila/الوسيلة_الثالثة_كتاب_الفريج_السري.docx')
