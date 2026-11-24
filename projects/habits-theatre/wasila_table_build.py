@@ -69,8 +69,9 @@ for k, v in rows:
     if v is None:
         c[1].text = ''
         p = c[1].paragraphs[0]; p_rtl(p, 'center')
-        p.add_run().add_picture('/home/user/work/habits/wasila/photo.jpg', height=Cm(11))
-        cap = c[1].add_paragraph(); p_rtl(cap, 'center'); run(cap, 'غلاف (كتاب الفريج السري) بعد الطباعة والتغليف', size=10)
+        p.add_run().add_picture('/home/user/work/habits/wasila/grid.jpg', width=Cm(11.6))
+        cap = c[1].add_paragraph(); p_rtl(cap, 'center')
+        run(cap, 'الغلاف، والمحطات الخمس مع شريط الحروف، والجيب المختوم', size=10)
     else:
         cell(c[1], v)
 for r in t.rows:
