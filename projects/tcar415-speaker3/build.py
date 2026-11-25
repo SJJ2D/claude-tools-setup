@@ -74,6 +74,57 @@ ul.dots li:before{content:'';position:absolute;right:4px;top:22px;width:12px;hei
 .cover .sub{font-size:34px;color:var(--ink2);margin-top:18px}
 .cover .src{font-size:27px;color:var(--mut);margin-top:30px}
 .rings{position:absolute;left:-180px;top:50%;transform:translateY(-50%)}
+/* ===== speaker-4 document look (flat, white, hairlines, thick right edge cards) ===== */
+body{font-family:'Kufi'}
+p,li,td,th,div{font-size:30px;line-height:1.75}
+section.slide{padding:64px 110px 80px}
+.kick{font-size:22px;color:#718096;font-weight:400}
+.pill{font-size:19px;padding:0 14px 4px}
+.qp{border:none;background:#2d3748;color:#fff;font-size:19px;padding:0 14px 4px}
+h1{font-weight:700;font-size:54px;color:#1a202c;margin-top:6px}
+h1 em{display:block;font-style:normal;color:#4a5568;font-weight:400;font-size:30px;margin-top:4px}
+.rule{height:2px;background:#d9dee6;margin:20px 0 30px}
+.body{top:280px}
+.foot{justify-content:center;gap:0;font-size:20px;color:#a0aec0}
+.foot span:first-child{position:absolute;right:0}
+.foot .pg{font-family:'Naskh';font-size:24px;color:#a0aec0}
+/* boxes -> plan footer rows: bold label + text, thick right edge */
+.box{border-radius:10px;border:1.5px solid #e2e8f0;border-right:7px solid var(--rust);background:#fff;padding:14px 24px;font-size:28px}
+.box .tag{background:none!important;border:none!important;color:#1a202c!important;padding:0;font-size:28px;margin-left:8px}
+.box .tag:after{content:':'}
+.read{border-right-color:var(--rust);background:#fdf6f0}
+.crit{border-right-color:#2d3748;background:#f7f8fa}
+.ex{border-right-color:#a0aec0;background:#fff}
+.term{border-right-color:#6b46c1;background:#faf8fe;border-style:solid}
+/* tables like the overview table */
+table{border:none;border-radius:0;border-bottom:1.5px solid #e2e8f0}
+th{background:#2d3748;font-size:26px;padding:12px 22px}
+td{border-top:1.5px solid #e2e8f0;padding:14px 22px}
+td.rh{background:#fff;font-size:27px;color:#1a202c}
+td.rh:before{content:'';display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--rust);margin-left:12px;vertical-align:middle}
+td.hl{background:#fff}
+/* cards like the speaker cards */
+.card{border:1.5px solid var(--peachb);border-right:7px solid var(--rust);border-radius:12px}
+.card .hd{background:var(--peach);font-size:30px;padding:12px 24px}
+.card .hd .en{color:#718096;font-size:20px}
+.card .bd{padding:14px 24px}
+.card.navy{border-color:#cbd5e0;border-right-color:#2d3748}.card.navy .hd{background:#edf0f5;color:#2d3748}
+/* chain -> flat row of cells */
+.chain{gap:0;border:1.5px solid #e2e8f0;border-radius:10px;overflow:hidden}
+.chain .c{border:none;border-radius:0;font-size:26px;padding:14px 18px;background:#fff}
+.chain .c.res{background:#2d3748;border:none}
+.chain .op{font-size:28px;padding:0 6px;color:#a0aec0;background:#fff;align-self:stretch;display:flex;align-items:center}
+ul.dots li:before{top:24px;width:11px;height:11px}
+.q{border-radius:10px;border-right:7px solid var(--rust);padding:8px 24px}
+.stack>*+*{margin-top:16px}
+.q .n{font-family:'Naskh';font-size:40px}
+.q div{font-size:32px;font-weight:600}
+.cover{padding-left:0;justify-content:flex-start;padding-top:120px}
+.cover h1{font-size:80px}
+.cover h1 em{font-size:80px;display:inline;color:#1a202c;font-weight:700}
+.cover .sub{font-size:32px;color:#4a5568;margin-top:14px}
+.cover .src{font-size:24px;color:#718096;margin-top:10px;padding-bottom:30px;border-bottom:2px solid #d9dee6}
+.rings{display:none}
 """
 
 def foot(pg, src=''):

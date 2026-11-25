@@ -36,25 +36,29 @@ SLIDES = [
   <h1>العوامل الاجتماعية<br><em>الباعثة على التغير</em></h1>
   <div class="sub">العرض السادس: التغيرات اللغوية، الدوافع الداخلية والعوامل الخارجية</div>
   <div class="src">الأحمري (2022)، لغويات اجتماعية، ص 69–71، 77، 79–80، 174–175</div>
+  <div class="card" style="margin-top:36px;width:1200px">
+   <div class="hd"><span>المتحدث الثالث &nbsp;<span class="pill" style="font-size:20px">د</span>&nbsp; <span style="color:#4a5568;font-weight:400;font-size:24px">العوامل الاجتماعية الباعثة على التغير</span></span></div>
+   <table style="border-bottom:none"><tr><td style="width:180px;font-family:Naskh;font-weight:700"><span dir="ltr">69–71</span></td><td>العوامل اللغوية-الاجتماعية، والتنوع المستقر طويل الأمد</td></tr>
+   <tr><td style="font-family:Naskh;font-weight:700">77</td><td>نظرية التموج</td></tr>
+   <tr><td style="font-family:Naskh;font-weight:700"><span dir="ltr">79–80</span></td><td>الواعي واللاواعي، المبالغة في التصحيح، البريستيج</td></tr></table></div>
  </div>'''},
  # 2 map
  {'title': 'من أين يأتي التغير؟ <em>موقع المحور</em>', 'src': A + '، ص 69–71', 'html': '''
- <div class="flow">
-  <div class="step" style="background:var(--bluet);border-color:#bcd6ee"><span class="k" style="color:var(--blue)">الدوافع الداخلية</span>من داخل النظام اللغوي، ومظاهر التغير<br><span class="who" style="background:#fff;color:var(--blue)">المتحدثان الأول والثاني</span></div>
-  <div class="arrow">←</div>
-  <div class="step" style="background:var(--peach);border:2.5px solid var(--rust)"><span class="k rust">العوامل اللغوية-الاجتماعية</span>من خارج اللغة: المجتمع وأحواله<br><span class="who" style="background:var(--rust);color:#fff">هذا المحور</span></div>
-  <div class="arrow">←</div>
-  <div class="step" style="background:var(--greent);border-color:#b6d4c5"><span class="k" style="color:var(--green)">الأبعاد</span>المكان والجماعة والفرد<br><span class="who" style="background:#fff;color:var(--green)">المتحدث الرابع</span></div>
- </div>
- <div class="k mut" style="font-size:26px;margin:38px 0 14px">سؤالان يوجّهان التحليل</div>
+ <table>
+  <tr><th>المتحدث</th><th>المحور</th><th>منبع التغير</th></tr>
+  <tr><td style="font-weight:700"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#2b6cb0;margin-left:12px"></span>الأول والثاني</td><td>أ + ب + ج</td><td>الدوافع الداخلية ومظاهر التغير</td></tr>
+  <tr><td style="font-weight:700;color:#c05621"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#c05621;margin-left:12px"></span>الثالث</td><td style="font-weight:700">د</td><td style="font-weight:700">العوامل اللغوية-الاجتماعية (هذا المحور)</td></tr>
+  <tr><td style="font-weight:700"><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#2f855a;margin-left:12px"></span>الرابع</td><td>هـ + و + ز</td><td>الأبعاد: المكان والجماعة والفرد</td></tr>
+ </table>
+ <div class="k" style="font-size:28px;margin:24px 0 10px">سؤالان يوجّهان التحليل</div>
  <div class="stack">
   <div class="q"><span class="n">1</span><div>متى نعدّ التنوع تغيرًا؟</div></div>
   <div class="q"><span class="n">2</span><div>كيف ينتقل التغير، وما اتجاهه، ولماذا يُقبَل؟</div></div>
- </div>''' + box('read', 'قراءة', 'التنوع هو المدخل الذي يُحدَّد من خلاله العامل الاجتماعي (ص 70)؛ لذلك يبدأ المحور بالسؤال الأول.', 'style="margin-top:24px"')},
+ </div>''' + box('read', 'قراءة', 'التنوع هو المدخل الذي يُحدَّد من خلاله العامل الاجتماعي (ص 70)؛ لذلك يبدأ المحور بالسؤال الأول.', 'style="margin-top:16px"')},
  # 3 internal vs external
- {'q': 1, 'title': 'العامل الاجتماعي: <em>خارجي المنبع، قصير الأمد</em>', 'src': A + '، ص 69–71', 'html': '''
+ {'q': 1, 'title': 'العامل الاجتماعي<em>خارجي المنبع، قصير الأمد</em>', 'src': A + '، ص 69–71', 'html': '''
  <table>
-  <tr>''' + CORNER.format(w=250) + '''<th>العوامل الداخلية</th><th style="background:var(--rust)">العوامل الخارجية (الاجتماعية)</th></tr>
+  <tr>''' + CORNER.format(w=250) + '''<th>العوامل الداخلية</th><th>العوامل الخارجية (الاجتماعية)</th></tr>
   <tr><td class="rh" style="padding:22px 24px">طبيعة العمل</td><td>تنبع من داخل اللغة</td><td class="hl">تأتي من أحوال المجتمع</td></tr>
   <tr><td class="rh" style="padding:22px 24px">أمد التأثير</td><td>طويل عادةً</td><td class="hl">قصير، وقد لا يتجاوز جيلًا واحدًا</td></tr>
  </table>
@@ -72,7 +76,7 @@ SLIDES = [
   box('read', 'قراءة', 'كلمة (معظم) تترك موضعًا لهذا الاستثناء: الطبقة تَسِم الصيغة ولا تدفعها إلى التغير.') + '''</div>
  </div>'''},
  # 5 wave
- {'q': 2, 'title': 'نظرية التموج: <em>التغير موجة تبدأ من مركز</em>', 'src': A + '، ص 77، عن Wardhaugh', 'html':
+ {'q': 2, 'title': 'نظرية التموج<em>التغير موجة تبدأ من مركز</em>', 'src': A + '، ص 77، عن Wardhaugh', 'html':
  DEF('Wave Theory', 'كل تغيير جديد هو (أشبه بموجة) تنتقل تذبذباتها من مركزها إلى الخارج (ص 77).') + '''
  <div style="display:flex;gap:46px;align-items:flex-start">
   <div style="flex:none;width:480px">''' + rings(480, ['المركز']) + '''</div>
@@ -92,7 +96,7 @@ SLIDES = [
  box('term', 'ملمح صرفي', 'يتنقّل الكتاب بين (التغيير الواعي/اللاواعي) (ص 79) و(التغير الواعي/اللاواعي) (ص 80)؛ و(التغيّر) مصدر المطاوع يصدق على النوعين، فهو الأدق.') +
  box('read', 'قراءة', 'يقرن الكتاب المبالغة بالتغير الواعي (ص 79)، ونوعَ البريستيج بنوع التغير (ص 80)؛ فالوعي إذن هو المتغير الذي تتفرع عنه الظاهرتان التاليتان.') + '</div>'},
  # 7 hypercorrection
- {'q': 2, 'title': 'المبالغة في التصحيح: <em>حرص يتجاوز حدّه</em>', 'src': A + '، ص 79–80، 83، عن Aitchison', 'html':
+ {'q': 2, 'title': 'المبالغة في التصحيح<em>حرص يتجاوز حدّه</em>', 'src': A + '، ص 79–80، 83، عن Aitchison', 'html':
  DEF('hypercorrection', 'استعمال تغير لغوي بشكل مبالغ فيه، وفي سياقات قد لا يوجد فيها أصلًا (ص 79).') + '''
  <div class="chain"><div class="c">تغير واعٍ أو ضغط من الأعلى</div><div class="op">←</div><div class="c">حرص على الصيغة ذات المكانة</div><div class="op">←</div><div class="c res">إفراط أو مدّ إلى غير موضعها</div></div>
  <div class="grid2" style="margin-top:34px">
@@ -102,7 +106,7 @@ SLIDES = [
   box('ex', 'مثال توضيحي', 'قطع همزة الوصل في درج الكلام تحرّيًا للفصاحة:<br>' + x('وَاسْتِخْدَام', 'وَإِسْتِخْدَام')) + '''</div>
  </div>'''},
  # 8 prestige
- {'q': 2, 'title': 'البريستيج: <em>قيمة تُضاف إلى التغير</em>', 'src': A + '، ص 80، 174–175', 'html':
+ {'q': 2, 'title': 'البريستيج<em>قيمة تُضاف إلى التغير</em>', 'src': A + '، ص 80، 174–175', 'html':
  DEF('prestige', '(عنصر إضافي) يضفي على التغيرات الحاصلة قيمة اجتماعية-اقتصادية إيجابية، ويجعلها (موضع إعجاب أعضاء المجتمع) (ص 80).') + '''
  <div class="grid2">
   <div class="card"><div class="hd">الظاهر <span class="en">overt</span></div><div class="bd"><p>رغبة في صيغ الطبقة العليا، ويصاحب عادةً التغير الواعي</p><p style="font-size:28px;margin-top:6px;color:var(--ink2)"><b>مثال توضيحي:</b> ضيف تلفزيوني يعدل عن (وايد، زين) إلى (كثيرًا، جيد).</p></div></div>
@@ -111,9 +115,9 @@ SLIDES = [
  <div class="stack" style="margin-top:24px">''' + box('term', 'ربط', 'الفصحى (النوع الأعلى) في ازدواجية (مستقرة نسبيًّا) (ص 174–175): هيبتها ظاهرة، ولا تحوّل الكلام اليومي إليها؛ فالبريستيج الظاهر وحده لا يصنع تغيرًا.') +
  box('read', 'قراءة', 'البريستيج يفسّر <b>لماذا</b> يُقبَل التغير الحاصل، والتموج يفسّر <b>كيف</b> ينتشر: الأول قيمة مضافة، والثاني مسار.') + '</div>'},
  # 9 network + bridge
- {'title': 'شبكة المحور: <em>كيف تترابط المفاهيم؟</em>', 'src': A + '، ص 71، 77، 79–80', 'html': '''
+ {'title': 'شبكة المحور<em>كيف تترابط المفاهيم؟</em>', 'src': A + '، ص 71، 77، 79–80', 'html': '''
  <table>
-  <tr>''' + CORNER.format(w=400) + '''<th style="background:var(--rust)">التغير الواعي</th><th>التغير اللاواعي</th></tr>
+  <tr>''' + CORNER.format(w=400) + '''<th>التغير الواعي</th><th>التغير اللاواعي</th></tr>
   <tr><td class="rh">الاتجاه</td><td class="hl">من الأعلى: أعلى من مستوى الوعي</td><td>من الأسفل: أدنى من مستوى الوعي</td></tr>
   <tr><td class="rh">البريستيج المصاحب (عادةً)</td><td class="hl">ظاهر</td><td>خفي</td></tr>
   <tr><td class="rh">ظاهرة مرافقة</td><td class="hl">المبالغة في التصحيح</td><td class="mut">لا يذكر الكتاب مقابلًا لها</td></tr>
