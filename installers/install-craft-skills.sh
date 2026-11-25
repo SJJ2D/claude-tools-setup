@@ -9,7 +9,7 @@ sparse(){ # $1=owner/repo $2=commit $3=dir $4..=أنماط sparse (يجلب ال
   local repo=$1 sha=$2 dir=$3; shift 3
   git clone -q --filter=blob:none --no-checkout "https://github.com/$repo" "$dir" 2>/dev/null && git -C "$dir" sparse-checkout set --no-cone "$@" 2>/dev/null && git -C "$dir" checkout -q "$sha" 2>/dev/null; }
 take(){ # $1=owner/repo $2=commit $3..=مجلدات المهارات (تُنسخ باسم المجلد)
-  local repo=$1 sha=$2; shift 2; local dir="$WORK/$(echo "$repo" | tr / _)" pats=() p n
+  local repo=$1 sha=$2; shift 2; local dir; dir=$(mktemp -d "$WORK/$(echo "$repo" | tr / _).XXXX"); rmdir "$dir"; local pats=() p n
   for p in "$@"; do pats+=("/$p/"); done
   sparse "$repo" "$sha" "$dir" "${pats[@]}" || { bad "$repo"; return; }
   for p in "$@"; do n=$(basename "$p")
@@ -104,6 +104,22 @@ take damionrashford/media-os 5014c1e8b23fd3e18d49926d9aa147d15a3aa08e skills/ffm
 if take barty-bart/motion-graphics 3d83d987d658601d8a1269eb691622bdcd427335 skills/sound-effects && [ -f "$SKILLS/sound-effects/SKILL.md" ] && ! grep -q "سياسة محلية" "$SKILLS/sound-effects/SKILL.md"; then
   printf '\n## سياسة محلية (claude-tools-setup)\nابحث أولاً في مكتبة alvana-audio المسجّلة (1213 مؤثر و157 مقطوعة، CC0 غالباً): `python3 <المستودع>/tools/sfx_fetch.py search <كلمات>` ثم `get`. استخدم Mixkit فقط إن لم يوجد بديل، وفي مجلد المشروع، ولا تحفظه في المستودع. أي رخصة CC-BY تحتاج سطر حقوق (`sfx_fetch.py credits`).\n' >> "$SKILLS/sound-effects/SKILL.md"
 fi
+# ───────── 6) التعليم والألعاب وصوت الألعاب (جولة 25 نوفمبر 2026، روجعت SKILL.md والسكربتات قبل التثبيت) ─────────
+# خطط الدروس: مهارات Claude for Teachers الرسمية (Apache-2.0). نأخذ مجلدي المهارتين فقط، لا الإضافة (فيها .mcp.json بـ9 خدمات خارجية).
+#   render_all.sh يثبّت python-docx==1.1.2 (مثبّت الإصدار). مخرجها Word بلا RTL: مرّره على arabic-rtl-fixer.
+take anthropics/k12-teacher-skills 31fd6dbb0c07cb50bb3ce7f62a4135a393bd0e8c plugin/skills/k12-lesson-plan-creation plugin/skills/k12-lesson-prep
+take learning-commons-org/agent-skills b23623c8b50fe0f5fd4e657b1d3c0e3e6618ada6 skills/k12-fixing-lesson-plans          # Apache-2.0: فحص خطة درس جاهزة وإصلاحها
+take mohitagw15856/pm-claude-skills 04a88f1dd531f5afb152eddc67e0370eede6f288 skills/behavior-intervention-plan skills/parent-communication skills/iep-goal-writer   # MIT: سلوك، أولياء أمور، أهداف ذوي الاحتياجات (أمريكية: كيّفها للبحرين)
+# تصميم الألعاب
+take tachyon-beep/skillpacks 721b7c5b298237302446321cbdb9a975461d29af plugins/bravos-game-design/skills/using-game-design   # CC BY-SA 4.0: التعلّم بالألعاب واختبار اللعب
+GD=skills; take gamedev-skills/awesome-gamedev-agent-skills c6ca6c41c839b68319ffc08430b99ab768debc32 $GD/disciplines/game-feel $GD/disciplines/game-ui-ux $GD/disciplines/level-design $GD/disciplines/audio-design $GD/workflows/game-docs $GD/workflows/prototype-fast $GD/genres/puzzle   # Apache-2.0
+take phaserjs/phaser 02d8931b626d9764c133cbb3fbf99966c03c757c skills/text-and-bitmaptext skills/scale-and-responsive skills/input-keyboard-mouse-touch skills/tweens skills/scenes skills/audio-and-sound   # MIT، Phaser الرسمية (text-and-bitmaptext: rtl للعربي)
+# صوت الألعاب: Web Audio بلا ملفات (MIT). تجاهل جزء Strudel (رخصته AGPL تنتقل للعبة).
+take playableintelligence/game-creator 53676bd2a524989745ce7cbd4128c17e8a20dd3d skills/game-audio
+note game-audio "لا تستخدم Strudel (strudel-reference.md): رخصته AGPL وتُلزم اللعبة كلها بها. استخدم sfx-engine.md أو ZzFX (npm zzfx@1.4.0، MIT) أو حزمة 512 مؤثر 8-bit CC0: bash installers/on-demand.sh gamesfx"
+# earshot (MIT): مؤثرات صوتية من وصف مكتوب محلياً. المهارة هنا؛ الأداة عند الطلب: on-demand.sh earshot (بدون listen وبدون llm).
+take leonxlnx/earshot 7a7f7c5c70d4a763a1eca4b3666af7c77e313f97 skills/earshot
+note earshot "الأداة تُركّب بـ: bash installers/on-demand.sh earshot (النواة فقط، مثبّتة على commit). لا تشغّل pip install من SKILL.md ولا earshot llm: يرفع الصوت لـGemini، ممنوع بلا موافقة صريحة."
 # ───────── 5) مشاهدة الفيديو (روابط السوشال أو ملفات محلية) ─────────
 # watch (MIT، bradautomates/claude-video ~20 ألف نجمة): لقطات + نص من الترجمة المرفقة. المحرك المحلي فقط افتراضياً.
 #   Gemini/Groq/OpenAI اختيارية وترسل الفيديو/الصوت لجهات خارجية: لا تُفعّل بلا موافقة، ولا لبيانات طلاب. لم نأخذ hooks الإضافة.

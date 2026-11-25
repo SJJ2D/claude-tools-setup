@@ -80,6 +80,17 @@ edittools(){ need_gb 1 || return; mkdir -p "$T/bin" "$T/models"
   [ -s "$T/models/face_detection_yunet_2023mar.onnx" ] || curl -fsSL -o "$T/models/face_detection_yunet_2023mar.onnx" https://huggingface.co/opencv/face_detection_yunet/resolve/main/face_detection_yunet_2023mar.onnx
   "$AE" --version >/dev/null 2>&1 && ok "edittools: $AE، pysubs2، ffmpeg-normalize، scenedetect، OTIO، YuNet ($T/models)"; }
 
+# earshot 1.0.0 (MIT): يولّد مؤثرات صوتية من وصف مكتوب (numpy/scipy/numba، بلا نموذج ولا GPU). النواة فقط: listen يجلب torch، وllm يرفع لـGemini.
+earshot(){ need_gb 1 || return; local v; v=$(venv earshot-venv)
+  [ -x "$v/bin/earshot" ] || pipi "$v" "earshot @ git+https://github.com/Leonxlnx/earshot@7a7f7c5c70d4a763a1eca4b3666af7c77e313f97" || { bad earshot; return; }
+  mkdir -p "$T/bin" && ln -sf "$v/bin/earshot" "$T/bin/earshot"; ok "earshot: $T/bin/earshot make \"coin pickup\" -o coin.wav"; }
+
+# 512 مؤثر 8-bit (Juhani Junkala، CC0 بلا نسبة): مثالية لألعاب الصفوف 1–3 (عملات، قفز، نجاح، أزرار)
+gamesfx(){ need_gb 1 || return; local D="$T/sfx/retro-512" Z="$T/sfx/retro-512.zip"; mkdir -p "$T/sfx"
+  [ -d "$D" ] && { ok "gamesfx موجود: $D"; return; }
+  getbin "$Z" 6d4519229c6e2c9e09502cd4967940052f68664140549a467615b56bdfd1d031 "https://opengameart.org/sites/default/files/The%20Essential%20Retro%20Video%20Game%20Sound%20Effects%20Collection%20%5B512%20sounds%5D.zip" \
+    && mkdir -p "$D" && unzip -q "$Z" -d "$D" && rm -f "$Z" && ok "gamesfx: $D (CC0)" || bad "gamesfx (البصمة أو التنزيل)"; }
+
 getbin(){ # $1=المسار $2=sha256 $3=الرابط: تنزيل ثنائي والتحقق من بصمته
   [ -s "$1" ] && return 0; curl -fsSL -o "$1.tmp" "$3" && [ "$(sha256sum "$1.tmp" | cut -d' ' -f1)" = "$2" ] && mv "$1.tmp" "$1" || { rm -f "$1.tmp"; return 1; }; }
 
@@ -113,11 +124,11 @@ tts(){ need_gb 6 || return; local v="$HOME/tts/.venv"
   "$v/bin/python" -c "from huggingface_hub import snapshot_download as d; d('ResembleAI/chatterbox', allow_patterns=['ve.pt','t3_mtl23ls_v3.safetensors','s3gen.pt','grapheme_mtl_merged_expanded_v1.json','conds.pt','Cangjie5_TC.json'])" >/dev/null 2>&1 \
     && ok "TTS: $v (ChatterboxMultilingualTTS.from_pretrained(device='cpu', t3_model='v3'))" || bad "أوزان chatterbox"; }
 
-ALL="rembg upscale manim blender docling camel qari habibi acestep careerops edittools typst denoise tts"
+ALL="rembg upscale manim blender docling camel qari habibi acestep careerops edittools typst denoise tts earshot gamesfx"
 [ $# -eq 0 ] && set -- list
 for t in "$@"; do case "$t" in
   list) echo "الأدوات: $ALL"; for x in $ALL; do printf '  %-8s' "$x"; done; echo;;
-  rembg|upscale|manim|blender|docling|camel|qari|habibi|acestep|careerops|edittools|typst|denoise|tts) "$t";;
+  rembg|upscale|manim|blender|docling|camel|qari|habibi|acestep|careerops|edittools|typst|denoise|tts|earshot|gamesfx) "$t";;
   arabic) bash "$HERE/installers/arabic-nlp.sh" || RC=1;;
   *) bad "أداة غير معروفة: $t";;
 esac; done
