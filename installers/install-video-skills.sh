@@ -13,7 +13,7 @@ fetch(){ git clone -q --filter=blob:none "https://github.com/$1" "$3" 2>/dev/nul
 put(){ [ -f "$1/SKILL.md" ] && [ ! -e "$SKILLS/$(basename "$1")" ] && cp -R "$1" "$SKILLS/$(basename "$1")"; }
 
 # 1) HyperFrames (HeyGen، Apache-2.0): فيديو من HTML. تنبيه: مهارة media-use فيها تتبّع استخدام (PostHog) يُعطَّل بـ DO_NOT_TRACK=1
-if fetch heygen-com/hyperframes 555c788a333c592e9878139db318ea52f1315cec "$WORK/hf"; then
+if fetch heygen-com/hyperframes 4864ade2838704b92c69d37ec5ffe554ddca4114 "$WORK/hf"; then
   # تحديث نوفمبر 2026: نستبدل النسخ القديمة، ونضيف مهارات «العقيدة» الداخلية (ربط المشاهد كحركة كاميرا واحدة، الانتقالات، منع الوميض، الكابشن، المؤشر).
   # changelog-video لم يُضف: خاص بمنتجهم وفيه خطوط تجارية.
   n=0; for s in "$WORK"/hf/skills/*/ "$WORK"/hf/.claude/skills/{motion-doctrine,seam-craft,cut-the-curve,captions-overlay,oversized-cursor}/; do
@@ -25,13 +25,13 @@ else bad "HyperFrames"; fi
 
 # 2) Lemo Opuscar (MIT): المهارة تحمّل المكتبة؛ نحمّلها نحن مثبّتة في ~/lemo-opuscar
 LEMO="${LEMO_DIR:-$HOME/lemo-opuscar}"
-if fetch lemomo-ai/lemo-opuscar bebbbe1aa92a3cb4bb6f83500e61b23a17d1aa00 "$WORK/lemo"; then
+if fetch lemomo-ai/lemo-opuscar 8ca0dd805e214bcc1d30714cd5b9d21cc02a454b "$WORK/lemo"; then
   put "$WORK/lemo/plugin/skills/lemo-opuscar" && ok "lemo-opuscar (مهارة)"
   [ -e "$LEMO" ] || { cp -R "$WORK/lemo" "$LEMO" && ok "مكتبة Lemo في $LEMO (مثبّتة؛ سكربت setup.sh الخاص بالمهارة قد يحدّثها من الإنترنت)"; }
 else bad "lemo-opuscar"; fi
 
 # 3) OneTake (رخصة PolyForm Noncommercial: للاستخدام غير التجاري فقط — مناسب للدراسة والتعليم)
-if fetch feitangyuan/onetake abb6d17279cdc749e27e99aa534a062d8fd01ced "$WORK/ot"; then
+if fetch feitangyuan/onetake 4e024be4c6c696b260f39a35aee6bd56d303b679 "$WORK/ot"; then
   rm -rf "$WORK/ot/.git"; mkdir -p "$WORK/otp/onetake" && cp -R "$WORK/ot/." "$WORK/otp/onetake/" && put "$WORK/otp/onetake" && ok "onetake (غير تجاري فقط)"
 else bad "onetake"; fi
 

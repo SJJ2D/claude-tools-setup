@@ -12,10 +12,10 @@ have(){ [ -e "$SKILLS/$1" ]; }
 have karpathy-guidelines || { fetch multica-ai/andrej-karpathy-skills 2c606141936f1eeef17fa3043a72095b4765b9c2 "$WORK/k" && put "$WORK/k/skills/karpathy-guidelines"; }
 have karpathy-guidelines && ok "karpathy-guidelines" || bad "karpathy-guidelines"
 
-have ui-ux-pro-max || { fetch nextlevelbuilder/ui-ux-pro-max-skill b7d5353e0130feb8c5574ef1251f8a1db1873ccb "$WORK/u" && put "$WORK/u/.claude/skills/ui-ux-pro-max"; }
+have ui-ux-pro-max || { fetch nextlevelbuilder/ui-ux-pro-max-skill 8db36338810d0942567b97ce439affd1619fcf31 "$WORK/u" && put "$WORK/u/.claude/skills/ui-ux-pro-max"; }
 have ui-ux-pro-max && ok "ui-ux-pro-max (بحث محلي بسكربت بايثون؛ بياناته داخل المهارة)" || bad "ui-ux-pro-max"
 
-have humanizer || { fetch blader/humanizer 0ef9fe5bc3572734fd3ae6c448fe00a30cd5dcf0 "$WORK/h" && rm -rf "$WORK/h/.git" && mkdir -p "$WORK/hh" && cp -R "$WORK/h" "$WORK/hh/humanizer" && put "$WORK/hh/humanizer"; }
+have humanizer || { fetch blader/humanizer a32f24407364c74c812b43c15926d638bee1e072 "$WORK/h" && rm -rf "$WORK/h/.git" && mkdir -p "$WORK/hh" && cp -R "$WORK/h" "$WORK/hh/humanizer" && put "$WORK/hh/humanizer"; }
 have humanizer && ok "humanizer" || bad "humanizer"
 
 # motion.dev AI Kit (MIT): مهارة /motion (أفضل ممارسات الحركة، بحث الوثائق، توليد CSS springs) + خادم Motion MCP المجاني (بحث وثائق بلا حساب).
@@ -29,7 +29,7 @@ fi
 
 # find-skills (MIT، vercel-labs/skills): اكتشاف المهارات عبر skills.sh. نعدّل الخطوة 6: لا تثبيت تلقائي (-y) قبل مراجعة المحتوى وموافقة المستخدم.
 if ! have find-skills; then
-  if fetch vercel-labs/skills d3701c11b1101251af14c9d148f026e1a47ebe17 "$WORK/f" && put "$WORK/f/skills/find-skills"; then
+  if fetch vercel-labs/skills 57217cf86ba38148a57af9e90d14a4c049558330 "$WORK/f" && put "$WORK/f/skills/find-skills"; then
     python3 - "$SKILLS/find-skills/SKILL.md" <<'PYEOF'
 import sys
 p = sys.argv[1]; s = open(p, encoding='utf-8').read()
@@ -47,7 +47,7 @@ fi
 have find-skills && ok "find-skills (مع سياسة: مراجعة قبل التثبيت)" || bad "find-skills"
 
 # مهارات عربية (MIT، راجعتها: نصوص إرشادية فقط، وأدوات rtl-fixer سكربتات OOXML محلية بلا شبكة ولا subprocess)
-have arabic-design || { fetch JamalMohafil/claude-skills ca8c888abeffa8616b611032510c631d43a263ef "$WORK/ad" && put "$WORK/ad/arabic-design"; }
+have arabic-design || { fetch JamalMohafil/claude-skills 8e6fa73c274c65704134b663513ca7754e99e199 "$WORK/ad" && put "$WORK/ad/arabic-design"; }
 have arabic-design && ok "arabic-design (عربي نظيف في HTML/CSS)" || bad "arabic-design"
 have arabic-writing || { fetch ahmeddabak/claude-arabic-writing 7001831e49a510f499a22368966fd14fc271b493 "$WORK/aw" && put "$WORK/aw/skills/arabic-writing"; }
 have arabic-writing && ok "arabic-writing (تدقيق وكتابة عربية سليمة)" || bad "arabic-writing"

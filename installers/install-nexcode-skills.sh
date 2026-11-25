@@ -14,13 +14,13 @@ whole(){ # مستودع كامل يعمل كمهارة واحدة: $1=مجلد �
   [ -e "$SKILLS/$2" ] && return 0; rm -rf "$1/.git"; mkdir -p "$WORK/w/$2" && cp -R "$1/." "$WORK/w/$2/" && put "$WORK/w/$2"; }
 
 # 1) Taste (MIT): اتجاه تصميم وصور مرجعية للواجهات
-if fetch Leonxlnx/taste-skill 9b4bf937a1f69348126959c15d2f99a73e65699b "$WORK/ts"; then put "$WORK/ts/skills/taste-skill" && ok "taste-skill"; else bad "taste-skill"; fi
+if fetch Leonxlnx/taste-skill d1a2bb41d927083ac7118f60cfc9cdf711810ea0 "$WORK/ts"; then put "$WORK/ts/skills/taste-skill" && ok "taste-skill"; else bad "taste-skill"; fi
 
 # 2) Impeccable (Apache-2.0): أوامر تصميم (polish, critique, audit). تنبيه: سكربتاته تنزّل «محرّك» بنسخة محددة عند أول تشغيل
-if fetch pbakaus/impeccable c3bb418ee38ee49a6b999b7752c1368f3123a2bd "$WORK/im"; then put "$WORK/im/plugin/skills/impeccable" && ok "impeccable"; else bad "impeccable"; fi
+if fetch pbakaus/impeccable b49177d32788f2dc585c42831d845dacf1ebed2c "$WORK/im"; then put "$WORK/im/plugin/skills/impeccable" && sed -i '/npx impeccable login/d' "$SKILLS/impeccable/reference/init.md" 2>/dev/null; ok "impeccable (بلا دعوة تسجيل الدخول السحابي)"; else bad "impeccable"; fi
 
 # 3) Playwright CLI (Apache-2.0): مهارة playwright-cli. الأداة نفسها:  npm install -g @playwright/cli  (لم أثبّتها تلقائياً)
-if fetch microsoft/playwright-cli 4bc00fb7fa5b4329f2fb53ac4743a066c2c664e8 "$WORK/pw"; then put "$WORK/pw/skills/playwright-cli" && ok "playwright-cli (مهارة)"; else bad "playwright-cli"; fi
+if fetch microsoft/playwright-cli dc5f4d5616ab5a28ded12fd7101a4d49bd59a820 "$WORK/pw"; then put "$WORK/pw/skills/playwright-cli" && ok "playwright-cli (مهارة)"; else bad "playwright-cli"; fi
 
 # 4) img2threejs (Apache-2.0): صورة مرجعية → كود Three.js. يحتاج Node 18+ وبايثون 3.10+
 if fetch img2threejs/img2threejs 0c0c49bc168e648dbaf9c8c080474de0b3a941b6 "$WORK/i3"; then whole "$WORK/i3" img2threejs && ok "img2threejs"; else bad "img2threejs"; fi

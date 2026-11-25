@@ -62,10 +62,10 @@ ok "أصول 3D: $(ls "$A" | wc -l) ملف في $A"
 if command -v claude >/dev/null; then
   have(){ claude mcp list 2>/dev/null | grep -q "^$1:"; }
   CH=$(ls -d /opt/pw-browsers/chromium-*/chrome-linux64/chrome 2>/dev/null | head -1)
-  have chrome-devtools || claude mcp add --scope user chrome-devtools -- npx -y chrome-devtools-mcp@1.12.0 --headless --isolated ${CH:+--executablePath "$CH"} --chromeArg=--no-sandbox >/dev/null 2>&1
+  have chrome-devtools || claude mcp add --scope user chrome-devtools -- npx -y chrome-devtools-mcp@1.14.0 --headless --isolated ${CH:+--executablePath "$CH"} --chromeArg=--no-sandbox >/dev/null 2>&1
   mkdir -p "$HERE/memory"
-  have memory || claude mcp add --scope user memory -e MEMORY_FILE_PATH="$HERE/memory/memory.jsonl" -- npx -y @modelcontextprotocol/server-memory@2.1.0 >/dev/null 2>&1
-  have sequential-thinking || claude mcp add --scope user sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking@2.1.1 >/dev/null 2>&1
+  have memory || claude mcp add --scope user memory -e MEMORY_FILE_PATH="$HERE/memory/memory.jsonl" -- npx -y @modelcontextprotocol/server-memory@2.2.1 >/dev/null 2>&1
+  have sequential-thinking || claude mcp add --scope user sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking@2.2.0 >/dev/null 2>&1
   have fetch || claude mcp add --scope user fetch -- uvx mcp-server-fetch >/dev/null 2>&1
   for s in chrome-devtools memory sequential-thinking fetch; do have $s && ok "MCP $s" || bad "MCP $s"; done
 else bad "claude CLI غير موجود لتسجيل MCP"; fi

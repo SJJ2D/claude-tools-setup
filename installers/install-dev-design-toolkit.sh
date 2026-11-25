@@ -16,7 +16,7 @@ if fetch obra/superpowers 22f0b463e7a5e579904dd6211a520321035526f7 "$WORK/sp"; t
 else bad "superpowers"; fi
 
 # 2) wshobson/agents (MIT): مهارات مختارة للبرمجة
-if fetch wshobson/agents 4bde3168b43c0655c4d00ea2726e631719908a6d "$WORK/wh"; then
+if fetch wshobson/agents c96b5f6552dba32e4492307493ee613581430715 "$WORK/wh"; then
   n=0; for p in developer-essentials python-development javascript-typescript frontend-mobile-development accessibility-compliance api-scaffolding database-design security-scanning game-development shell-scripting backend-development file-conversion; do
     for s in "$WORK/wh/plugins/$p/skills"/*/; do [ -d "$s" ] && put "${s%/}" && n=$((n+1)); done; done
   ok "مهارات البرمجة (wshobson): $n"
@@ -29,7 +29,7 @@ else bad "designing-arabic-frontends"; fi
 
 # 4) UX/UI: أنظمة تصميم، رموز، إتاحة WCAG، مراجعة تصميم (MIT). مهاراتها تشير لملفات داخل المستودع، فيبقى كاملاً في ~/tools
 UX="${UXUI_DIR:-$HOME/tools/ux-ui-agent-skills}"
-if [ -d "$UX/.git" ] || fetch plugin87/ux-ui-agent-skills def84a70fadc3490d80901295a4f1951fdb2cc69 "$UX"; then
+if [ -d "$UX/.git" ] || fetch plugin87/ux-ui-agent-skills d0ee2fa38edea5eba0b3d3a4a43f6b7e9ab923a6 "$UX"; then
   ok "ux-ui-agent-skills في $UX — لأفضل نتيجة شغّل Claude Code من داخل هذا المجلد (مهاراته مشروع)"
 else bad "ux-ui-agent-skills"; fi
 
