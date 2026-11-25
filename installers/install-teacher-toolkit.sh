@@ -16,7 +16,7 @@ fetch(){  # fetch <owner/repo> <sha> <dir>
 put(){ [ -f "$1/SKILL.md" ] && [ ! -e "$SKILLS/$(basename "$1")" ] && cp -R "$1" "$SKILLS/$(basename "$1")"; }  # لا يستبدل ولا يعشّش نسخة داخل المهارة عند إعادة التشغيل
 
 # 1) مهارات Anthropic الرسمية: مستندات وعروض وتصميم ومواقع (لكل مهارة رخصتها داخل مجلدها)
-if fetch anthropics/skills ca45fc496a3436251f191354091d557da31c15b5 "$WORK/anthropic"; then
+if fetch anthropics/skills e4bb5d960d87126ff3b3a8af1a104b7db67560ba "$WORK/anthropic"; then
   n=0; for s in docx pdf pptx xlsx frontend-design canvas-design web-artifacts-builder webapp-testing doc-coauthoring theme-factory brand-guidelines skill-creator; do put "$WORK/anthropic/skills/$s" && n=$((n+1)); done
   ok "Anthropic skills: $n"
 else bad "anthropics/skills"; fi
@@ -40,7 +40,7 @@ if fetch zarazhangrui/frontend-slides 9906a34d640d2111f724544cbc50f7f130569ae1 "
 else bad "frontend-slides"; fi
 
 # 4) ألعاب الويب (Phaser وPixi وThree.js) من مكتبة مهارات الألعاب (Apache-2.0)
-if fetch gamedev-skills/awesome-gamedev-agent-skills 19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9 "$WORK/gd"; then
+if fetch gamedev-skills/awesome-gamedev-agent-skills c6ca6c41c839b68319ffc08430b99ab768debc32 "$WORK/gd"; then
   n=0; for s in phaser-core phaser-arcade-physics pixijs-rendering threejs-scene-setup; do put "$WORK/gd/skills/web-engines/$s" && n=$((n+1)); done; ok "مهارات ألعاب الويب: $n"
 else bad "gamedev skills"; fi
 
@@ -59,7 +59,7 @@ if fetch 6missedcalls/video-editing-skill 7dc6e1da66f43eff44c3692d4b84e06aef6590
 else bad "video-editing-skill"; fi
 
 # 7) فيديوهات شرح وسبورة بيضاء وأنيميشن للمعلمين (MIT)
-if fetch iart-ai/explainer-video-skills 3e2d411b725d9a72939cf8e5eb81579e751373e7 "$WORK/expl"; then
+if fetch iart-ai/explainer-video-skills 3c13a1bc360c08503f24f9c9a99fda6d3d35de56 "$WORK/expl"; then
   n=0; for s in "$WORK"/expl/skills/*/; do put "${s%/}" && n=$((n+1)); done; ok "فيديوهات الشرح والأنيميشن: $n"
 else bad "explainer-video-skills"; fi
 
@@ -69,7 +69,7 @@ sp(){ # $1=owner/repo $2=sha $3..=مسارات مجلدات المهارات
   git clone -q --filter=blob:none --no-checkout "https://github.com/$r" "$d" 2>/dev/null && git -C "$d" sparse-checkout set --no-cone "${pats[@]}" && git -C "$d" checkout -q "$sha" 2>/dev/null || { bad "$r"; return; }
   for x in "$@"; do [ -e "$SKILLS/$(basename "$x")" ] && ok "$(basename "$x") (موجودة)" || { put "$d/$x" && ok "$(basename "$x")" || bad "$(basename "$x")"; }; done; }
 # التحقق من المراجع (Crossref/OpenAlex/arXiv: يكشف DOI مختلق أو لبحث آخر — جُرّب)، APA 7، تحويل صيغ المراجع، مراجعة منهجية PRISMA. مكتبة بايثون القياسية فقط
-sp kalarislabs/research-agent-skills 29fe36d26127205057d5e0ed8425f6b0e9a8c13a skills/citation-verification skills/apa7 skills/reference-manager-interop skills/systematic-review-prisma
+sp kalarislabs/research-agent-skills a74b0dbe5fa865d73b9f250ba5b0c9f107bd1baa skills/citation-verification skills/apa7 skills/reference-manager-interop skills/systematic-review-prisma
 # العربي الأكاديمي (IMRaD، اقتباس، إعادة صياغة موثّقة) — مثاله في APA يذكر مدينة الناشر (APA 6): الأولوية لـ profile/study-guide.md
 sp specailm5/arabic-academic-skill 3794abdded86edd816f980fca24dce7be1e64ef5 skills/arabic-academic-skill
 sp specailm5/arabic-editing-skill 6c276ba129441a2b9c989d2e7abbafb5b827dc6b skills/arabic-editing-skill          # تقرير تحريري يحفظ صوت الكاتب

@@ -11,14 +11,14 @@ fetch(){ git clone -q --filter=blob:none "https://github.com/$1" "$3" 2>/dev/nul
 put(){ [ -f "$1/SKILL.md" ] && [ ! -e "$SKILLS/$(basename "$1")" ] && cp -R "$1" "$SKILLS/$(basename "$1")"; }
 
 # 1) Addy Osmani agent-skills (MIT): 25 مهارة هندسة برمجيات (مواصفات، TDD، مراجعة، أمان، أداء، شحن)
-if fetch addyosmani/agent-skills 301b02b12bff98e4688e6984af6556802322bbde "$WORK/ao"; then
+if fetch addyosmani/agent-skills e997ac5b9a74eab332d5e9793bb38a38c8cfdd74 "$WORK/ao"; then
   n=0; for s in "$WORK"/ao/skills/*/; do put "${s%/}" && n=$((n+1)); done
   [ -e "$SKILLS/references" ] || cp -R "$WORK/ao/references" "$SKILLS/references"   # مهاراته تشير إلى ../references
   ok "agent-skills (Addy Osmani): $n"
 else bad "agent-skills"; fi
 
 # 2) Context7 (MIT): مهارات توثيق المكتبات الحديثة. الخادم نفسه (MCP) يُضاف بأمر منفصل، انظر أسفل
-if fetch upstash/context7 76d68b5d2b19eb0f5d96c3e44c12c710f6a7a5ab "$WORK/c7"; then
+if fetch upstash/context7 d0f2ef972852848904c23ac27a0b8e14254e3360 "$WORK/c7"; then
   n=0; for s in context7-mcp context7-cli find-docs; do put "$WORK/c7/skills/$s" && n=$((n+1)); done; ok "context7: $n مهارات"
 else bad "context7"; fi
 
@@ -28,14 +28,14 @@ if fetch 21st-dev/magic-mcp 6b5299e8a83ceffa73d4fc4e148905bb3eeeeb55 "$WORK/mg";
 else bad "21st-ui"; fi
 
 # 4) Strix (Apache-2.0): 9 مهارات اختبار اختراق. للاستخدام على تطبيقاتك أنت أو بإذن صريح فقط
-if fetch usestrix/strix 06015506625a78b981ae0b34be40239fc1b389be "$WORK/sx"; then
+if fetch usestrix/strix 935f82350782cdf15d70cbcb3e6d7e48f49071c2 "$WORK/sx"; then
   n=0; for s in "$WORK"/sx/skills/*/; do put "${s%/}" && n=$((n+1)); done; ok "strix (مهارات): $n"
 else bad "strix"; fi
 
 # 5) Graphify (Apache-2.0): أداة بايثون تبني رسماً معرفياً للمشروع وتسجّل مهارتها في Claude Code
 if command -v uv >/dev/null 2>&1; then
-  if uv tool install -q "git+https://github.com/Graphify-Labs/graphify@16218bfc80d4ca2799734d045039f7ed1a5fa9fb" >/dev/null 2>&1 \
-     || uv tool install -q --force "git+https://github.com/Graphify-Labs/graphify@16218bfc80d4ca2799734d045039f7ed1a5fa9fb" >/dev/null 2>&1; then
+  if uv tool install -q "git+https://github.com/Graphify-Labs/graphify@14f35e381cab8d0ae10824a336114a907c288146" >/dev/null 2>&1 \
+     || uv tool install -q --force "git+https://github.com/Graphify-Labs/graphify@14f35e381cab8d0ae10824a336114a907c288146" >/dev/null 2>&1; then
     PATH="$(uv tool dir --bin 2>/dev/null):$HOME/.local/bin:$PATH" graphify install >/dev/null 2>&1 && ok "graphify (للاستخدام: /graphify .)" || bad "graphify: فشل graphify install"
   else bad "graphify: فشل التركيب"; fi
 else bad "graphify: uv غير موجود"; fi
