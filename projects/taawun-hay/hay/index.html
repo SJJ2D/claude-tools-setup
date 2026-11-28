@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>درس التعاون – جولة في حيّ التعاون</title>
+<style>
+@font-face{font-family:'Lalezar';src:url(../fonts/lalezar.woff2) format('woff2')}
+@font-face{font-family:'Tajawal';font-weight:700;src:url(../fonts/tajawal-700.woff2) format('woff2')}
+@font-face{font-family:'Tajawal';font-weight:900;src:url(../fonts/tajawal-900.woff2) format('woff2')}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:#9fd8ff;font-family:'Tajawal',Tahoma,sans-serif;user-select:none;touch-action:none}
+canvas{display:block}
+.ui{position:fixed;z-index:10;pointer-events:none}
+.top{top:12px;left:0;right:0;display:flex;justify-content:center;gap:12px}
+.pill{background:rgba(255,255,255,.88);border-radius:22px;padding:8px 20px;font-weight:900;font-size:22px;color:#0b5e40;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+.pill b{font-family:'Lalezar';font-size:26px}
+.title{font-family:'Lalezar';font-size:28px;font-weight:400}
+.btns{position:fixed;top:12px;left:12px;z-index:11;display:flex;gap:8px}
+.ic{width:50px;height:50px;border-radius:15px;border:0;background:rgba(255,255,255,.9);font-size:24px;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.15)}
+.hint{bottom:14px;left:0;right:0;text-align:center}
+.hint span{background:rgba(0,0,0,.45);color:#fff;border-radius:18px;padding:6px 16px;font-size:18px;font-weight:700}
+#card{position:fixed;top:78px;left:50%;transform:translateX(-50%) translateY(-30px) scale(.8);opacity:0;z-index:12;background:#fffdf3;border:6px solid #f2b705;border-radius:26px;padding:14px 28px;text-align:center;min-width:min(560px,92vw);max-width:94vw;box-shadow:0 14px 40px rgba(0,0,0,.3);transition:all .45s cubic-bezier(.3,1.5,.5,1);pointer-events:none}
+#card.on{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+#card h2{font-family:'Lalezar';font-weight:400;font-size:40px;color:#0b5e40}
+#card p{font-size:23px;font-weight:900;color:#3b2f1a;margin-top:4px;line-height:1.5}
+#card small{display:block;margin-top:6px;font-size:21px;font-weight:900;color:#d6336c}
+#start{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(255,248,214,.92),rgba(15,138,95,.92));text-align:center;gap:14px;padding:20px}
+#start h1{font-family:'Lalezar';font-weight:400;font-size:clamp(48px,8vw,90px);color:#fff;text-shadow:0 6px 0 #0b5e40,0 12px 26px rgba(0,0,0,.25)}
+#start p{font-size:clamp(18px,2.4vw,26px);font-weight:900;color:#083d2a;max-width:820px;line-height:1.6;background:rgba(255,255,255,.75);border-radius:20px;padding:10px 20px}
+#go{font-family:'Lalezar';font-size:36px;color:#4a2c00;background:#ffb703;border:0;border-radius:24px;padding:12px 44px;box-shadow:0 8px 0 #c98700;cursor:pointer}
+#go:active{transform:translateY(5px);box-shadow:0 3px 0 #c98700}
+#loading{font-weight:900;color:#083d2a}
+#joy{position:fixed;left:26px;bottom:60px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.28);border:3px solid rgba(255,255,255,.7);z-index:11;display:none;touch-action:none}
+#joy i{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:0 4px 10px rgba(0,0,0,.25)}
+#final{position:fixed;inset:0;z-index:15;display:none;align-items:center;justify-content:center;pointer-events:none}
+#final div{background:#fffdf3;border:8px double #e0b13c;border-radius:30px;padding:20px 40px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.3);pointer-events:auto;animation:pop .7s cubic-bezier(.3,1.5,.5,1)}
+#final h2{font-family:'Lalezar';font-weight:400;font-size:46px;color:#0b5e40}
+#final p{font-size:28px;font-weight:900;color:#3b2f1a;margin:8px 0}
+#final button{font-family:'Lalezar';font-size:26px;border:0;border-radius:18px;padding:8px 26px;background:#2b8cee;color:#fff;box-shadow:0 6px 0 #1a5fa8;cursor:pointer;margin-top:8px}
+@keyframes pop{0%{transform:scale(.3)}100%{transform:scale(1)}}
+#conf{position:fixed;inset:0;pointer-events:none;z-index:16}
+#map{position:fixed;top:12px;right:12px;width:clamp(96px,13vw,160px);height:clamp(96px,13vw,160px);z-index:11;pointer-events:none;border-radius:50%;box-shadow:0 5px 14px rgba(0,0,0,.3)}
+#quiz{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(140%);z-index:12;background:#fffdf3;border:6px solid #9b5de5;border-radius:28px;padding:12px 26px 16px;text-align:center;width:min(760px,94vw);box-shadow:0 14px 40px rgba(0,0,0,.3);transition:transform .45s cubic-bezier(.3,1.4,.5,1)}
+#quiz.on{transform:translateX(-50%) translateY(0)}
+#quiz.shake{animation:shk .5s}
+@keyframes shk{0%,100%{transform:translateX(-50%)}25%{transform:translateX(calc(-50% - 14px))}50%{transform:translateX(calc(-50% + 12px))}75%{transform:translateX(calc(-50% - 6px))}}
+#qN{font-weight:900;color:#7b3fb5;font-size:20px}
+#quiz h2{font-family:'Lalezar';font-weight:400;font-size:clamp(28px,3.4vw,40px);color:#2a2340;margin:2px 0 8px}
+#qBtns{display:flex;gap:18px;justify-content:center}
+#qBtns button,#qNext{font-family:'Lalezar';font-size:clamp(22px,2.6vw,30px);border:0;border-radius:20px;padding:8px 26px;color:#fff;cursor:pointer}
+#yes{background:#2fbf71;box-shadow:0 7px 0 #1d8a4f}#no{background:#f0545c;box-shadow:0 7px 0 #b9343b}
+#qNext{background:#2b8cee;box-shadow:0 7px 0 #1a5fa8;display:none;margin-top:8px}
+#qBtns button:active,#qNext:active{transform:translateY(4px)}
+#qWhy{font-size:clamp(18px,2vw,23px);font-weight:900;margin-top:8px;line-height:1.5}
+#qWhy.ok{color:#1d8a4f}#qWhy.no{color:#c0392b}#qWhy.hint{color:#7a5a00}
+#start{background:radial-gradient(circle at 50% 40%,rgba(255,248,214,.92),rgba(123,63,181,.92))}
+#start h1{text-shadow:0 6px 0 #4a2580,0 12px 26px rgba(0,0,0,.25)}
+#start p{color:#2a1a45}
+.pill{color:#5e2e8f}
+.hint{bottom:auto;top:66px}
+.hint span{font-size:clamp(14px,1.8vw,18px)}
+
+
+#start{cursor:pointer;gap:10px}
+#start .logo{font-size:clamp(56px,9vw,96px);line-height:1;filter:drop-shadow(0 6px 0 rgba(74,37,128,.35))}
+#start h1{font-size:clamp(64px,12vw,130px);line-height:1.05}
+.card3{background:rgba(255,255,255,.85);border:5px solid #f2b705;border-radius:26px;padding:12px 34px;box-shadow:0 10px 0 rgba(0,0,0,.12)}
+.card3 p{background:none;padding:2px 0;max-width:none;color:#2a1a45;font-weight:900}
+.card3 .by{font-size:clamp(22px,3.2vw,34px)}.card3 .by b{color:#7b3fb5;font-family:'Lalezar';font-weight:400;font-size:1.15em}
+.card3 .cls{font-size:clamp(20px,2.8vw,30px);color:#0b5e40}
+#go{font-size:clamp(30px,4.4vw,48px);margin-top:10px;animation:bob 1.3s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.05)}}
+#start .ctl{font-size:clamp(14px,1.7vw,18px);background:rgba(255,255,255,.55);padding:6px 16px}
+#quiz{max-height:80vh;overflow:auto}
+#qT{font-family:'Tajawal';font-size:clamp(18px,2.1vw,24px);font-weight:900;color:#3b2f1a;line-height:1.65;margin:4px 0 6px}
+#qQ{font-size:clamp(20px,2.4vw,28px);color:#7b3fb5}
+#qReasons{display:none;flex-direction:column;gap:8px;margin-top:6px}
+#qReasons button{font-family:'Tajawal';font-weight:900;font-size:clamp(17px,2vw,22px);line-height:1.5;border:4px solid #9b5de5;background:#fff;color:#2a2340;border-radius:18px;padding:8px 14px;cursor:pointer;box-shadow:0 5px 0 #7b3fb5}
+#qReasons button:active{transform:translateY(3px)}
+#qReasons button.bad{background:#ffe3e3;border-color:#f0545c;box-shadow:none;color:#999;text-decoration:line-through}
+#final div{max-width:min(640px,94vw);max-height:92vh;overflow:auto}
+#fStars{font-size:44px;letter-spacing:6px}
+#fList{list-style:none;text-align:right;margin:6px 0;font-size:clamp(16px,2vw,20px);font-weight:900}
+#fList li{padding:3px 0}#fList .c{color:#1d8a4f}#fList .n{color:#c0392b}
+#final .ayah{font-size:clamp(17px,2vw,22px);color:#0b5e40}
+</style>
+<script type="importmap">{"imports":{"three":"../vendor/three.module.min.js"}}</script>
+</head>
+<body>
+<div id="start" role="button" tabindex="0">
+  <div class="logo">🤝</div>
+  <h1>درس التعاون</h1>
+  <div class="card3">
+    <p class="by">إعداد طلاب الدكتور: <b>مهند مصطفى</b></p>
+    <p class="cls">صف ثالث ابتدائي — فرقة ١</p>
+  </div>
+  <div id="go">👆 انقر للبدء</div>
+  <p class="ctl">⌨️ الأسهم أو W A S D للمشي • 🖱️ اضغط على الأرض لتمشي إليها • ✋ اسحب لتدوير الكاميرا</p>
+  <div id="loading">يتم تجهيز العالم…</div>
+</div>
+<div class="ui top"><div class="pill title">🤝 درس التعاون</div><div class="pill">🔍 المواقف: <b id="cnt">0</b> / <b id="tot">6</b></div></div>
+<div class="btns"><button class="ic" id="fs" title="ملء الشاشة">⛶</button><button class="ic" id="snd" title="الصوت">🔊</button></div>
+<div class="ui hint"><span>العلامات الثلاث: ① نعمل معًا &nbsp; ② كلٌّ يؤدي دوره &nbsp; ③ في عمل خير</span></div>
+<div id="quiz"><div id="qN"></div><p id="qT"></p><h2 id="qQ"></h2><div id="qBtns"><button id="yes">🤝 سلوك تعاوني</button><button id="no">🚫 غير تعاوني</button></div><div id="qReasons"></div><p id="qWhy"></p><button id="qNext">أكمل الجولة 👣</button></div>
+<div id="joy"><i></i></div>
+<canvas id="map" width="300" height="300"></canvas>
+<div id="final"><div><h2>🏆 أنهيتم جولة حيّ التعاون!</h2><div id="fStars"></div><p id="fScore"></p><ul id="fList"></ul><p class="ayah">﴿ وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَى وَلَا تَعَاوَنُوا عَلَى الْإِثْمِ وَالْعُدْوَانِ ﴾</p><button onclick="document.getElementById('final').style.display='none'">أكمل التجوّل 👣</button> <button id="again" style="background:#2fbf71;box-shadow:0 6px 0 #1d8a4f">🔁 العب من جديد</button></div></div>
+<canvas id="conf"></canvas>
+<script type="module" src="world.js"></script>
+</body>
+</html>
